@@ -1,0 +1,27 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/list_collection_request.json",
+  "type": "object",
+  "title": "WLTS - List Collections operation",
+  "description": "Retrieves list of offered collections",
+  "readOnly": true,
+  "writeOnly": false,
+  "required": [ ],
+  "properties": {
+    "collectionstype": {
+      "$id": "#/properties/collectiontype",
+      "type": "string",
+      "title": "Collection Type Identifier",
+      "description": "Collection type identifier",
+      "default": "",
+      "examples": [
+        "image_collection",
+        "feature_collection"
+      ],
+      "readOnly": true,
+      "writeOnly": false,
+      "pattern": "^(.*)$"
+    }
+  }
+}
