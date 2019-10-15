@@ -64,17 +64,26 @@ paths:
             type: number
         - in: query
           name: start_date
+          required: false
           description: Start date. i.e `start_date=2007-01-01`
           schema:
             type: string
         - in: query
           name: end_date
+          required: false
           description: End date. i.e `end_date=2017-12-31`
           schema:
             type: string
+        - in: query
+          name: class_type
+          required: false
+          description: Class type `class_type=original` or `class_type=map`
+          schema:
+            type: string
+
       responses:
         '200':
-          description: Array of collections
+          description: Trajectory found
           content:
             application/json:
               schema:
@@ -86,7 +95,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/APIError'
         '404':
-          description: Coverage not found
+          description: Collections not found
           content:
             application/json:
               schema:
@@ -97,17 +106,18 @@ paths:
       description: Retrieves collection description
       parameters:
         - in: query
-          name: collection_name
+          name: name
+          required: true
           schema:
             type: string
       responses:
         '200':
-          description: Coverage found.
+          description: Collection found.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CollectionDescription'
-                
+
   /list_classification_sytem:
     get:
       summary: List Classification System
@@ -118,15 +128,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Classification_System_List'
-                
-  /list_legend_system:
+                $ref: '#/components/schemas/ClassificationSystemList'
+
+  /describe_classification_sytem:
     get:
-      summary: List avaliable legend of classification system 
-      description: Retrieves avaliable legend of classification system
+      summary: Describe Classification System
+      description: Retrieves all class of classification system
       parameters:
         - in: query
-          name: classyfication_system_name
+          name: name
+          required: true
           schema:
             type: string
       responses:
@@ -136,17 +147,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClassificationDescription'
-                
+
 components:
   schemas:
     CollectionList:
       type: object
       properties:
-        features_collection:
+        feature_collection:
           type: array
           items:
             type: string
-        images_collection:
+        image_collection:
           type: array
           items:
             type: string
@@ -156,36 +167,20 @@ components:
         result:
           type: object
           properties:
-            attributes:
+            trajectory:
               type: array
               items:
                 type: object
                 properties:
-                  id:
-                    type: number
-                  class:
+                  collection_name:
                     type: string
-                  collection:
+                  classification_class:
                     type: string
                   data:
                     type: string
                   geom:
                     type: string
-            timeline:
-              type: array
-              items:
-                type: string
-            coordinates:
-              type: object
-              properties:
-                longitude:
-                  type: number
-                latitude:
-                  type: number
-                col:
-                  type: integer
-                row:
-                  type: integer
+
         query:
           type: object
           properties:
@@ -206,7 +201,7 @@ components:
         required:
           - collection_name
         properties:
-          collection_name:
+          name:
             type: string
           description:
             type: string
@@ -228,14 +223,13 @@ components:
                 type: string
           spatial_extent:
             $ref: '#/components/schemas/SpatialExtent'
-          avaliable_class:
-            type: array
-            items:
-              type: string
-    Classification_System_List:
+          classification_system_class:
+            $ref: '#/components/schemas/ClassificationSystemClass'
+
+    ClassificationSystemList:
       type: object
       properties:
-        classyfication_system_name:
+        classyfication_system:
           type: array
           items:
             type: string
@@ -244,13 +238,24 @@ components:
       required:
         - classification_system_name
       properties:
-        classification_system_name:
+        classification_system:
           type: string
         description:
           type: string
         detail:
           type: string
-        avaliable_class:
+        classification_system_class:
+          type: array
+          items:
+            type: string
+    ClassificationSystemClass:
+      type: object
+      properties:
+        classification_system:
+          type: string
+        description:
+          type: string
+        class_name:
           type: array
           items:
             type: string
