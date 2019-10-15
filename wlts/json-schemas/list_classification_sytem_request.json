@@ -1,0 +1,13 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/list_classification_system_request.json",
+  "type": "object",
+  "title": "WLTS - List Classification System operation",
+  "description": "Retrieves list of offered classification system",
+  "readOnly": true,
+  "writeOnly": false,
+  "required": [ ],
+  "properties": { }
+
+}

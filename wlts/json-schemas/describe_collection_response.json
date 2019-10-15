@@ -1,0 +1,81 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/describe_collection_response.json",
+  "type": "object",
+  "title": "WLTS - Describe Collection operation",
+  "required": [
+    "name",
+    "description",
+    "collection_type",
+    "resolution_unit",
+    "period",
+    "spatial_extent",
+    "classification_system_class"
+  ],
+  "properties": {
+    "name": {
+      "$id": "#/properties/name",
+      "type": "string",
+      "title": "The Collection Name",
+      "default": "",
+      "examples": [
+        "prodes"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "description": {
+      "$id": "#/properties/description",
+      "type": "string",
+      "title": "The Description Collections",
+      "default": ""
+    },
+    "classification_system_class": {
+      "$id": "#/properties/classification_system_class",
+      "type": "object",
+      "title": "The Classification System Class Class of Collection",
+      "required": [
+          "classification_system",
+          "description",
+          "class_name"
+        ],
+        "properties": {
+          "classification_system": {
+            "$id": "#/properties/classification_system_class/items/properties/classification_system",
+            "type": "string",
+            "title": "The Classification System Name",
+            "default": "",
+            "examples": [
+              "corina"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "description": {
+            "$id": "#/properties/classification_system_class/items/properties/description",
+            "type": "string",
+            "title": "The Description Schema",
+            "default": "",
+            "examples": [
+              "Sistema de Classificação ...."
+            ],
+            "pattern": "^(.*)$"
+          },
+          "class_name": {
+            "$id": "#/properties/classification_system_class/items/properties/class_name",
+            "type": "array",
+            "title": "The Class Name of Classification System Class",
+            "items": {
+              "$id": "#/properties/classification_system_class/items",
+              "type": "string",
+              "title": "Class Identifier",
+              "description": "Class identifier",
+              "default": "",
+              "examples": [
+                "Desmatamento"
+              ]
+            }
+          }
+        }
+      }
+    }
+}

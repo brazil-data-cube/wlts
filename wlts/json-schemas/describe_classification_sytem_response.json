@@ -1,0 +1,57 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/describe_classification_system_response.json",
+  "type": "object",
+  "title": "WLTS - Describe Classification System operation",
+  "required": [
+    "classification_system",
+    "description",
+    "detail",
+    "classification_system_class"
+  ],
+  "properties": {
+    "classification_system": {
+      "$id": "#/properties/classification_system",
+      "type": "string",
+      "title": "The Classification System Name",
+      "default": "",
+      "examples": [
+        "prodes"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "description": {
+      "$id": "#/properties/description",
+      "type": "string",
+      "title": "The Description Classification System",
+      "default": ""
+    },
+    "detail": {
+      "$id": "#/properties/description",
+      "type": "string",
+      "title": "The Detail Classification System",
+      "default": ""
+    },
+
+    "classification_system_class": {
+      "$id": "#/properties/classification_system_class",
+      "type": "array",
+      "title": "Feature classification System Class Names",
+      "description": "Defines list of classification system class from server",
+      "default": false,
+      "items": {
+        "$id": "#/properties/classification_system_class/items",
+        "type": "string",
+        "title": "Classification System Class Identifier",
+        "description": "Classification System Class Identifier",
+        "default": "",
+        "examples": [
+          "Desmatamento"
+        ]
+      }
+    }
+
+
+  }
+}

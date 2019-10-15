@@ -1,0 +1,47 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/list_collection_response.json",
+  "type": "object",
+  "title": "WLTS - List Collection operation",
+  "description": "Retrieves list of offered collections",
+  "required": [
+    "collections"
+  ],
+  "properties": {
+    "feature_collection": {
+      "$id": "#/properties/feature_collection",
+      "type": "array",
+      "title": "Feature Collection Names",
+      "description": "Defines list of feature collection names from server",
+      "default": false,
+      "items": {
+        "$id": "#/properties/feature_collection/items",
+        "type": "string",
+        "title": "Feature Collection Identifier",
+        "description": "Feature Collection identifier",
+        "default": "",
+        "examples": [
+          "prodes"
+        ]
+      }
+    },
+    "image_collection": {
+      "$id": "#/properties/image_collection",
+      "type": "array",
+      "title": "Image Collection Names",
+      "description": "Defines list of image collection names from server",
+      "default": false,
+      "items": {
+        "$id": "#/properties/image_collection/items",
+        "type": "string",
+        "title": "Image Collection Identifier",
+        "description": "Image Collection identifier",
+        "default": "",
+        "examples": [
+          "mapbiomas"
+        ]
+      }
+    }
+  }
+}

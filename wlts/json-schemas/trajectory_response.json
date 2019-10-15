@@ -1,0 +1,152 @@
+{
+  "definitions":{},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "localhost/wlts/trajectory_response.json",
+  "type": "object",
+  "title": "The Trajectory root schema",
+  "required": [
+    "result",
+    "query"
+  ],
+   "properties": {
+    "result": {
+      "$id": "#/properties/result",
+      "type": "object",
+      "title": "The Result Schema",
+      "required": [
+        "attributes"
+      ],
+      "properties": {
+        "trajectory": {
+          "$id": "#/properties/result/properties/trajectory",
+          "type": "array",
+          "title": "Trajectory result grouped by collection name",
+          "items": {
+            "$id": "#/properties/result/properties/trajectory/items",
+            "type": "object",
+            "title": "The Items Schema",
+            "required": [
+              "collection_name",
+              "classification_class",
+              "data",
+              "geom"
+            ],
+            "properties": {
+              "collection_name": {
+                "$id": "#/properties/result/properties/trajectory/items/properties/collection_name",
+                "type": "string",
+                "title": "The collection_name Schema",
+                "default": "",
+                "examples": [
+                  "prodes"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "classification_class": {
+                "$id": "#/properties/result/properties/trajectory/items/properties/classification_class",
+                "type": "string",
+                "title": "The classification_class Schema",
+                "default": "",
+                "examples": [
+                  "Desmatamento"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "data": {
+                "$id": "#/properties/result/properties/trajectory/items/properties/data",
+                "type": "string",
+                "title": "The data Schema",
+                "default": "",
+                "examples": [
+                  "2007-01-01"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "geom": {
+                "$id": "#/properties/result/properties/trajectory/items/properties/geom",
+                "type": "string",
+                "title": "The geom Schema",
+                "default": "",
+                "examples": [
+                  "Polygon()"
+                ],
+                "pattern": "^(.*)$"
+              }
+            }
+
+          }
+        }
+
+      }
+    },
+    "query": {
+      "$id": "#/properties/query",
+      "type": "object",
+      "title": "The Query Schema",
+      "required": [
+        "collections",
+        "longitude",
+        "latitude",
+        "start_date",
+        "end_date"
+      ],
+      "properties": {
+        "collections": {
+          "$id": "#/properties/query/properties/collections",
+          "type": "array",
+          "title": "The Collections Schema",
+          "items": {
+            "$id": "#/properties/query/properties/collections/items",
+            "type": "string",
+            "title": "The collections Schema",
+            "default": "",
+            "examples": [
+              "prodes",
+              "deter"
+            ],
+            "pattern": "^(.*)$"
+          }
+        },
+        "longitude": {
+          "$id": "#/properties/query/properties/longitude",
+          "type": "integer",
+          "title": "The Longitude Schema",
+          "default": 0,
+          "examples": [
+            -54
+          ]
+        },
+        "latitude": {
+          "$id": "#/properties/query/properties/latitude",
+          "type": "integer",
+          "title": "The Latitude Schema",
+          "default": 0,
+          "examples": [
+            -12
+          ]
+        },
+        "start_date": {
+          "$id": "#/properties/query/properties/start_date",
+          "type": "string",
+          "title": "The Start_date Schema",
+          "default": "",
+          "examples": [
+            "2015-01-01"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "end_date": {
+          "$id": "#/properties/query/properties/end_date",
+          "type": "string",
+          "title": "The End_date Schema",
+          "default": "",
+          "examples": [
+            "2017-12-31"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+
+}

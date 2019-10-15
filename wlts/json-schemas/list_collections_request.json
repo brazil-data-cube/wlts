@@ -4,13 +4,13 @@
   "$id": "localhost/wlts/list_collection_request.json",
   "type": "object",
   "title": "WLTS - List Collections operation",
-  "description": "Retrieves list of offered collections",
+  "description": "Retrieves list of available collections",
   "readOnly": true,
   "writeOnly": false,
   "required": [ ],
   "properties": {
-    "collectionstype": {
-      "$id": "#/properties/collectiontype",
+    "collection_type": {
+      "$id": "#/properties/collection_type",
       "type": "string",
       "title": "Collection Type Identifier",
       "description": "Collection type identifier",
