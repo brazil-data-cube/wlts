@@ -3,7 +3,7 @@ from bdc_core.utils.flask import APIResource
 from bdc_core.decorators.validators import require_model
 from flask import jsonify, request
 from wlts.schemas import describe_collection, collections_list, trajectory
-
+from wlts.collection import collection_manager
 """Controllers of Web Land Trajectory Service
 The WLTS consists in five operations:
     - `wlts/list_collections` Retrieve list of available collections
@@ -20,19 +20,20 @@ class ListCollectionsController(APIResource):
 
     @require_model(collections_list)
     def get(self):
-        if 'collectionstype' in request.args:
-            collection_type = request.args['collectionstype']
+        if 'collection_type' in request.args:
+            collection_type = request.args['collection_type']
+
+            names = collection_manager.get_collection_name(collection_type)
+
             response = {
-                "feature_collection":["Prodes", "Deter"]
+                collection_type:names
 
             }
             return jsonify(response)
         else:
-            response = {
-                "feature_collection":["Prodes", "Deter"],
-                "image_collection":["MapBiomas"]
-            }
-            return jsonify(response)
+            all_names = collection_manager.get_all_collection_names()
+
+            return jsonify(all_names)
 
 @api.route('/describe_collections')
 class DescribeCollection(APIResource):
