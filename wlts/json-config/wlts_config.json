@@ -1,104 +1,99 @@
 {
   "datasources": {
-	  "dbms_source": [{
-		  "type": "POSTGIS",
-          "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-          "host": "localhost",
-		  "port": "5442",
-		  "user": "postgres",
-		  "password": "XXXXX",
-          "database":"XXXX"
-
-          }
-	  ],
-	  "webservice_source":[{
-		  "type":"WFS",
-		  "id":"3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-		  "host":"http://127.0.0.1",
-		  "port":"8081",
-		  "location":"geoserver",
-		  "user":"XXXXX",
-		  "password":"XXXX"
-
-	  }
-
-	  ]
-
-	},
-	"feature_collection": [{
-		"name":"prodes",
-		"description": "Taxas Anuais Desmatamento",
-      	"detail":"http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      	"datasource_id":"1",
-      	"type":"inpe_obt:prodes",
-      	"geom_property":{
-          	"property_name":"geom",
-          	"srid":4326,
-          	"type":"Polygon"
-      	},
-      	"id_property":"gid",
-      	"observations_info":[
-        {
-            "date_info":{
-              "property_name": "data_observacao",
-              "type": "DATE",
-              "resolution": {
-                  "unit": "YEAR",
-                  "value": "1"
-              }
-            },
-            "class_info" :{
-              "property_name": "classe_id",
-              "avaliable_class":{
-                  "original_class": {
-                      "name":"prodes_classes"
-                  }
-              }
-
-            }
-
-        }
-
-      ]
+    "dbms_source": [
+      {
+        "type": "POSTGIS",
+        "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
+        "host": "localhost",
+        "port": "5442",
+        "user": "postgres",
+        "password": "XXXXX",
+        "database": "XXXXX"
+      }
+    ],
+    "webservice_source": [
+      {
+        "type": "WFS",
+        "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+        "host": "http://127.0.0.1",
+        "port": "8081",
+        "location": "geoserver",
+        "user": "XXXXX",
+        "password": "XXXX"
+      }
+    ]
+  },
+  "classification_system": [
+    {
+      "id": "1",
+      "name": "prodes",
+      "authority_name": "INPE",
+      "description": "Sistema de Classificacao do PRODES",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
+      "version": "1.0"
     },
-
-		{
-			"name":"terraclass",
-			  "description": "Mapeamento Uso e Cobertura da Terra",
-			  "detail":"https://www.terraclass.gov.br/",
-			  "datasource_id":"1",
-			  "type":"inpe_obt:terraclass",
-			  "id_property":"gid",
-			  "geom_property":{
-				  "property_name":"geom",
-				  "srid":4326,
-				  "type":"Polygon"
-			  },
-			  "observations_info":[
-				{
-					"date_info":{
-					  "property_name": "data_observacao",
-					  "type": "DATE",
-					  "resolution": {
-						  "unit": "YEAR",
-						  "value": "1"
-					  }
-					},
-					"class_info" :{
-					  "property_name": "classe_id",
-					  "avaliable_class":{
-						  "original_class": {
-							  "name":"prodes_classes"
-						  }
-					  }
-
-					}
-
-				}
-
-			  ]
-		}
-
-	]
+    {
+      "id": "2",
+      "name": "deter",
+      "authority_name": "INPE",
+      "description": "Sistema de Classificacao do Deter",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
+      "version": "1.0"
+    },
+    {
+      "id": "3",
+      "name": "TerraClass",
+      "authority_name": "INPE",
+      "description": "Sistema de Classificacao do TerraClass",
+      "detail": "https://www.terraclass.gov.br",
+      "version": "1.0"
+    },
+    {
+      "id": "4",
+      "name": "MapBiomas",
+      "authority_name": "INPE",
+      "description": "Sistema de Classificacao do MapBiomas",
+      "detail": "http://mapbiomas.org",
+      "version": "1.0"
+    }
+  ],
+  "feature_collection": [
+    {
+      "name": "prodes",
+      "authority_name": "INPE",
+      "description": "Taxas Anuais Desmatamento",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
+      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
+      "dataset_type": "Table",
+      "classification_class": {
+        "classification_system_id": "1",
+        "type": "Feature",
+        "property_name": "inpe_obt.prodes_class",
+        "property_id": "id",
+        "property_description": "descricao"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "YEAR",
+          "value": "1"
+        }
+      },
+      "scala": "1:50",
+      "spatial_extent": "80",
+      "feature_type": "inpe_obt.prodes",
+      "feature_id_property": "gid",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4326,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property_name": "nome",
+          "temporal_property": "data_observacao"
+        }
+      ]
+    }
+  ]
 }
-
