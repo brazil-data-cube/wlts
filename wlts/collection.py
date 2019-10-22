@@ -11,17 +11,28 @@ config_folder = Path(BASE_DIR) / 'json-config/'
 class Collection(metaclass=ABCMeta):
     """docstring for ."""
 
-    def __init__(self, name, description, detail, datasource_id):
+    def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
+                 classification_class, temporal, scala, spatial_extent):
         self.name = name
+        self.authority_name = authority_name
         self.description = description
         self.detail = detail
-        self.datasource = datasource_manager.get_datasource(datasource_id)
+        self.datasource = datasource_manager.get_datasource(datasource_id),
+        self.dataset_type = dataset_type
+        self.classification_class = classification_class
+        self.temporal = temporal
+        self.scala = scala
+        self.spatial_extent = spatial_extent
+
 
     def get_name(self):
         return self.name
 
     def get_datasource_id(self):
-        return self.datasource_id
+        return self.datasource.get_id()
+
+    def get_datasource(self):
+        return self.datasource
 
     @abstractmethod
     def get_collectiontype(self):
@@ -31,12 +42,15 @@ class Collection(metaclass=ABCMeta):
 class FeatureCollection(Collection):
     """ FeatureCollection Class """
 
-    def __init__(self, name, description, detail, datasource_id, type, geom_property, id_property, observations_info):
-        super().__init__(name, description, detail, datasource_id)
-        self.type = type
-        self.geom_property = geom_property
-        self.id_property = id_property
-        self.observations_info = observations_info
+    def __init__(self, collections_info):
+        super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
+                         collections_info["detail"], collections_info["datasource_id"], collections_info["dataset_type"],
+                         collections_info["classification_class"], collections_info["temporal"],
+                         collections_info["scala"], collections_info["spatial_extent"])
+        self.feature_type = collections_info["feature_type"]
+        self.feature_id_property = collections_info["feature_id_property"]
+        self.geom_property = collections_info["geom_property"]
+        self.observations_properties = collections_info["observations_properties"]
 
     def get_collectiontype(self):
         return "Feature"
@@ -44,18 +58,14 @@ class FeatureCollection(Collection):
 
 class CollectionFactory:
     @staticmethod
-    def make(collection_type, fcinfo):
+    def make(collection_type, collections_info):
         factorys = {"feature_collection": "FeatureCollection", "image_collection": "ImageCollection"}
 
-        collection = eval(factorys[collection_type])(fcinfo["name"], fcinfo["description"], fcinfo["detail"],
-                                                     fcinfo["datasource_id"],
-                                                     fcinfo["type"], fcinfo["geom_property"], fcinfo["id_property"],
-                                                     fcinfo["observations_info"])
+
+        collection = eval(factorys[collection_type])(collections_info)
 
         return collection
 
-
-# TODO: singleton
 class CollectionManager:
     """docstring for ."""
 
@@ -118,8 +128,8 @@ class CollectionManager:
 
             config = json_loads(json_data.read())
 
-            if "image_collection" in config:
-                image_collection = config["image_collection"]
+            # if "image_collection" in config:
+            #     image_collection = config["image_collection"]
 
             if "feature_collection" in config:
                 feature_collection = config["feature_collection"]
