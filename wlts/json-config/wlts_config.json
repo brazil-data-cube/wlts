@@ -8,7 +8,7 @@
         "port": "5442",
         "user": "postgres",
         "password": "XXXXX",
-        "database": "XXXXX"
+	"database": "XXXX"
       }
     ],
     "webservice_source": [
