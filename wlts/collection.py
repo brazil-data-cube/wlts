@@ -3,6 +3,7 @@ from json import loads as json_loads
 from pathlib import Path
 from wlts.datasource import datasource_manager
 from wlts.config import BASE_DIR
+from wlts.classificationsys import ClassificationSystemClass as ClassSystem
 
 
 config_folder = Path(BASE_DIR) / 'json-config/'
@@ -17,13 +18,17 @@ class Collection(metaclass=ABCMeta):
         self.authority_name = authority_name
         self.description = description
         self.detail = detail
-        self.datasource = datasource_manager.get_datasource(datasource_id),
+        self.datasource = datasource_manager.get_datasource(datasource_id)
         self.dataset_type = dataset_type
-        self.classification_class = classification_class
+        self.classification_class = ClassSystem(classification_class["classification_system_id"],
+                                                classification_class["type"], classification_class["property_name"],
+                                                classification_class["property_description"], classification_class["property_id"],
+                                                classification_class["class_property_name"])
         self.temporal = temporal
         self.scala = scala
         self.spatial_extent = spatial_extent
 
+        # print("\nInicializando Collections\n")
 
     def get_name(self):
         return self.name
@@ -34,8 +39,13 @@ class Collection(metaclass=ABCMeta):
     def get_datasource(self):
         return self.datasource
 
+
     @abstractmethod
     def get_collectiontype(self):
+        pass
+
+    @abstractmethod
+    def trajectory(self, tj_attr, x, y, start_date, end_date):
         pass
 
 
@@ -54,6 +64,30 @@ class FeatureCollection(Collection):
 
     def get_collectiontype(self):
         return "Feature"
+
+
+    def trajectory(self, tj_attr, x, y, start_date, end_date):
+        # no retorno do json eu preciso colocar o collection_name (name) classification_class data
+        # para a consulta eu preciso de observations_properties["class_property_name"], observations_properties["temporal_property"]
+        # &typeNames=datacube:deterb_amz&&propertyName=classe_id,data_observacao
+
+        ds = self.get_datasource()
+
+        for obs in self.observations_properties:
+
+            result = ds.get_trajectory(self.feature_type, self.temporal,x, y, obs, self.geom_property,
+                                   self.classification_class, start_date, end_date)
+
+            if(result):
+                trj = {
+                    "collection_name": self.get_name(),
+                    "classification_class": result[0],
+                    "data": result[1]
+                }
+
+                tj_attr.append(trj)
+
+        # return tj_attr
 
 
 class CollectionFactory:
@@ -78,6 +112,9 @@ class CollectionManager:
 
     def __init__(self):
         """ Virtually private constructor. """
+
+        print("Inicializando CollectionManager")
+
         if CollectionManager.__instance != None:
             raise Exception("This class is a singleton!")
         else:
@@ -95,12 +132,17 @@ class CollectionManager:
         collection = CollectionFactory.make(dsType, collection_info)
         self._collenctions[dsType].append(collection)
 
+
     def get_collection(self, name):
-        for c_list in self._collenctions.values():
-            for collection in c_list:
-                if collection.get_name() == name:
-                    return collection
-        return None
+
+        try:
+            for c_list in self._collenctions.values():
+                for collection in c_list:
+                    if collection.get_name() == name:
+                        print("Collection found! {} ".format(type(collection)))
+                        return collection
+        except:
+            return None
 
     def get_all_collection_names(self):
         all_collection = {
@@ -111,6 +153,15 @@ class CollectionManager:
             for collection_v in c_value:
                 if (collection_v):
                     all_collection[c_key].append(collection_v.get_name())
+        return all_collection
+
+    def get_all_collection(self):
+        all_collection = []
+
+        for c_list in self._collenctions.values():
+            for collection in c_list:
+                if collection:
+                    all_collection.append(collection)
         return all_collection
 
     def get_collection_name(self, c_type):

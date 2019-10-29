@@ -5,7 +5,7 @@ Attributes:
     collections_list (dict): JSON Schema of WLTS ListCollections request
     describe_collections (dict): JSON Schema of WLTS DescribeCollection request
     trajectory (dict): JSON Schema of WLTS Trajectory request
-    
+
 
 """
 
