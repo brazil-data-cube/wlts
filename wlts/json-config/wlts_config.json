@@ -1,16 +1,5 @@
 {
   "datasources": {
-    "dbms_source": [
-      {
-        "type": "POSTGIS",
-        "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-        "host": "localhost",
-        "port": "5442",
-        "user": "postgres",
-        "password": "XXXXX",
-	    "database": "XXXXX"
-      }
-    ],
     "webservice_source": [
       {
         "type": "WFS",
@@ -18,8 +7,8 @@
         "host": "http://127.0.0.1",
         "port": "8081",
         "location": "geoserver",
-        "user": "XXXXX",
-        "password": "XXXX"
+        "user": "admin",
+        "password": "geoserver"
       }
     ]
   },
@@ -58,93 +47,18 @@
     }
   ],
   "feature_collection": [
-    {
-      "name": "prodes",
-      "authority_name": "INPE",
-      "description": "Taxas Anuais Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-      "dataset_type": "Table",
-      "classification_class": {
-        "classification_system_id": "1",
-        "type": "Feature",
-        "property_name": "inpe_obt.prodes_classes",
-        "property_id": "id",
-        "class_property_name":"nome",
-        "property_description": "descricao"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "YEAR",
-          "value": "1"
-        }
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "inpe_obt.prodes",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4674,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "classe_id",
-          "temporal_property": "ano"
-        }
-      ]
-    },
-    {
-      "name":"deter_amz",
-      "authority_name": "INPE",
-      "description": "Alertas de Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-      "dataset_type": "Table",
-      "classification_class": {
-        "classification_system_id": "2",
-        "type": "Literal",
-        "property_name": "",
-        "property_id": "",
-        "class_property_name":"Alerta",
-        "property_description": "descricao"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "DAY",
-          "value": "1"
-        }
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "inpe_obt.deter_amz",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4618,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "",
-          "temporal_property": "data_observacao"
-        }
-      ]
-    },
+
     {
       "name": "deterb_amz",
       "authority_name": "INPE",
       "description": "Alertas de Desmatamento",
       "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-      "dataset_type": "Table",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Feature",
       "classification_class": {
         "classification_system_id": "5",
         "type": "Feature",
-        "property_name": "inpe_obt.deterb_amz_classes",
+        "property_name": "datacube:deterb_amz_classes",
         "property_id": "id",
         "class_property_name": "nome",
         "property_description": "descricao"
@@ -158,7 +72,7 @@
       },
       "scala": "1:50",
       "spatial_extent": "80",
-      "feature_type": "inpe_obt.deterb_amz",
+      "feature_type": "datacube:deterb_amz",
       "feature_id_property": "gid",
       "geom_property": {
         "property_name": "geom",
@@ -177,12 +91,12 @@
       "authority_name": "INPE",
       "description": "Mapeamento do uso e cobertura da Terra",
       "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
       "dataset_type": "Table",
       "classification_class": {
         "classification_system_id": "3",
         "type": "Feature",
-        "property_name": "inpe_obt.terraclass_classes",
+        "property_name": "datacube:terraclass_classes",
         "property_id": "id",
         "class_property_name": "nome",
         "property_description": "descricao"
@@ -196,7 +110,7 @@
       },
       "scala": "1:50",
       "spatial_extent": "80",
-      "feature_type": "inpe_obt.terraclass",
+      "feature_type": "datacube:terraclass",
       "feature_id_property": "gid",
       "geom_property": {
         "property_name": "geom",
@@ -226,5 +140,6 @@
         }
       ]
     }
+
   ]
 }

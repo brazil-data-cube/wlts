@@ -71,6 +71,8 @@ class FeatureCollection(Collection):
         # para a consulta eu preciso de observations_properties["class_property_name"], observations_properties["temporal_property"]
         # &typeNames=datacube:deterb_amz&&propertyName=classe_id,data_observacao
 
+        print("Collection start_date {}".format(start_date))
+
         ds = self.get_datasource()
 
         for obs in self.observations_properties:

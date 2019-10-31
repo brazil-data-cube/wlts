@@ -71,7 +71,6 @@ class Trajectory:
                 See `json-schemas/trajectory_response.json`
         """
 
-
         if(ts_params.collections):
 
             # Validate collection existence
@@ -89,24 +88,16 @@ class Trajectory:
         tj_attr = []
 
         for collection in collections:
-            print("Collection Name: {}".format(collection.get_name()))
+            # print("Get trajectory off Collection Name: {}".format(collection.get_name()))
 
             collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date, ts_params.end_date)
-            # tj_attr.append(collection.trajectory(ts_params.latitude,ts_params.longitude))
 
-            # print(type(tj_attr))
+        newtraj = sorted(tj_attr, key=lambda k: k['data'])
 
         return {
             "query": ts_params.to_dict(),
             "result":{
-                "trajectory": tj_attr
+                "trajectory": newtraj
             }
 
         }
-
-
-    # @staticmethod
-    # def get_trajectory(x, y):
-    #     result = collection_manager.get_collection('terraclass')
-    #
-    #     result.trajectory(x, y)
