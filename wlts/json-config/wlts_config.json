@@ -7,8 +7,8 @@
         "host": "http://127.0.0.1",
         "port": "8081",
         "location": "geoserver",
-        "user": "admin",
-        "password": "geoserver"
+        "user": "XXXX",
+        "password": "XXXX"
       }
     ]
   },
@@ -43,6 +43,14 @@
       "authority_name": "INPE",
       "description": "Sistema de Classificacao do MapBiomas",
       "detail": "http://mapbiomas.org",
+      "version": "1.0"
+    },
+    {
+      "id": "5",
+      "name": "Deter B",
+      "authority_name": "INPE",
+      "description": "Sistema de Classificacao do Deter",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
       "version": "1.0"
     }
   ],
@@ -106,7 +114,8 @@
         "resolution": {
           "unit": "YEAR",
           "value": "2"
-        }
+        },
+        "string_format":"YYYY"
       },
       "scala": "1:50",
       "spatial_extent": "80",
@@ -137,6 +146,44 @@
         {
           "class_property": "classe_2014",
           "temporal_property": "2014"
+        }
+      ]
+    },
+    {
+      "name": "deter_amz",
+      "authority_name": "INPE",
+      "description": "Alertas de desmatamento",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Table",
+      "classification_class": {
+        "classification_system_id": "2",
+        "type": "Literal",
+        "property_name": "",
+        "property_id": "",
+        "class_property_name":"",
+        "property_description": "Unica Classe Deter"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "YEAR",
+          "value": "1"
+        }
+      },
+      "scala": "1:50",
+      "spatial_extent": "80",
+      "feature_type": "datacube:deter_amz",
+      "feature_id_property": "gid",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4618,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property_name": "Alerta",
+          "temporal_property": "data_observacao"
         }
       ]
     }

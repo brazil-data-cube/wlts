@@ -77,6 +77,8 @@ class FeatureCollection(Collection):
 
         for obs in self.observations_properties:
 
+            print("Pegando trajectory for obs {}".format(obs))
+
             result = ds.get_trajectory(self.feature_type, self.temporal,x, y, obs, self.geom_property,
                                    self.classification_class, start_date, end_date)
 

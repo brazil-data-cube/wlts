@@ -106,7 +106,33 @@ class PostGisConnectionPool:
     def get_connection(self):
         return self.pg_connection
 
-class WFSConnectionPool(object):
+# class WFSConnectionPool:
+#     """docstring for ."""
+#     def __init__(self, connection_info):
+#         self.host = connection_info["host"]
+#         self.port = connection_info["port"]
+#         self.location = connection_info["location"]
+#         self.workspace = "datacube"
+#         self.base_path = "wfs?service=WFS&version=1.0.0"
+#         self.auth = None
+#
+#         if(connection_info["user"] and connection_info["password"]):
+#             self.auth = (connection_info["user"], connection_info["password"])
+#
+#         self.base = self.mount_url()
+#
+#     def _get(self, uri):
+#         response = requests.get(uri, auth=self.auth)
+#
+#         if (response.status_code) != 200:
+#             raise Exception("Request Fail: {} ".format(response.status_code))
+#
+#         return response.content.decode('utf-8')
+#
+#     def get_capabilities(self):
+#
+
+class WFSConnectionPool:
     """docstring for ."""
     def __init__(self, connection_info):
         self.host = connection_info["host"]
@@ -211,9 +237,14 @@ class WFSConnectionPool(object):
 
         doc = self._get(url)
 
+        print(url)
+
         js = json_loads(doc)
 
-        return js["features"][0]["properties"]
+        if(js["features"]):
+            return js["features"][0]["properties"]
+
+        return
 
     def get_class(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
 
@@ -392,6 +423,8 @@ class WCSDataSource(DataSource):
     def __init__(self, id, connection_info):
         super().__init__(id, connection_info)
 
+        self.wfs_poll = WCSConnectionPool(self.get_connection_info())
+
     def get_type(self):
         return "WCS"
 
@@ -406,6 +439,8 @@ class WFSDataSource(DataSource):
     def __init__(self, id, connection_info):
         super().__init__(id, connection_info)
 
+        self.wfs_poll = WFSConnectionPool(self.get_connection_info())
+
         print("Inicializando WFSDataSource: {}".format(self.get_id()))
     def get_type(self):
         return "WFS"
@@ -417,7 +452,11 @@ class WFSDataSource(DataSource):
 
         class_property_name = classification_class.get_class_property_name()
 
+        print("class_property_name {}".format(class_property_name))
+
         class_name = classification_class.get_name()
+
+        print("class_name {}".format(class_name))
 
         temporal_type = temporal["type"]
 
@@ -427,8 +466,6 @@ class WFSDataSource(DataSource):
         date = None
 
         result = []
-
-        self.wfs_poll = WFSConnectionPool(self.get_connection_info())
 
         args = {"feature_type": feature_type,
                 "geom": geom,
@@ -440,14 +477,18 @@ class WFSDataSource(DataSource):
         # response = self.wfs_poll.get_feature(**args)
 
         if(classification_class.get_type() == "Literal" and temporal_type == "STRING"):
+            print("Primeiro IF")
             response = self.wfs_poll.get_feature(**args)
 
-            result.append(class_property_name)
-            result.append(obs["temporal_property"])
+            if(response):
+                result.append(obs["class_property_name"])
+                result.append(obs["temporal_property"])
 
         elif(classification_class.get_type() == "Literal" and temporal_type != "STRING"):
 
             # propertyName.append("{}".format(obs["temporal_property"]))
+            print("Segundo IF")
+
             propertyName = "{}".format(obs["temporal_property"])
 
             if (start_date):
@@ -459,9 +500,15 @@ class WFSDataSource(DataSource):
             # response = self.wfs_poll.get_feature(feature_type, geom, geom_property, propertyName, geom_property['srid'], date)
             response = self.wfs_poll.get_feature(**args)
 
-            result.append(response[obs["temporal_property"]])
+            if(response):
+                result.append(obs["class_property_name"])
+                result.append(response[obs["temporal_property"]])
+
+            print("Result:{}".format(result))
 
         elif (classification_class.get_type() != "Literal" and temporal_type == "STRING"):
+
+            print("Terceito IF")
 
             obs_temporal = get_date_from_str(obs["temporal_property"])
 
@@ -481,21 +528,22 @@ class WFSDataSource(DataSource):
 
             response = self.wfs_poll.get_feature(**args)
 
-            featureID = response[obs["class_property"]]
-            classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+            if(response):
+                featureID = response[obs["class_property"]]
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
 
-            result.append(classes_prop)
-            result.append(obs["temporal_property"])
+                result.append(classes_prop)
+                result.append(obs["temporal_property"])
 
         else:
+
+            print("Else IF")
 
             # propertyName.append("{}".format(obs["class_property"]))
 
             # propertyName.append("{}".format(obs["temporal_property"]))
 
             propertyName = "{},{}".format(obs["class_property"], obs["temporal_property"])
-
-
 
             if (start_date):
                 date = " AND {} >= {}".format(obs["temporal_property"], start_date)
@@ -507,13 +555,18 @@ class WFSDataSource(DataSource):
 
             response = self.wfs_poll.get_feature(**args)
 
-            featureID = response[obs["class_property"]]
-            classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+            print("response {}".format(response))
 
-            result.append(classes_prop)
-            result.append(response[obs["temporal_property"]])
+            if(response):
+                print("entrou")
+                featureID = response[obs["class_property"]]
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
 
+                result.append(classes_prop)
+                result.append(response[obs["temporal_property"]])
 
+            # else:
+            #     print("Nao retorno nada")
 
         return result
 

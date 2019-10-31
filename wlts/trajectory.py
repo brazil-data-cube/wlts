@@ -42,6 +42,8 @@ class Trajectory:
     def check_collection(cls, collection):
         """Utility to check coverage existence in memory"""
 
+        print(collection)
+        print(cls.list_coverage())
         if collection not in cls.list_coverage():
             raise NotFound('Collection "{}" not found'.format(collection))
 
@@ -88,7 +90,7 @@ class Trajectory:
         tj_attr = []
 
         for collection in collections:
-            # print("Get trajectory off Collection Name: {}".format(collection.get_name()))
+            print("Get trajectory off Collection Name: {}".format(collection.get_name()))
 
             collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date, ts_params.end_date)
 
