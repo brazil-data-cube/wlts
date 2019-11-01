@@ -71,23 +71,23 @@ class FeatureCollection(Collection):
         # para a consulta eu preciso de observations_properties["class_property_name"], observations_properties["temporal_property"]
         # &typeNames=datacube:deterb_amz&&propertyName=classe_id,data_observacao
 
-        print("Collection start_date {}".format(start_date))
+        # print("Collection start_date {}".format(start_date))
 
         ds = self.get_datasource()
 
         for obs in self.observations_properties:
 
-            print("Pegando trajectory for obs {}".format(obs))
+            # print("Pegando trajectory for obs {}".format(obs))
 
             result = ds.get_trajectory(self.feature_type, self.temporal,x, y, obs, self.geom_property,
                                    self.classification_class, start_date, end_date)
 
             if(result):
-                print("Result Type {}".format(type(result[0])))
+                # print("Result Type {}".format(type(result[0])))
                 trj = {
                     "collection_name": self.get_name(),
                     "classification_class": result[0],
-                    "data": result[1]
+                    "data": str(result[1])
                 }
 
                 tj_attr.append(trj)

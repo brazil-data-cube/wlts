@@ -3,7 +3,7 @@ import psycopg2
 from json import loads as json_loads
 from pathlib import Path
 import requests
-import json
+from werkzeug.exceptions import BadRequest, NotFound
 from datetime import datetime
 from shapely.geometry import Point
 from xml.dom import minidom
@@ -14,15 +14,12 @@ config_folder = Path(BASE_DIR) / 'json-config/'
 def get_date_from_str(date, date_ref=None):
     """Utility to build date from str
     Example:
-        >>> from bdc_wtss.services import get_date_from_str
-        ...
-        ...
-        >>> print(get_date_from_str('2018-12-31'))
-        >>> # 2018-12-31
-        >>> print(get_date_from_str('2018'))
-        >>> # 2018-01-01
-        >>> print(get_date_from_str('2018', '2018))
-        >>> # 2018-12-31
+        print(get_date_from_str('2018-12-31'))
+        # 2018-12-31
+        print(get_date_from_str('2018'))
+        # 2018-01-01
+        print(get_date_from_str('2018', '2018))
+        # 2018-12-31
     """
     date = date.replace('/', '-')
 
@@ -231,16 +228,8 @@ class WFSConnectionPool:
 
         url = "{}/{}&request=GetFeature&typeName={}".format(self.base, self.base_path, kwargs['feature_type'])
 
-        # if(len(kwargs['propertyName']) == 1):
-        #     url += "&propertyName={}".format((kwargs['propertyName'])[0])
-        # if(len(kwargs['propertyName']) == 2):
-        #     url += "&propertyName={},{}".format((kwargs['propertyName'])[0],(kwargs['propertyName'])[1])
-        #
-
         if 'propertyName' in kwargs:
             url+= "&propertyName={}".format(kwargs['propertyName'])
-        # if(kwargs['propertyName']):
-        #     teste = "&propertyName={}".format(kwargs['propertyName'])
 
         url += "&outputformat=json&CRS=EPSG:{}".format(kwargs['srid'])
 
@@ -315,7 +304,7 @@ class DataSource(metaclass=ABCMeta):
 
     @abstractmethod
     def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
-                       start_date=None, end_date=None):
+                       start_date, end_date):
         pass
 
 
@@ -484,24 +473,24 @@ class WFSDataSource(DataSource):
                 }
 
         if(class_type == "Literal" and temporal["type"] == "STRING"):
-            print("Primeiro IF")
             response = self.wfs_poll.get_feature(**args)
+
+            obs_tm = get_date_from_str(obs["temporal_property"])
 
             if(response):
                 result.append(obs["class_property_name"])
-                result.append(obs["temporal_property"])
+                result.append(obs_tm.strftime(temporal["string_format"]))
 
         elif(class_type == "Literal" and temporal["type"] != "STRING"):
-            print("Segundo IF")
             
             args['propertyName'] = "{}".format(obs["temporal_property"])
 
             if (start_date):
                 start_date = get_date_from_str(start_date)
-                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime('%Y-%m-%d'))
+                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime(temporal["string_format"]))
             if (end_date):
                 end_date = get_date_from_str(end_date)
-                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime('%Y-%m-%d'))
+                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime(temporal["string_format"]))
 
             response = self.wfs_poll.get_feature(**args)
 
@@ -510,8 +499,6 @@ class WFSDataSource(DataSource):
                 result.append(response[obs["temporal_property"]])
 
         elif(class_type != "Literal" and temporal["type"] == "STRING"):
-
-            print("Terceito IF")
 
             obs_temporal = get_date_from_str(obs["temporal_property"])
 
@@ -537,16 +524,14 @@ class WFSDataSource(DataSource):
 
         else:
 
-            print("Else IF")
-
             args['propertyName'] =  "{},{}".format(obs["class_property"], obs["temporal_property"])
 
             if (start_date):
                 start_date = get_date_from_str(start_date)
-                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime('%Y-%m-%d'))
+                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime(temporal["string_format"]))
             if (end_date):
                 end_date = get_date_from_str(end_date)
-                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime('%Y-%m-%d'))
+                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime(temporal["string_format"]))
 
             response = self.wfs_poll.get_feature(**args)
 

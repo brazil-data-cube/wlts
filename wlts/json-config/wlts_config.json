@@ -55,7 +55,6 @@
     }
   ],
   "feature_collection": [
-
     {
       "name": "deterb_amz",
       "authority_name": "INPE",
@@ -76,7 +75,8 @@
         "resolution": {
           "unit": "DAY",
           "value": "1"
-        }
+        },
+        "string_format": "%Y-%m-%d"
       },
       "scala": "1:50",
       "spatial_extent": "80",
@@ -114,7 +114,8 @@
         "resolution": {
           "unit": "YEAR",
           "value": "2"
-        }
+        },
+        "string_format": "%Y"
       },
       "scala": "1:50",
       "spatial_extent": "80",
@@ -160,7 +161,7 @@
         "type": "Literal",
         "property_name": "",
         "property_id": "",
-        "class_property_name":"",
+        "class_property_name": "",
         "property_description": "Unica Classe Deter"
       },
       "temporal": {
@@ -168,7 +169,8 @@
         "resolution": {
           "unit": "YEAR",
           "value": "1"
-        }
+        },
+        "string_format": "%Y-%m-%d"
       },
       "scala": "1:50",
       "spatial_extent": "80",
@@ -183,6 +185,45 @@
         {
           "class_property_name": "Alerta",
           "temporal_property": "data_observacao"
+        }
+      ]
+    },
+    {
+      "name": "prodes",
+      "authority_name": "INPE",
+      "description": "Taxas anuais de Desmatamento",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Feature",
+      "classification_class": {
+        "classification_system_id": "1",
+        "type": "Feature",
+        "property_name": "datacube:prodes_classes",
+        "property_id": "id",
+        "class_property_name": "nome",
+        "property_description": "descricao"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "YEAR",
+          "value": "1"
+        },
+        "string_format": "%Y"
+      },
+      "scala": "1:50",
+      "spatial_extent": "80",
+      "feature_type": "datacube:prodes",
+      "feature_id_property": "gid",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4674,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property": "classe_id",
+          "temporal_property": "ano"
         }
       ]
     }
