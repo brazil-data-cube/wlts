@@ -114,8 +114,7 @@
         "resolution": {
           "unit": "YEAR",
           "value": "2"
-        },
-        "string_format":"YYYY"
+        }
       },
       "scala": "1:50",
       "spatial_extent": "80",
@@ -187,6 +186,5 @@
         }
       ]
     }
-
   ]
 }

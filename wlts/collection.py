@@ -83,6 +83,7 @@ class FeatureCollection(Collection):
                                    self.classification_class, start_date, end_date)
 
             if(result):
+                print("Result Type {}".format(type(result[0])))
                 trj = {
                     "collection_name": self.get_name(),
                     "classification_class": result[0],
