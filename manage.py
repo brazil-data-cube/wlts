@@ -1,6 +1,5 @@
 import contextlib
 import os
-from pathlib import Path
 from wlts import app
 from flask_script import Manager
 
