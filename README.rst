@@ -28,6 +28,7 @@ Web Land Trajectory Service
 .. image:: https://img.shields.io/badge/lifecycle-experimental-orange.svg
         :target: https://www.tidyverse.org/lifecycle/#experimental
 
+This is the server application.
 
 Installation
 ============
