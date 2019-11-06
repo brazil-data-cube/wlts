@@ -178,9 +178,6 @@ components:
                     type: string
                   data:
                     type: string
-                  geom:
-                    type: string
-
         query:
           type: object
           properties:

@@ -61,16 +61,6 @@
                   "2007-01-01"
                 ],
                 "pattern": "^(.*)$"
-              },
-              "geom": {
-                "$id": "#/properties/result/properties/trajectory/items/properties/geom",
-                "type": "string",
-                "title": "The geom Schema",
-                "default": "",
-                "examples": [
-                  "Polygon()"
-                ],
-                "pattern": "^(.*)$"
               }
             }
 

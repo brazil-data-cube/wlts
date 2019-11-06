@@ -5,7 +5,7 @@ Attributes:
     collections_list (dict): JSON Schema of WLTS ListCollections request
     describe_collections (dict): JSON Schema of WLTS DescribeCollection request
     trajectory (dict): JSON Schema of WLTS Trajectory request
-    
+
 
 """
 
@@ -34,8 +34,9 @@ def load_schema(file_name):
 
 
 collections_list = load_schema('list_collections_request.json')
-# collections_list_response = load_schema('list_collections_response.json')
+collections_list_response = load_schema('list_collections_response.json')
 describe_collection = load_schema('describe_collection_request.json')
-# describe_collection_response = load_schema('describe_collection_response.json')
+describe_collection_response = load_schema('describe_collection_response.json')
 trajectory = load_schema('trajectory_request.json')
-# trajectory_response = load_schema('trajectory_response.json')
+trajectory_response = load_schema('trajectory_response.json')
+list_classification_system = load_schema('list_classification_sytem_request.json')
