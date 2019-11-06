@@ -2,7 +2,10 @@ from flask_restplus import Namespace
 from bdc_core.utils.flask import APIResource
 from bdc_core.decorators.validators import require_model
 from flask import jsonify, request
-from wlts.schemas import describe_collection, collections_list, trajectory
+from wlts.schemas import describe_collection, collections_list, trajectory, list_classification_system
+from wlts.collection import collection_manager
+from wlts.classificationsys import classification_sys_manager
+from wlts.trajectory import Trajectory,TrajectoryParams
 
 """Controllers of Web Land Trajectory Service
 The WLTS consists in five operations:
@@ -20,19 +23,20 @@ class ListCollectionsController(APIResource):
 
     @require_model(collections_list)
     def get(self):
-        if 'collectionstype' in request.args:
-            collection_type = request.args['collectionstype']
+        if 'collection_type' in request.args:
+            collection_type = request.args['collection_type']
+
+            names = collection_manager.get_collection_name(collection_type)
+
             response = {
-                "feature_collection":["Prodes", "Deter"]
+                collection_type:names
 
             }
             return jsonify(response)
         else:
-            response = {
-                "feature_collection":["Prodes", "Deter"],
-                "image_collection":["MapBiomas"]
-            }
-            return jsonify(response)
+            all_names = collection_manager.get_all_collection_names()
+
+            return jsonify(all_names)
 
 @api.route('/describe_collections')
 class DescribeCollection(APIResource):
@@ -48,17 +52,22 @@ class TimeSeries(APIResource):
 
     @require_model(trajectory)
     def get(self):
-        return jsonify({'trajectory': 'teste'})
 
-# @api.route('/list_classification_sytem')
-# class ListClassificationSystemController(APIResource):
+        params = TrajectoryParams(**request.args.to_dict())
 
-#     @require_model(trajectory)
-#     def get(self):
-#         return {}
+        return jsonify(Trajectory.get_trajectory(params))
 
-# @api.route('/list_classification_sytem')
-# class ListLegendSystemController(APIResource):
+@api.route('/list_classification_system')
+class ListClassificationSystemController(APIResource):
+
+    @require_model(list_classification_system)
+    def get(self):
+        all_classification = classification_sys_manager.get_all_classification_system()
+
+        return jsonify({"classification_system":all_classification})
+
+# @api.route('/describe_classification_system')
+# class DescribeClassificationSystem(APIResource):
 
 #     @require_model(trajectory)
 #     def get(self):
