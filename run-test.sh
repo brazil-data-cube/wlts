@@ -7,4 +7,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 
-python setup.py test
+isort --check-only --diff --recursive **/*.py && \
+check-manifest --ignore ".travis-*" && \
+pytest
