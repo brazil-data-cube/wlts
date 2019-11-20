@@ -1,12 +1,14 @@
 from abc import ABCMeta, abstractmethod
-import psycopg2
+from datetime import datetime
 from json import loads as json_loads
 from pathlib import Path
-import requests
-from werkzeug.exceptions import BadRequest, NotFound
-from datetime import datetime
-from shapely.geometry import Point
 from xml.dom import minidom
+
+import psycopg2
+import requests
+from shapely.geometry import Point
+from werkzeug.exceptions import BadRequest, NotFound
+
 from wlts.config import BASE_DIR
 
 config_folder = Path(BASE_DIR) / 'json-config/'

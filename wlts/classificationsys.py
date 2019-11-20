@@ -1,5 +1,6 @@
 from json import loads as json_loads
 from pathlib import Path
+
 from wlts.config import BASE_DIR
 
 config_folder = Path(BASE_DIR) / 'json-config/'

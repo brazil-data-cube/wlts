@@ -1,11 +1,13 @@
-from flask_restplus import Namespace
-from bdc_core.utils.flask import APIResource
 from bdc_core.decorators.validators import require_model
+from bdc_core.utils.flask import APIResource
 from flask import jsonify, request
-from wlts.schemas import describe_collection, collections_list, trajectory, list_classification_system
-from wlts.collection import collection_manager
+from flask_restplus import Namespace
+
 from wlts.classificationsys import classification_sys_manager
-from wlts.trajectory import Trajectory,TrajectoryParams
+from wlts.collection import collection_manager
+from wlts.schemas import (collections_list, describe_collection,
+                          list_classification_system, trajectory)
+from wlts.trajectory import Trajectory, TrajectoryParams
 
 """Controllers of Web Land Trajectory Service
 The WLTS consists in five operations:
@@ -13,7 +15,6 @@ The WLTS consists in five operations:
     - `wlts/describe_collection` Retrieves collection description
     - `wlts/trajectory` etrieves the trajectories of collections associated with a given location in space.
     - `wlts/list_classification_sytem` Retrieve list of available classification system
-    - `wlts/list_legend_system` Retrieves avaliable legend of classification system
 """
 
 api = Namespace('wlts', description='status')
@@ -52,7 +53,6 @@ class TimeSeries(APIResource):
 
     @require_model(trajectory)
     def get(self):
-
         params = TrajectoryParams(**request.args.to_dict())
 
         return jsonify(Trajectory.get_trajectory(params))
@@ -64,11 +64,4 @@ class ListClassificationSystemController(APIResource):
     def get(self):
         all_classification = classification_sys_manager.get_all_classification_system()
 
-        return jsonify({"classification_system":all_classification})
-
-# @api.route('/describe_classification_system')
-# class DescribeClassificationSystem(APIResource):
-
-#     @require_model(trajectory)
-#     def get(self):
-#         return {}
+        return jsonify({"classification_system": all_classification})

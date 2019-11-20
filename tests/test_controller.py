@@ -8,8 +8,10 @@
 
 """Unit-test for WLTS' controller."""
 
-import  pytest
+import pytest
+
 from wlts import app as wlts_app
+
 
 @pytest.fixture
 def app():

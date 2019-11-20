@@ -1,10 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from json import loads as json_loads
 from pathlib import Path
-from wlts.datasource import datasource_manager
-from wlts.config import BASE_DIR
-from wlts.classificationsys import ClassificationSystemClass as ClassSystem
 
+from wlts.classificationsys import ClassificationSystemClass as ClassSystem
+from wlts.config import BASE_DIR
+from wlts.datasource import datasource_manager
 
 config_folder = Path(BASE_DIR) / 'json-config/'
 
