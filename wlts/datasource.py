@@ -1,3 +1,11 @@
+#
+# This file is part of Web Land Trajectory Service.
+# Copyright (C) 2019 INPE.
+#
+# Web Land Trajectory Service is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""WLTS data source class."""
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from json import loads as json_loads
@@ -14,15 +22,7 @@ from wlts.config import BASE_DIR
 config_folder = Path(BASE_DIR) / 'json-config/'
 
 def get_date_from_str(date, date_ref=None):
-    """Utility to build date from str
-    Example:
-        print(get_date_from_str('2018-12-31'))
-        # 2018-12-31
-        print(get_date_from_str('2018'))
-        # 2018-01-01
-        print(get_date_from_str('2018', '2018))
-        # 2018-12-31
-    """
+    """Utility to build date from str."""
     date = date.replace('/', '-')
 
     try:
@@ -37,24 +37,20 @@ def get_date_from_str(date, date_ref=None):
         date = date.replace(day=31, month=12)
 
     return date
-#
-# def form_start_end_date(start_date, end_date):
 
 class PostgisConnection:
-    """
+    """PostgisConnection.
 
-    PostgisConnection
+    :param pgisInfo: Python object (dict) with connection info
+    :type pgisInfo: dict
 
-    Args:
-        pgisInfo (dic): Python object (dict) with connection info
-    Returns:
-        psycopg2.connect
-    Raises:
-        Exception, psycopg2.Error When connection is not stabelish
+    :returns: connection.
+    :rtype: psycopg2.connect
 
     """
 
     def connection_open(pgisInfo):
+        """Get Connection."""
         try:
             connection = psycopg2.connect(user = pgisInfo["user"],
                                           password = pgisInfo["password"],
@@ -63,36 +59,40 @@ class PostgisConnection:
                                           database = pgisInfo["database"]
                                           )
 
-            print("Connection stabelized! ")
+            # print("Connection stabelized! ")
             return connection
         except (Exception, psycopg2.Error) as error:
             print ("Error while connecting to PostgreSQL :{}".format(error))
 
-#Pode mudar e ser o DRIVER
+#TODO Pode mudar DRIVER o nome
 class PostGisConnectionPool:
-    """
+    """PostGisConnectionPool.
 
-    PostGisConnectionPool
-
-    Args:
-        pg_source (dic): Python object (dict) with connection info
+    :param pg_source: Python object (dict) with connection info
+    :type pg_source: dict.
 
     """
+
     def __init__(self, pg_source):
+        """Creates PostGisConnectionPool."""
         self.datasource = pg_source
         self.open_conection()
 
     def __del__(self):
+        """Delete PostGisConnectionPool."""
         self.close_connection()
 
     def open_conection(self):
+        """Open PostGisConnection."""
         self.pg_connection = PostgisConnection.connection_open(self.datasource.get_connection_info())
 
     def close_connection(self):
+        """Close PostGisConnectionPool."""
         # self.pg_connection.cursor().close()
         self.pg_connection.close()
 
     def execute_query(self, sql):
+        """Execute PostGis Query."""
         cur = self.pg_connection.cursor()
         cur.execute(sql)
         return cur.fetchall()
@@ -103,11 +103,19 @@ class PostGisConnectionPool:
             # cursor.close()
 
     def get_connection(self):
+        """Get PostGisConnection."""
         return self.pg_connection
 
 class WCSConnectionPool:
-    """docstring for ."""
+    """WCSConnectionPool.
+
+    :param connection_info: Connection info
+    :type connection_info: dict.
+
+    """
+
     def __init__(self, connection_info):
+        """Creates WCSConnectionPool."""
         self.host = connection_info["host"]
         self.port = connection_info["port"]
         self.location = connection_info["location"]
@@ -121,11 +129,13 @@ class WCSConnectionPool:
         self.base = self.mount_url()
 
     def mount_url(self):
+        """Mount Url."""
         all_url = self.host + ":" + self.port + "/" + self.location + "/" + self.workspace
 
         return all_url
 
     def _get(self, uri):
+        """Get Response."""
         response = requests.get(uri, auth=self.auth)
 
         if (response.status_code) != 200:
@@ -133,8 +143,8 @@ class WCSConnectionPool:
 
         return response.content.decode('utf-8')
 
-    def list_coverage(self):
-
+    def list_collection(self):
+        """List collection."""
         url = "{}/{}&request=GetCapabilities".format(self.base,self.base_path)
 
         doc = self._get(url)
@@ -143,9 +153,17 @@ class WCSConnectionPool:
 
         xmldoc.toxml()
 
+
 class WFSConnectionPool:
-    """docstring for ."""
+    """WFSConnectionPool.
+
+    :param connection_info: Connection info
+    :type connection_info: dict.
+
+    """
+
     def __init__(self, connection_info):
+        """Creates WFSConnectionPool."""
         self.host = connection_info["host"]
         self.port = connection_info["port"]
         self.location = connection_info["location"]
@@ -159,6 +177,7 @@ class WFSConnectionPool:
         self.base = self.mount_url()
 
     def _get(self, uri):
+        """Get WFS."""
         response = requests.get(uri, auth=self.auth)
 
         if (response.status_code) != 200:
@@ -167,11 +186,13 @@ class WFSConnectionPool:
         return response.content.decode('utf-8')
 
     def mount_url(self):
+        """Mount url WFS."""
         all_url = self.host + ":" + self.port + "/" + self.location + "/" + self.workspace
 
         return all_url
 
     def list_feature(self):
+        """List Feature WFS."""
         url = "{}/{}&request=GetCapabilities".format(self.base,self.base_path)
 
         doc = self._get(url)
@@ -188,7 +209,7 @@ class WFSConnectionPool:
         return features
 
     def describe_feature(self, ft_name):
-
+        """Describe Feature WFS."""
         url = "{}/{}&request=DescribeFeatureType&typeName={}".format(self.base, self.base_path, ft_name)
 
         doc = self._get(url)
@@ -202,24 +223,12 @@ class WFSConnectionPool:
         # print(js)
 
     def get_feature(self, **kwargs):
-
         """Retrieve the feature collection given feature.
-        Args:
-             **kwargs: Keyword arguments:
-                ft_name
-                geom
-                geom_property
-                propertyName
-                srid
-                date
 
-        Raises:
-            ValueError:
-            AttributeError: if found an unexpected parameter or unexpected type
-            Exception: if the service returns a exception
-            Raise: feature not found
+        Keyword arguments:ft_name, geom, geom_property,propertyName, srid,  date
+
+        :param kwargs: Keyword arguments
         """
-
         invalid_parameters = set(kwargs) - {'geom_property', 'feature_type', 'srid', 'geom', 'propertyName', 'start_date', 'end_date'}
 
         if invalid_parameters:
@@ -255,7 +264,7 @@ class WFSConnectionPool:
         return
 
     def get_class(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
-
+        """Get classes of given feature."""
         url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, self.base_path, ft_name, featureID)
 
         doc = self._get(url)
@@ -272,74 +281,85 @@ class WFSConnectionPool:
 
 
     def check_feature(self, ft_name):
-        """Utility to check feature existence in wfs"""
-
+        """Utility to check feature existence in wfs."""
         features = self.list_feature()
 
         if ft_name not in features['features']:
             raise NotFound('Feature "{}" not found'.format(ft_name))
 
 
-
 class DataSource(metaclass=ABCMeta):
-    """docstring for ."""
+    """Abstract Class DataSource.
+
+    :param id: DataSource id
+    :type id: string.
+
+    :param m_conninfo: Connection info
+    :type m_conninfo: dict.
+
+    """
 
     def __init__(self, id, m_conninfo):
+        """Abstraction to make DataSource."""
         self._id = id
         self._connection_inf = m_conninfo
 
     def get_id(self):
+        """Get datasource id."""
         return self._id
 
-    # def set_id(self, id):
-    #     self._id = id
-
     def get_connection_info(self):
+        """Get datasource info connection."""
         return self._connection_inf
-
-    # def set_connection_inf(self, m_conninfo):
-    #     self._connection_inf = m_conninfo
 
     @abstractmethod
     def get_type(self):
+        """Get DataSource Type."""
         pass
 
     @abstractmethod
     def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
                        start_date, end_date):
+        """Get Trajectory."""
         pass
 
 
 class PostGisDataSource(DataSource):
-    """ PostGisDataSource Class """
+    """PostGisDataSource Class."""
 
     _connection_inf = {}
 
     def __init__(self, id, connection_info):
+        """Creates PostGisDataSource."""
         super().__init__(id, connection_info)
         self.initialize()
 
     def initialize(self):
+        """Inicialize Postgis Connection for."""
         self.open_connection()
 
     def get_type(self):
+        """Get DataSource type."""
         return "POSTGIS"
 
     def open_connection(self):
+        """Open Postgis connection."""
         self.pg_poll = PostGisConnectionPool(self)
         self.pg_poll.open_conection()
 
     def close_connection(self):
+        """Close Postgis connection."""
         self.pg_poll.close_connection()
         print("Close Connection")
 
     def execute_query(self, sql):
+        """Execute query."""
         result = self.pg_poll.execute_query(sql)
 
         return  result
     def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
                        start_date=None, end_date=None):
-
+        """Retorn trajectory."""
         geom = Point(x, y)
 
         sql = "SELECT"
@@ -426,37 +446,45 @@ class PostGisDataSource(DataSource):
         #
 
 class WCSDataSource(DataSource):
+    """WCSDataSource Class."""
+
     _connection_inf = {}
 
     def __init__(self, id, connection_info):
+        """Creates WCSDataSource."""
         super().__init__(id, connection_info)
 
         self.wfc_poll = WCSConnectionPool(self.get_connection_info())
 
     def get_type(self):
+        """Get DataSource type."""
         return "WCS"
 
     def get_trajectory(self, feature_type, temporal, x, y, obs, geom_property, classification_class,
                        start_date, end_date):
-
-        self.wfc_poll.list_coverage()
+        """Retorn trajectory for ."""
+        self.wfc_poll.list_collection()
         return
 
 class WFSDataSource(DataSource):
+    """WCSDataSource Class."""
+
     _connection_inf = {}
 
     def __init__(self, id, connection_info):
+        """Creates WFSDataSource."""
         super().__init__(id, connection_info)
 
         self.wfs_poll = WFSConnectionPool(self.get_connection_info())
 
         print("Inicializando WFSDataSource: {}".format(self.get_id()))
     def get_type(self):
+        """Get DataSource Type."""
         return "WFS"
 
     def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
                        start_date, end_date):
-
+        """Return trajectory."""
         geom = Point(x, y)
 
         class_property_name = classification_class.get_class_property_name()
@@ -547,6 +575,7 @@ class WFSDataSource(DataSource):
         return result
 
     def open(self):
+        """Open WFS Connection."""
         self.wfs_poll = WFSConnectionPool(self.get_connection_info())
         self.wfs_poll.describe_feature("deterb_amz")
         # self.wfs_poll.openConection()
@@ -557,17 +586,18 @@ class WFSDataSource(DataSource):
 
 
 class DataSourceFactory:
-    """docstring for """
+    """Factory for DataSource."""
 
     @staticmethod
     def make(dsType, id, connInfo):
+        """Factory method for creates datasource."""
         factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", "WFS": "WFSDataSource"}
         datasource = eval(factorys[dsType])(id, connInfo)
         return datasource
 
 
 class DataSourceManager:
-    """docstring for ."""
+    """DataSourceManager Class."""
 
     _datasources = {
         "webservice_source": [],
@@ -578,8 +608,7 @@ class DataSourceManager:
     __instance = None
 
     def __init__(self):
-        """ Virtually private constructor. """
-
+        """Virtually private constructor."""
         print("Inicializando DatasourceManager")
         if DataSourceManager.__instance != None:
             raise Exception("This class is a singleton!")
@@ -589,13 +618,13 @@ class DataSourceManager:
 
     @staticmethod
     def getInstance():
-        """ Static access method. """
+        """Static access method."""
         if DataSourceManager.__instance == None:
             DataSourceManager()
         return DataSourceManager.__instance
 
     def get_datasource(self, ds_id):
-
+        """Get DataSource."""
         try:
             for ds_list in self._datasources.values():
                 for ds in ds_list:
@@ -605,10 +634,11 @@ class DataSourceManager:
             return None
 
     def insert_datasource(self, dsType, connInfo):
+        """Insert DataSource."""
         self._datasources[dsType].append(DataSourceFactory.make(connInfo["type"], connInfo["id"], connInfo))
 
     def load_all(self):
-
+        """Carrega Todos os DataSources."""
         config_file = config_folder / 'wlts_config.json'
 
         with config_file.open()  as json_data:

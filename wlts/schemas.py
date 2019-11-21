@@ -1,14 +1,11 @@
-"""
-This module WLTS Operations vocabularies.
-It is defined as `request` and `response` objects.
-Attributes:
-    collections_list (dict): JSON Schema of WLTS ListCollections request
-    describe_collections (dict): JSON Schema of WLTS DescribeCollection request
-    trajectory (dict): JSON Schema of WLTS Trajectory request
-
-
-"""
-
+#
+# This file is part of Web Land Trajectory Service.
+# Copyright (C) 2019 INPE.
+#
+# Web Land Trajectory Service is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""This module WLTS Operations vocabularies."""
 from json import loads as json_loads
 from pathlib import Path
 
@@ -18,14 +15,9 @@ schemas_folder = Path(BASE_DIR) / 'json-schemas/'
 
 
 def load_schema(file_name):
-    """
-    Open file and parses as JSON file
-    Args:
-        file_name (str): File name of JSON Schema
-    Returns:
-        JSON schema parsed as Python object (dict)
-    Raises:
-        json.JSONDecodeError When file is not valid JSON object
+    """Open file and parses as JSON file.
+
+    :param file_name: File name of JSON Schema.
     """
     schema_file = schemas_folder / file_name
 

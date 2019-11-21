@@ -5,7 +5,6 @@
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-
 """Web Land Trajectory Service."""
 
 import os
@@ -20,15 +19,13 @@ from .version import __version__
 
 
 def create_app(config_name):
+    """Creates Brazil Data Cube WLTS application from config object.
 
-    """
-    Creates Brazil Data Cube WLTS application from config object
-    Args:
-        config_name (string|wlts.config.Config) Config instance
-    Returns:
-        Flask Application with config instance scope
-    """
+    :param config_name: Config instance.
+    :type config_name:string|wlts.config.Config
 
+    :returns: Flask Application with config instance scope.
+    """
     internal_app = Flask(__name__)
 
     with internal_app.app_context():

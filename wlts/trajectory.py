@@ -1,16 +1,25 @@
+#
+# This file is part of Web Land Trajectory Service.
+# Copyright (C) 2019 INPE.
+#
+# Web Land Trajectory Service is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""This class implements a  for WLTS."""
 from werkzeug.exceptions import BadRequest, NotFound
 
 from wlts.collection import collection_manager
 
 
 class TrajectoryParams:
-    """Object wrapper for Trajectory Request Parameters"""
+    """Object wrapper for Trajectory Request Parameters.
+
+    :param properties: trajectory parameter object
+    :type properties:dict
+    """
 
     def __init__(self, **properties):
-        """Creates a trajectory parameter object
-        Args:
-            **properties (dict) - Request parameters
-        """
+        """Creates a trajectory parameter object."""
         self.collections = properties.get('collections').split(',') if properties.get('collections') else None
         self.longitude = float(properties.get('longitude'))
         self.latitude = float(properties.get('latitude'))
@@ -23,8 +32,7 @@ class TrajectoryParams:
         # self.class_type = properties.get('class_type')
 
     def to_dict(self):
-        """Export Trajectory params to Python Dictionary"""
-
+        """Export Trajectory params to Python Dictionary."""
         return {
             k: v
             for k, v in vars(self).items() if not k.startswith('_')
@@ -32,25 +40,28 @@ class TrajectoryParams:
 
 
 class Trajectory:
-    @classmethod
-    def list_coverage(cls):
+    """Trajectory Class.
 
+    :param cls: instance ...
+    """
+
+    @classmethod
+    def list_collection(cls):
+        """Creates a trajectory parameter object."""
         collections = collection_manager.get_all_collection_names()
         return collections['feature_collection'] + collections['image_collection']
 
     @classmethod
     def check_collection(cls, collection):
-        """Utility to check coverage existence in memory"""
-
-        print(collection)
-        print(cls.list_coverage())
-        if collection not in cls.list_coverage():
+        """Utility to check collection existence in memory."""
+        # print(collection)
+        # print(cls.list_collection())
+        if collection not in cls.list_collection():
             raise NotFound('Collection "{}" not found'.format(collection))
 
     @staticmethod
     def get_collections(ts_params):
-
-        """Retrieves collections"""
+        """Retrieves collections."""
         features = []
         try:
 
@@ -65,14 +76,15 @@ class Trajectory:
     @classmethod
     def get_trajectory(cls, ts_params: TrajectoryParams):
         """
-        Retrieves time series object
-        Args:
-            ts_params (TrajectoryParams): WLTS Request parameters
-        Returns:
-            dict trajectory object.
-                See `json-schemas/trajectory_response.json`
-        """
+        Retrieves trajectory object.
 
+        :param ts_params: WLTS Request trajectory parameters
+        :type ts_params: TrajectoryParams
+
+        :returns: Trajectory.
+        :rtype: dict
+
+        """
         if (ts_params.collections):
 
             # Validate collection existence
