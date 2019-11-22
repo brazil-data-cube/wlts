@@ -9,19 +9,22 @@
 """Web Land Trajectory Service."""
 
 import os
-from wlts.config import get_settings
-from wlts.blueprint import blueprint
+
 from flask import Flask
 from flask_cors import CORS
 
+from wlts.blueprint import blueprint
+from wlts.config import get_settings
+
 from .version import __version__
+
 
 def create_app(config_name):
 
     """
-    Creates Brazil Data Cube LUCCWS application from config object
+    Creates Brazil Data Cube WLTS application from config object
     Args:
-        config_name (string|bdc_lucc.config.Config) Config instance
+        config_name (string|wlts.config.Config) Config instance
     Returns:
         Flask Application with config instance scope
     """

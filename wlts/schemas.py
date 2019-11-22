@@ -11,8 +11,8 @@ Attributes:
 
 from json import loads as json_loads
 from pathlib import Path
-from wlts.config import BASE_DIR
 
+from wlts.config import BASE_DIR
 
 schemas_folder = Path(BASE_DIR) / 'json-schemas/'
 

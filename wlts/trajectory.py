@@ -1,5 +1,6 @@
-from wlts.collection import collection_manager
 from werkzeug.exceptions import BadRequest, NotFound
+
+from wlts.collection import collection_manager
 
 
 class TrajectoryParams:
@@ -13,7 +14,7 @@ class TrajectoryParams:
         self.collections = properties.get('collections').split(',') if properties.get('collections') else None
         self.longitude = float(properties.get('longitude'))
         self.latitude = float(properties.get('latitude'))
-        self.start_date =  properties.get('start_date') if properties.get('start_date') else None
+        self.start_date = properties.get('start_date') if properties.get('start_date') else None
         self.end_date = properties.get('end_date') if properties.get('end_date') else None
         self.class_type = properties.get('class_type') if properties.get('class_type') else None
         # self.collections =  properties.get('collections').split(',')
@@ -29,9 +30,8 @@ class TrajectoryParams:
             for k, v in vars(self).items() if not k.startswith('_')
             }
 
+
 class Trajectory:
-
-
     @classmethod
     def list_coverage(cls):
 
@@ -51,7 +51,7 @@ class Trajectory:
     def get_collections(ts_params):
 
         """Retrieves collections"""
-        features =[]
+        features = []
         try:
 
             for collections_name in ts_params.collections:
@@ -73,7 +73,7 @@ class Trajectory:
                 See `json-schemas/trajectory_response.json`
         """
 
-        if(ts_params.collections):
+        if (ts_params.collections):
 
             # Validate collection existence
             for collection in ts_params.collections:
@@ -92,13 +92,14 @@ class Trajectory:
         for collection in collections:
             print("Get trajectory off Collection Name: {}".format(collection.get_name()))
 
-            collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date, ts_params.end_date)
+            collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date,
+                                  ts_params.end_date)
 
         newtraj = sorted(tj_attr, key=lambda k: k['data'])
 
         return {
             "query": ts_params.to_dict(),
-            "result":{
+            "result": {
                 "trajectory": newtraj
             }
 

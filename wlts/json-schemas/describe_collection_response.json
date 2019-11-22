@@ -56,7 +56,7 @@
             "title": "The Description Schema",
             "default": "",
             "examples": [
-              "Sistema de Classificação ...."
+              "Classification System ...."
             ],
             "pattern": "^(.*)$"
           },
