@@ -13,8 +13,9 @@ from flask_restplus import Namespace
 
 from wlts.classificationsys import classification_sys_manager
 from wlts.collection import collection_manager
-from wlts.schemas import (collections_list, describe_collection,
-                          list_classification_system, trajectory)
+from wlts.schemas import (collections_list, describe_classification_system,
+                          describe_collection, list_classification_system,
+                          trajectory)
 from wlts.trajectory import Trajectory, TrajectoryParams
 
 api = Namespace('wlts', description='status')
@@ -59,9 +60,34 @@ class DescribeCollection(APIResource):
         :rtype: dict
         """
         collection_name = request.args['name']
-        data = {"name": collection_name, "class_attribute": "class_name", "period_attribute": "data_observacao",
-                "resolution_unit": "year|month-year|day-month-year"}
-        return jsonify({"collection_name": data})
+        data = {
+            "name": collection_name,
+            "description": "string",
+            "collection_type": "string",
+            "resolution_unit": {
+                "unit": "string",
+                "value": 0
+            },
+            "period": {
+                "start_date": "string",
+                "end_date": "string"
+            },
+            "spatial_extent": {
+                "xmin": 0,
+                "xmax": 0,
+                "ymin": 0,
+                "ymax": 0
+            },
+            "classification_system_class": {
+                "classification_system": "string",
+                "description": "string",
+                "class_name": [
+                    "string"
+                ]
+            }
+        }
+
+        return jsonify(data)
 
 
 @api.route('/trajectory')
@@ -94,3 +120,28 @@ class ListClassificationSystemController(APIResource):
         all_classification = classification_sys_manager.get_all_classification_system()
 
         return jsonify({"classification_system": all_classification})
+
+@api.route('/describe_classification_system')
+class DescribeClassificationSystemController(APIResource):
+    """WLTS Describe Classification System Operation."""
+
+    @require_model(describe_classification_system)
+    def get(self):
+        """Retrieves classification system metadata.
+
+        :returns: Collection Description
+        :rtype: dict
+        """
+        classification_sys_name = request.args['name']
+
+        data = {
+          "classification_system": classification_sys_name,
+          "description": "string",
+          "detail": "string",
+          "classification_system_class": [
+            "string"
+          ]
+        }
+
+
+        return jsonify(data)
