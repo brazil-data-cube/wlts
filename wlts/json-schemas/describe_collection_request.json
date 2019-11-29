@@ -17,9 +17,7 @@
       "title": "Collection Identifier",
       "description": "Collection identifier",
       "default": "",
-      "examples": [
-        "prodes"
-      ],
+      "examples": "prodes",
       "readOnly": true,
       "writeOnly": false,
       "pattern": "^(.*)$"

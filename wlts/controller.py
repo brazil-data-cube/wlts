@@ -35,7 +35,7 @@ class ListCollectionsController(APIResource):
         return jsonify(collection_manager.get_all_collection_names())
 
 
-@api.route('/describe_collections')
+@api.route('/describe_collection')
 class DescribeCollection(APIResource):
     """WLTS DescribeCollection Operation."""
 
@@ -50,11 +50,13 @@ class DescribeCollection(APIResource):
         data = {
             "name": collection_name,
             "description": "string",
+            "detail": "",
             "collection_type": "string",
             "resolution_unit": {
                 "unit": "string",
                 "value": 0
             },
+            "time_format": "",
             "period": {
                 "start_date": "string",
                 "end_date": "string"
@@ -65,13 +67,7 @@ class DescribeCollection(APIResource):
                 "ymin": 0,
                 "ymax": 0
             },
-            "classification_system_class": {
-                "classification_system": "string",
-                "description": "string",
-                "class_name": [
-                    "string"
-                ]
-            }
+            "classification_system": "string"
         }
 
         return jsonify(data)

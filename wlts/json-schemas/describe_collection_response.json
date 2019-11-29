@@ -7,11 +7,14 @@
   "required": [
     "name",
     "description",
+    "detail",
     "collection_type",
-    "resolution_unit",
+    "temporal_resolution",
+    "time_format",
     "period",
     "spatial_extent",
-    "classification_system_class"
+    "scala",
+    "classification_system"
   ],
   "properties": {
     "name": {
@@ -27,55 +30,155 @@
     "description": {
       "$id": "#/properties/description",
       "type": "string",
-      "title": "The Description Collections",
+      "title": "The Description Collection",
       "default": ""
     },
-    "classification_system_class": {
-      "$id": "#/properties/classification_system_class",
+    "detail": {
+      "$id": "#/properties/detail",
+      "type": "string",
+      "title": "The Detail Collection",
+      "default": ""
+    },
+    "collection_type": {
+      "$id": "#/properties/collection_type",
+      "type": "string",
+      "title": "The Collection Type",
+      "default": "",
+      "examples": "feature",
+      "pattern": "^(.*)$"
+    },
+    "temporal_resolution": {
+      "$id": "#/properties/temporal_resolution",
       "type": "object",
-      "title": "The Classification System Class Class of Collection",
+      "title": "The Temporal Resolution of Collection",
       "required": [
-          "classification_system",
-          "description",
-          "class_name"
-        ],
-        "properties": {
-          "classification_system": {
-            "$id": "#/properties/classification_system_class/items/properties/classification_system",
-            "type": "string",
-            "title": "The Classification System Name",
-            "default": "",
-            "examples": [
-              "corina"
-            ],
-            "pattern": "^(.*)$"
-          },
-          "description": {
-            "$id": "#/properties/classification_system_class/items/properties/description",
-            "type": "string",
-            "title": "The Description Schema",
-            "default": "",
-            "examples": [
-              "Classification System ...."
-            ],
-            "pattern": "^(.*)$"
-          },
-          "class_name": {
-            "$id": "#/properties/classification_system_class/items/properties/class_name",
-            "type": "array",
-            "title": "The Class Name of Classification System Class",
-            "items": {
-              "$id": "#/properties/classification_system_class/items",
-              "type": "string",
-              "title": "Class Identifier",
-              "description": "Class identifier",
-              "default": "",
-              "examples": [
-                "Desmatamento"
-              ]
-            }
-          }
+        "unit",
+        "value"
+      ],
+      "properties": {
+        "unit": {
+          "$id": "#/properties/temporal_resolution/properties/unit",
+          "type": "string",
+          "title": "Time resolution unit",
+          "default": "",
+          "examples": [
+            "YEAR"
+          ]
+        },
+        "value": {
+          "$id": "#/properties/temporal_resolution/properties/value",
+          "type": "number",
+          "title": "Time resolution value",
+          "default": "",
+          "examples": [
+            "1"
+          ]
         }
       }
+    },
+    "time_format": {
+      "$id": "#/properties/time_format",
+      "type": "string",
+      "title": "The String Format of time",
+      "default": "",
+      "examples": [
+        "%Y"
+      ]
+    },
+    "period": {
+      "$id": "#/properties/temporal_resolution",
+      "type": "object",
+      "title": "The Temporal Resolution of Collection",
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "properties": {
+        "start_date": {
+          "$id": "#/properties/temporal_resolution/properties/start_date",
+          "type": "string",
+          "title": "Start Date of Collection",
+          "default": "",
+          "examples": [
+            "2000-02-18"
+          ]
+        },
+        "end_date": {
+          "$id": "#/properties/temporal_resolution/properties/end_date",
+          "type": "string",
+          "title": "End Date of Collection",
+          "default": "",
+          "examples": [
+            "2010-02-18"
+          ]
+        }
+      }
+    },
+    "spatial_extent": {
+      "$id": "#/properties/spatial_extent",
+      "type": "object",
+      "title": "The Spatial Extent of Collection",
+      "required": [
+        "xmin",
+        "xmax",
+        "ymin",
+        "ymax"
+      ],
+      "properties": {
+        "xmin": {
+          "$id": "#/properties/spatial_extent/properties/xmin",
+          "type": "number",
+          "title": "The x min value",
+          "default": 0.0,
+          "examples": [
+            -81.2341289433377
+          ]
+        },
+        "xmax": {
+          "$id": "#/properties/spatial_extent/properties/xmax",
+          "type": "number",
+          "title": "The x max value",
+          "default": 0.0,
+          "examples": [
+            -29.9999999973059
+          ]
+        },
+        "ymin": {
+          "$id": "#/properties/spatial_extent/properties/ymin",
+          "type": "number",
+          "title": "The y min value",
+          "default": 0.0,
+          "examples": [
+            -39.9999999964109
+          ]
+        },
+        "ymax": {
+          "$id": "#/properties/spatial_extent/properties/ymax",
+          "type": "number",
+          "title": "The y max value",
+          "default": 0.0,
+          "examples": [
+            9.99999999910497
+          ]
+        }
+      }
+    },
+    "scala": {
+      "$id": "#/properties/scala",
+      "type": "string",
+      "title": "The scala of collection",
+      "default": "",
+      "examples": [
+        "1:100.000"
+      ]
+    },
+    "classification_system": {
+      "$id": "#/properties/classification_system",
+      "type": "string",
+      "title": "The Collection Classification System Name",
+      "default": "",
+      "examples": "CORINE",
+      "pattern": "^(.*)$"
     }
+  }
 }

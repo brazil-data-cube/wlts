@@ -165,7 +165,6 @@ class CollectionManager:
 
     def get_all_collection_names(self):
         """Get Name of all collections avaliable."""
-
         collections_names = list()
 
         for c_type, c_name in self._collenctions.items():
