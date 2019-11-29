@@ -96,9 +96,9 @@ class FeatureCollection(Collection):
             if(result):
                 # print("Result Type {}".format(type(result[0])))
                 trj = {
-                    "collection_name": self.get_name(),
-                    "classification_class": result[0],
-                    "data": str(result[1])
+                    "collection": self.get_name(),
+                    "class": result[0],
+                    "date": str(result[1])
                 }
 
                 tj_attr.append(trj)

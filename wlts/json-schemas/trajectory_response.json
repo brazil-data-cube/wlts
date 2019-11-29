@@ -14,7 +14,7 @@
       "type": "object",
       "title": "The Result Schema",
       "required": [
-        "attributes"
+        "trajectory"
       ],
       "properties": {
         "trajectory": {
@@ -26,36 +26,35 @@
             "type": "object",
             "title": "The Items Schema",
             "required": [
-              "collection_name",
-              "classification_class",
-              "data",
-              "geom"
+              "collection",
+              "class",
+              "date"
             ],
             "properties": {
-              "collection_name": {
-                "$id": "#/properties/result/properties/trajectory/items/properties/collection_name",
+              "collection": {
+                "$id": "#/properties/result/properties/trajectory/items/properties/collection",
                 "type": "string",
-                "title": "The collection_name Schema",
+                "title": "The collection name Schema",
                 "default": "",
                 "examples": [
                   "prodes"
                 ],
                 "pattern": "^(.*)$"
               },
-              "classification_class": {
+              "class": {
                 "$id": "#/properties/result/properties/trajectory/items/properties/classification_class",
                 "type": "string",
-                "title": "The classification_class Schema",
+                "title": "The classification class Schema",
                 "default": "",
                 "examples": [
                   "Desmatamento"
                 ],
                 "pattern": "^(.*)$"
               },
-              "data": {
+              "date": {
                 "$id": "#/properties/result/properties/trajectory/items/properties/data",
                 "type": "string",
-                "title": "The data Schema",
+                "title": "The data of collection ",
                 "default": "",
                 "examples": [
                   "2007-01-01"
