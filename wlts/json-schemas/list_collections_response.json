@@ -9,37 +9,21 @@
     "collections"
   ],
   "properties": {
-    "feature_collection": {
-      "$id": "#/properties/feature_collection",
+    "collections": {
+      "$id": "#/properties/collections",
       "type": "array",
-      "title": "Feature Collection Names",
-      "description": "Defines list of feature collection names from server",
+      "title": "Collections Names",
+      "description": "Defines list of collections names from server",
       "default": false,
       "items": {
-        "$id": "#/properties/feature_collection/items",
+        "$id": "#/properties/collections/items",
         "type": "string",
-        "title": "Feature Collection Identifier",
-        "description": "Feature Collection identifier",
+        "title": "Collection Identifier",
+        "description": "Collection identifier",
         "default": "",
         "examples": [
-          "prodes"
-        ]
-      }
-    },
-    "image_collection": {
-      "$id": "#/properties/image_collection",
-      "type": "array",
-      "title": "Image Collection Names",
-      "description": "Defines list of image collection names from server",
-      "default": false,
-      "items": {
-        "$id": "#/properties/image_collection/items",
-        "type": "string",
-        "title": "Image Collection Identifier",
-        "description": "Image Collection identifier",
-        "default": "",
-        "examples": [
-          "mapbiomas"
+          "prodes",
+          "deter"
         ]
       }
     }

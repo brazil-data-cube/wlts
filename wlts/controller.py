@@ -32,20 +32,7 @@ class ListCollectionsController(APIResource):
         :returns: Collection list avaliable in server.
         :rtype: dict
         """
-        if 'collection_type' in request.args:
-            collection_type = request.args['collection_type']
-
-            names = collection_manager.get_collection_name(collection_type)
-
-            response = {
-                collection_type: names
-
-            }
-            return jsonify(response)
-        else:
-            all_names = collection_manager.get_all_collection_names()
-
-            return jsonify(all_names)
+        return jsonify(collection_manager.get_all_collection_names())
 
 
 @api.route('/describe_collections')

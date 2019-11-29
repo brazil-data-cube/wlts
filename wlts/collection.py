@@ -164,16 +164,15 @@ class CollectionManager:
             return None
 
     def get_all_collection_names(self):
-        """Get all Collections Name."""
-        all_collection = {
-            "feature_collection": [],
-            "image_collection": []
-        }
-        for c_key, c_value in self._collenctions.items():
-            for collection_v in c_value:
-                if (collection_v):
-                    all_collection[c_key].append(collection_v.get_name())
-        return all_collection
+        """Get Name of all collections avaliable."""
+
+        collections_names = list()
+
+        for c_type, c_name in self._collenctions.items():
+            for name in c_name:
+                collections_names.append(name.get_name())
+
+        return collections_names
 
     def get_all_collection(self):
         """Get all Collections."""
