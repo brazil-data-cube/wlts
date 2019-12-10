@@ -1,3 +1,11 @@
+#
+# This file is part of Web Land Trajectory Service.
+# Copyright (C) 2019 INPE.
+#
+# Web Land Trajectory Service is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+"""Python Collection Class and methods for WLTS."""
 from abc import ABCMeta, abstractmethod
 from json import loads as json_loads
 from pathlib import Path
@@ -10,10 +18,11 @@ config_folder = Path(BASE_DIR) / 'json-config/'
 
 
 class Collection(metaclass=ABCMeta):
-    """docstring for ."""
+    """Abstract Collection Class."""
 
     def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
                  classification_class, temporal, scala, spatial_extent):
+        """Creates Collection."""
         self.name = name
         self.authority_name = authority_name
         self.description = description
@@ -31,28 +40,34 @@ class Collection(metaclass=ABCMeta):
         # print("\nInicializando Collections\n")
 
     def get_name(self):
+        """Get Collection Name."""
         return self.name
 
     def get_datasource_id(self):
+        """Get Collection id."""
         return self.datasource.get_id()
 
     def get_datasource(self):
+        """Get Collection DataSource."""
         return self.datasource
 
 
     @abstractmethod
     def get_collectiontype(self):
+        """Get Collection Type Abstract Method."""
         pass
 
     @abstractmethod
     def trajectory(self, tj_attr, x, y, start_date, end_date):
+        """Get Trajectory Type Abstract Method."""
         pass
 
 
 class FeatureCollection(Collection):
-    """ FeatureCollection Class """
+    """FeatureCollection Class."""
 
     def __init__(self, collections_info):
+        """Creates FeatureCollection."""
         super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
                          collections_info["detail"], collections_info["datasource_id"], collections_info["dataset_type"],
                          collections_info["classification_class"], collections_info["temporal"],
@@ -63,16 +78,12 @@ class FeatureCollection(Collection):
         self.observations_properties = collections_info["observations_properties"]
 
     def get_collectiontype(self):
+        """Get Collection Feature Type."""
         return "Feature"
 
 
     def trajectory(self, tj_attr, x, y, start_date, end_date):
-        # no retorno do json eu preciso colocar o collection_name (name) classification_class data
-        # para a consulta eu preciso de observations_properties["class_property_name"], observations_properties["temporal_property"]
-        # &typeNames=datacube:deterb_amz&&propertyName=classe_id,data_observacao
-
-        # print("Collection start_date {}".format(start_date))
-
+        """Get Trajectory."""
         ds = self.get_datasource()
 
         for obs in self.observations_properties:
@@ -96,8 +107,11 @@ class FeatureCollection(Collection):
 
 
 class CollectionFactory:
+    """Factory Class for Collection."""
+
     @staticmethod
     def make(collection_type, collections_info):
+        """Factory method creates Collection."""
         factorys = {"feature_collection": "FeatureCollection", "image_collection": "ImageCollection"}
 
 
@@ -106,7 +120,7 @@ class CollectionFactory:
         return collection
 
 class CollectionManager:
-    """docstring for ."""
+    """CollectionManager Class."""
 
     _collenctions = {
         "feature_collection": [],
@@ -116,8 +130,7 @@ class CollectionManager:
     __instance = None
 
     def __init__(self):
-        """ Virtually private constructor. """
-
+        """Virtually private constructor."""
         print("Inicializando CollectionManager")
 
         if CollectionManager.__instance != None:
@@ -128,18 +141,19 @@ class CollectionManager:
 
     @staticmethod
     def getInstance():
-        """ Static access method. """
+        """Static access method."""
         if CollectionManager.__instance == None:
             CollectionManager()
         return CollectionManager.__instance
 
     def insert(self, dsType, collection_info):
+        """Insert Collection."""
         collection = CollectionFactory.make(dsType, collection_info)
         self._collenctions[dsType].append(collection)
 
 
     def get_collection(self, name):
-
+        """Get Collection."""
         try:
             for c_list in self._collenctions.values():
                 for collection in c_list:
@@ -150,6 +164,7 @@ class CollectionManager:
             return None
 
     def get_all_collection_names(self):
+        """Get all Collections Name."""
         all_collection = {
             "feature_collection": [],
             "image_collection": []
@@ -161,6 +176,7 @@ class CollectionManager:
         return all_collection
 
     def get_all_collection(self):
+        """Get all Collections."""
         all_collection = []
 
         for c_list in self._collenctions.values():
@@ -170,6 +186,7 @@ class CollectionManager:
         return all_collection
 
     def get_collection_name(self, c_type):
+        """Get Collection by name."""
         all_collection = []
         for cl in self._collenctions[c_type]:
             if(cl):
@@ -177,7 +194,7 @@ class CollectionManager:
         return all_collection
 
     def load_all(self):
-
+        """Load all Collection."""
         config_file = config_folder / 'wlts_config.json'
 
         with config_file.open()  as json_data:
