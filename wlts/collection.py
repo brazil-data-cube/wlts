@@ -90,8 +90,19 @@ class FeatureCollection(Collection):
 
             # print("Pegando trajectory for obs {}".format(obs))
 
-            result = ds.get_trajectory(self.feature_type, self.temporal,x, y, obs, self.geom_property,
-                                   self.classification_class, start_date, end_date)
+            args = {
+                "feature_type": self.feature_type,
+                "temporal": self.temporal,
+                "x": x,
+                "y": y,
+                "obs": obs,
+                "geom_property": self.geom_property,
+                "classification_class": self.classification_class,
+                "start_date": start_date,
+                "end_date" : end_date
+            }
+
+            result = ds.get_trajectory(**args)
 
             if(result):
                 # print("Result Type {}".format(type(result[0])))
