@@ -113,7 +113,62 @@ class FeatureCollection(Collection):
 
                 tj_attr.append(trj)
 
-        # return tj_attr
+class ImageCollection(Collection):
+    """ImageCollection Class."""
+
+    def __init__(self, collections_info):
+        """Creates ImageCollection."""
+        super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
+                         collections_info["detail"], collections_info["datasource_id"],
+                         collections_info["dataset_type"],
+                         collections_info["classification_class"], collections_info["temporal"],
+                         collections_info["scala"], collections_info["spatial_extent"])
+        self.image = collections_info["image"]
+        self.grid = collections_info["grid"]
+        self.spatial_ref_system = collections_info["spatial_reference_system"]
+        self.attributes_properties = collections_info["attributes_properties"]
+        self.timeline = collections_info["timeline"]
+
+    def get_collectiontype(self):
+        """Get Collection Image Type."""
+        return "Image"
+
+    def trajectory(self, tj_attr, x, y, start_date, end_date):
+        """Get Trajectory."""
+
+        ds = self.get_datasource()
+
+        for obs in self.attributes_properties:
+            for tl in self.timeline:
+
+                print("Preparando Trajectory for Image")
+
+                args = {
+                    "image": self.image,
+                    "temporal": self.temporal,
+                    "x": x,
+                    "y": y,
+                    "attribute": obs,
+                    "grid": self.grid,
+                    "srid" : self.spatial_ref_system["srid"],
+                    "classification_class": self.classification_class,
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "time": tl
+                }
+
+                result = ds.get_trajectory(**args)
+
+                if (result):
+
+                    trj = {
+                        "collection": self.get_name(),
+                        "class": result[0],
+                        "date": str(result[1])
+                    }
+
+                    tj_attr.append(trj)
+
 
 
 class CollectionFactory:
@@ -209,8 +264,10 @@ class CollectionManager:
 
             config = json_loads(json_data.read())
 
-            # if "image_collection" in config:
-            #     image_collection = config["image_collection"]
+            if "image_collection" in config:
+                image_collection = config["image_collection"]
+                for img_collection in image_collection:
+                    self.insert("image_collection", img_collection)
 
             if "feature_collection" in config:
                 feature_collection = config["feature_collection"]
