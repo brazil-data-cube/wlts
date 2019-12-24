@@ -11,11 +11,8 @@ from bdc_core.utils.flask import APIResource
 from flask import jsonify, request
 from flask_restplus import Namespace
 
-from wlts.classificationsys import classification_sys_manager
 from wlts.collection import collection_manager
-from wlts.schemas import (collections_list, describe_classification_system,
-                          describe_collection, list_classification_system,
-                          trajectory)
+from wlts.schemas import (collections_list, describe_collection, trajectory)
 from wlts.trajectory import Trajectory, TrajectoryParams
 
 api = Namespace('wlts', description='status')
@@ -87,44 +84,3 @@ class TrajectoryController(APIResource):
         params = TrajectoryParams(**request.args.to_dict())
 
         return jsonify(Trajectory.get_trajectory(params))
-
-
-@api.route('/list_classification_system')
-class ListClassificationSystemController(APIResource):
-    """WLTS Trajectory Operation."""
-
-    @require_model(list_classification_system)
-    def get(self):
-        """Retrieve list of classification offered.
-
-        :returns: Classification list avaliable in server.
-        :rtype: dict
-        """
-        all_classification = classification_sys_manager.get_all_classification_system()
-
-        return jsonify({"classification_system": all_classification})
-
-@api.route('/describe_classification_system')
-class DescribeClassificationSystemController(APIResource):
-    """WLTS Describe Classification System Operation."""
-
-    @require_model(describe_classification_system)
-    def get(self):
-        """Retrieves classification system metadata.
-
-        :returns: Collection Description
-        :rtype: dict
-        """
-        classification_sys_name = request.args['name']
-
-        data = {
-          "classification_system": classification_sys_name,
-          "description": "string",
-          "detail": "string",
-          "classification_system_class": [
-            "string"
-          ]
-        }
-
-
-        return jsonify(data)

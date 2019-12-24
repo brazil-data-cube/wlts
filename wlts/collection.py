@@ -10,7 +10,7 @@ from abc import ABCMeta, abstractmethod
 from json import loads as json_loads
 from pathlib import Path
 
-from wlts.classificationsys import ClassificationSystemClass as ClassSystem
+from wlts.classificationsys import ClassificationSystemClass as Class
 from wlts.config import BASE_DIR
 from wlts.datasource import datasource_manager
 
@@ -29,8 +29,7 @@ class Collection(metaclass=ABCMeta):
         self.detail = detail
         self.datasource = datasource_manager.get_datasource(datasource_id)
         self.dataset_type = dataset_type
-        self.classification_class = ClassSystem(classification_class["classification_system_id"],
-                                                classification_class["type"], classification_class["property_name"],
+        self.classification_class = Class(classification_class["type"], classification_class["property_name"],
                                                 classification_class["property_description"], classification_class["property_id"],
                                                 classification_class["class_property_name"])
         self.temporal = temporal
