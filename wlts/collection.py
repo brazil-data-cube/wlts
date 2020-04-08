@@ -36,8 +36,6 @@ class Collection(metaclass=ABCMeta):
         self.scala = scala
         self.spatial_extent = spatial_extent
 
-        # print("\nInicializando Collections\n")
-
     def get_name(self):
         """Get Collection Name."""
         return self.name
@@ -87,8 +85,6 @@ class FeatureCollection(Collection):
 
         for obs in self.observations_properties:
 
-            # print("Pegando trajectory for obs {}".format(obs))
-
             args = {
                 "feature_type": self.feature_type,
                 "temporal": self.temporal,
@@ -104,7 +100,6 @@ class FeatureCollection(Collection):
             result = ds.get_trajectory(**args)
 
             if(result):
-                # print("Result Type {}".format(type(result[0])))
                 trj = {
                     "collection": self.get_name(),
                     "class": result[0],
@@ -140,8 +135,6 @@ class ImageCollection(Collection):
 
         for obs in self.attributes_properties:
             for tl in self.timeline:
-
-                print("Preparando Trajectory for Image")
 
                 args = {
                     "image": self.image,
@@ -196,7 +189,6 @@ class CollectionManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        print("Inicializando CollectionManager")
 
         if CollectionManager.__instance != None:
             raise Exception("This class is a singleton!")

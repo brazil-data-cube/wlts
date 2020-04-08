@@ -101,7 +101,7 @@ class Trajectory:
         for collection in collections:
             print("Get trajectory off Collection Name: {}".format(collection.get_name()))
 
-            collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date,
+            collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
                                   ts_params.end_date)
 
         newtraj = sorted(tj_attr, key=lambda k: k['date'])
