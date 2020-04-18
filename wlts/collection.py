@@ -21,7 +21,7 @@ class Collection(metaclass=ABCMeta):
     """Abstract Collection Class."""
 
     def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
-                 classification_class, temporal, scala, spatial_extent):
+                 classification_class, temporal, scala, spatial_extent, period):
         """Creates Collection."""
         self.name = name
         self.authority_name = authority_name
@@ -35,8 +35,7 @@ class Collection(metaclass=ABCMeta):
         self.temporal = temporal
         self.scala = scala
         self.spatial_extent = spatial_extent
-
-        # print("\nInicializando Collections\n")
+        self.period = period
 
     def get_name(self):
         """Get Collection Name."""
@@ -50,11 +49,25 @@ class Collection(metaclass=ABCMeta):
         """Get Collection DataSource."""
         return self.datasource
 
+    def get_resolution_unit(self):
+        """Get Collection Time resolution unit."""
+        return self.temporal["resolution"]["unit"]
 
-    @abstractmethod
-    def get_collectiontype(self):
-        """Get Collection Type Abstract Method."""
-        pass
+    def get_resolution_value(self):
+        """Get Collection Time resolution value."""
+        return self.temporal["resolution"]["value"]
+
+    def get_spatial_extent(self):
+        """Get Collection Spatial_extent."""
+        return self.spatial_extent
+
+    def get_start_date(self):
+        """Get Collection start_date."""
+        return self.period["start_date"]
+
+    def get_end_date(self):
+        """Get Collection end_date."""
+        return self.period["end_date"]
 
     @abstractmethod
     def trajectory(self, tj_attr, x, y, start_date, end_date):
@@ -70,7 +83,7 @@ class FeatureCollection(Collection):
         super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
                          collections_info["detail"], collections_info["datasource_id"], collections_info["dataset_type"],
                          collections_info["classification_class"], collections_info["temporal"],
-                         collections_info["scala"], collections_info["spatial_extent"])
+                         collections_info["scala"], collections_info["spatial_extent"], collections_info["period"])
         self.feature_type = collections_info["feature_type"]
         self.feature_id_property = collections_info["feature_id_property"]
         self.geom_property = collections_info["geom_property"]
@@ -87,8 +100,6 @@ class FeatureCollection(Collection):
 
         for obs in self.observations_properties:
 
-            # print("Pegando trajectory for obs {}".format(obs))
-
             args = {
                 "feature_type": self.feature_type,
                 "temporal": self.temporal,
@@ -104,7 +115,6 @@ class FeatureCollection(Collection):
             result = ds.get_trajectory(**args)
 
             if(result):
-                # print("Result Type {}".format(type(result[0])))
                 trj = {
                     "collection": self.get_name(),
                     "class": result[0],
@@ -113,7 +123,59 @@ class FeatureCollection(Collection):
 
                 tj_attr.append(trj)
 
-        # return tj_attr
+class ImageCollection(Collection):
+    """ImageCollection Class."""
+
+    def __init__(self, collections_info):
+        """Creates ImageCollection."""
+        super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
+                         collections_info["detail"], collections_info["datasource_id"],
+                         collections_info["dataset_type"],
+                         collections_info["classification_class"], collections_info["temporal"],
+                         collections_info["scala"], collections_info["spatial_extent"],collections_info["period"])
+        self.image = collections_info["image"]
+        self.grid = collections_info["grid"]
+        self.spatial_ref_system = collections_info["spatial_reference_system"]
+        self.attributes_properties = collections_info["attributes_properties"]
+        self.timeline = collections_info["timeline"]
+
+    def get_collectiontype(self):
+        """Get Collection Image Type."""
+        return "Image"
+
+    def trajectory(self, tj_attr, x, y, start_date, end_date):
+        """Get Trajectory."""
+        ds = self.get_datasource()
+
+        for obs in self.attributes_properties:
+            for tl in self.timeline:
+
+                args = {
+                    "image": self.image,
+                    "temporal": self.temporal,
+                    "x": x,
+                    "y": y,
+                    "attribute": obs,
+                    "grid": self.grid,
+                    "srid" : self.spatial_ref_system["srid"],
+                    "classification_class": self.classification_class,
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "time": tl
+                }
+
+                result = ds.get_trajectory(**args)
+
+                if (result):
+
+                    trj = {
+                        "collection": self.get_name(),
+                        "class": result[0],
+                        "date": str(result[1])
+                    }
+
+                    tj_attr.append(trj)
+
 
 
 class CollectionFactory:
@@ -141,8 +203,6 @@ class CollectionManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        print("Inicializando CollectionManager")
-
         if CollectionManager.__instance != None:
             raise Exception("This class is a singleton!")
         else:
@@ -181,7 +241,7 @@ class CollectionManager:
             for name in c_name:
                 collections_names.append(name.get_name())
 
-        return collections_names
+        return {"collections": collections_names}
 
     def get_all_collection(self):
         """Get all Collections."""
@@ -209,8 +269,10 @@ class CollectionManager:
 
             config = json_loads(json_data.read())
 
-            # if "image_collection" in config:
-            #     image_collection = config["image_collection"]
+            if "image_collection" in config:
+                image_collection = config["image_collection"]
+                for img_collection in image_collection:
+                    self.insert("image_collection", img_collection)
 
             if "feature_collection" in config:
                 feature_collection = config["feature_collection"]

@@ -7,18 +7,17 @@
 #
 """Web Land Trajectory Service."""
 
-import os
-
 from flask import Flask
 from flask_cors import CORS
 
 from wlts.blueprint import blueprint
 from wlts.config import get_settings
 
+from .ext import WLTSDatabase
 from .version import __version__
 
 
-def create_app(config_name):
+def create_app(config_name='DevelopmentConfig'):
     """Creates Brazil Data Cube WLTS application from config object.
 
     :param config_name: Config instance.
@@ -26,18 +25,20 @@ def create_app(config_name):
 
     :returns: Flask Application with config instance scope.
     """
-    internal_app = Flask(__name__)
+    app = Flask(__name__)
 
-    with internal_app.app_context():
-        internal_app.config.from_object(config_name)
-        internal_app.register_blueprint(blueprint)
+    conf = config.get_settings(config_name)
+    app.config.from_object(conf)
 
-    return internal_app
+    with app.app_context():
+
+        CORS(app, resorces={r'/d/*': {"origins": '*'}})
+
+        WLTSDatabase(app)
+
+        app.register_blueprint(blueprint)
+
+    return app
 
 
-app = create_app(get_settings(os.environ.get('ENVIRONMENT', 'DevelopmentConfig')))
-
-
-CORS(app, resorces={r'/d/*': {"origins": '*'}})
-
-__all__ = ( '__version__', )
+__all__ = ('__version__', 'create_app')

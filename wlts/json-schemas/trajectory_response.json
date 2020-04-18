@@ -1,73 +1,14 @@
 {
-  "definitions":{},
+  "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "localhost/wlts/trajectory_response.json",
+  "$id": "http://www.esensing.dpi.inpe.br/wlts/trajectory_response.json",
   "type": "object",
   "title": "The Trajectory root schema",
   "required": [
-    "result",
+    "trajectory",
     "query"
   ],
-   "properties": {
-    "result": {
-      "$id": "#/properties/result",
-      "type": "object",
-      "title": "The Result Schema",
-      "required": [
-        "trajectory"
-      ],
-      "properties": {
-        "trajectory": {
-          "$id": "#/properties/result/properties/trajectory",
-          "type": "array",
-          "title": "Trajectory result grouped by collection name",
-          "items": {
-            "$id": "#/properties/result/properties/trajectory/items",
-            "type": "object",
-            "title": "The Items Schema",
-            "required": [
-              "collection",
-              "class",
-              "date"
-            ],
-            "properties": {
-              "collection": {
-                "$id": "#/properties/result/properties/trajectory/items/properties/collection",
-                "type": "string",
-                "title": "The collection name Schema",
-                "default": "",
-                "examples": [
-                  "prodes"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "class": {
-                "$id": "#/properties/result/properties/trajectory/items/properties/classification_class",
-                "type": "string",
-                "title": "The classification class Schema",
-                "default": "",
-                "examples": [
-                  "Desmatamento"
-                ],
-                "pattern": "^(.*)$"
-              },
-              "date": {
-                "$id": "#/properties/result/properties/trajectory/items/properties/data",
-                "type": "string",
-                "title": "The data of collection ",
-                "default": "",
-                "examples": [
-                  "2007-01-01"
-                ],
-                "pattern": "^(.*)$"
-              }
-            }
-
-          }
-        }
-
-      }
-    },
+  "properties": {
     "query": {
       "$id": "#/properties/query",
       "type": "object",
@@ -135,7 +76,55 @@
           "pattern": "^(.*)$"
         }
       }
+    },
+    "trajectory": {
+      "$id": "#/properties/trajectory",
+      "type": "array",
+      "title": "Trajectory result order by date",
+      "items": {
+        "$id": "#/properties/trajectory/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "class",
+          "collection",
+          "date"
+        ],
+        "properties": {
+          "class": {
+            "$id": "#/properties/trajectory/items/properties/class",
+            "type": "string",
+            "title": "The Collection Class",
+            "default": "",
+            "examples": [
+              "Floresta"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "collection": {
+            "$id": "#/properties/trajectory/items/properties/collection",
+            "type": "string",
+            "title": "The Collection Name",
+            "default": "",
+            "examples": [
+              "Prodes"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "date": {
+            "$id": "#/properties/trajectory/items/properties/date",
+            "type": "string",
+            "title": "The date of Collection",
+            "default": "",
+            "examples": [
+              "2007-01-01"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+
+      }
+
     }
   }
-
 }

@@ -6,8 +6,12 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS data source class."""
+import urllib.request
+import uuid
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+from gzip import GzipFile
+from io import BytesIO
 from json import loads as json_loads
 from pathlib import Path
 from xml.dom import minidom
@@ -15,8 +19,10 @@ from xml.dom import minidom
 import psycopg2
 import requests
 from shapely.geometry import Point
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import NotFound
 
+import gdal
+from osgeo import ogr, osr
 from wlts.config import BASE_DIR
 
 config_folder = Path(BASE_DIR) / 'json-config/'
@@ -59,7 +65,6 @@ class PostgisConnection:
                                           database = pgisInfo["database"]
                                           )
 
-            # print("Connection stabelized! ")
             return connection
         except (Exception, psycopg2.Error) as error:
             print ("Error while connecting to PostgreSQL :{}".format(error))
@@ -136,14 +141,17 @@ class WCSConnectionPool:
 
     def _get(self, uri):
         """Get Response."""
-        response = requests.get(uri, auth=self.auth)
+        try:
+            request = urllib.request.Request(uri, headers={"Accept-Encoding": "gzip"})
+            response = urllib.request.urlopen(request, timeout=30)
+            if response.info().get('Content-Encoding') == 'gzip':
+                return GzipFile(fileobj=BytesIO(response.read()))
+            else:
+                return response
+        except urllib.request.URLError:
+            return None
 
-        if (response.status_code) != 200:
-            raise Exception("Request Fail: {} ".format(response.status_code))
-
-        return response.content.decode('utf-8')
-
-    def list_collection(self):
+    def list_image(self):
         """List collection."""
         url = "{}/{}&request=GetCapabilities".format(self.base,self.base_path)
 
@@ -151,8 +159,103 @@ class WCSConnectionPool:
 
         xmldoc = minidom.parseString(doc)
 
-        xmldoc.toxml()
+        itemlist = xmldoc.getElementsByTagName('wcs:Contents')
 
+    def check_image(self, ft_name):
+        """Utility to check feature existence in wfs."""
+        images = self.list_image()
+
+        # if ft_name not in images['Contents']:
+        #     raise NotFound('Feature "{}" not found'.format(ft_name))
+
+    def transform_latlong_to_rowcol(self, data_set,  lat, long):
+        """Transform the pixel location of a geospatial coordinate."""
+        srs = osr.SpatialReference()
+        srs.ImportFromWkt(data_set.GetProjection())
+
+        srs_lat_ong = srs.CloneGeogCS()
+        ct = osr.CoordinateTransformation(srs_lat_ong, srs)
+        x, y, _ = ct.TransformPoint(long, lat)
+
+        transform = data_set.GetGeoTransform()
+
+        x = int((x - transform[0]) / transform[1])
+        y = int((transform[3] - y) / -transform[5])
+
+        return x,y
+
+    def get_uri(self, uri):
+        """Get WFS."""
+        response = requests.get(uri, auth=self.auth)
+
+        if (response.status_code) != 200:
+            raise Exception("Request Fail: {} ".format(response.status_code))
+
+        return response.content.decode('utf-8')
+
+    def get_class_wfs(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
+        """Get classes of given feature."""
+        url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, "wfs?service=WFS&version=1.0.0", ft_name, featureID)
+
+        doc = self.get_uri(url)
+
+        xmldoc = minidom.parseString(doc)
+
+        tagName = workspace + ":" + class_property_name
+
+        itemlist = xmldoc.getElementsByTagName(tagName)
+
+        return itemlist[0].firstChild.nodeValue
+
+    # def get_class_pgis(self):
+
+    def open_image(self, url, lat, long, srid):
+        """Open Image."""
+        image_data = self._get(url)
+
+        if not image_data:
+            return None
+        mmap_name = "/vsimem/" + uuid.uuid4().hex
+
+        gdal.FileFromMemBuffer(mmap_name, image_data.read())
+        gdal_dataset = gdal.Open(mmap_name)
+
+        target = osr.SpatialReference(wkt=gdal_dataset.GetProjection())
+
+        source = osr.SpatialReference()
+        source.ImportFromEPSG(srid)
+
+        transform = osr.CoordinateTransformation(source, target)
+
+        point = ogr.Geometry(ogr.wkbPoint)
+        point.AddPoint(long, lat)
+        point.Transform(transform)
+
+        x, y = self.transform_latlong_to_rowcol(gdal_dataset, point.GetX(), point.GetY())
+
+        intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1)
+
+        gdal_dataset = None
+        # Free memory associated with the in-memory file
+        gdal.Unlink(mmap_name)
+
+        return intval[0]
+
+    def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time,x, y):
+        """Get Image."""
+        url = "{}/{}&request=GetCoverage&COVERAGE={}&".format(self.base, self.base_path, image)
+
+        url += "CRS=EPSG:{}&".format(srid)
+
+        url += "BBOX={},{},{},{}&".format(min_x, max_x, min_y, max_y)
+
+        url += "&FORMAT=GeoTIFF&WIDTH={}&HEIGHT={}&time={}".format(column,row, time)
+
+        featureID = self.open_image(url, x, y ,srid)
+
+        #TODO verificar se eh via banco ou wfs
+
+        return featureID
 
 class WFSConnectionPool:
     """WFSConnectionPool.
@@ -220,7 +323,6 @@ class WFSConnectionPool:
 
         js = json_loads(doc)
 
-        # print(js)
 
     def get_feature(self, **kwargs):
         """Retrieve the feature collection given feature.
@@ -254,8 +356,6 @@ class WFSConnectionPool:
 
         doc = self._get(url)
 
-        # print(url)
-
         js = json_loads(doc)
 
         if(js["features"]):
@@ -270,8 +370,6 @@ class WFSConnectionPool:
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
-
-        # print(xmldoc.toxml())
 
         tagName = workspace + ":" + class_property_name
 
@@ -412,7 +510,7 @@ class PostGisDataSource(DataSource):
 
         elif (kwargs['classification_class'].get_type() != "Literal" and temporal_type == "STRING"):
 
-            properties = " class.{} AS classe, \'{}\' AS data ".format(class_property_name, obs["temporal_property"])
+            properties = " class.{} AS classe, \'{}\' AS data ".format(class_property_name, (kwargs['obs'])["temporal_property"])
             from_str = "FROM {} AS dado, {} AS class".format(kwargs['feature_type'], class_name)
             where_sql += " AND dado.{} = class.{} ".format((kwargs['obs'])["class_property"], class_id)
             sql += properties + from_str + where_sql
@@ -438,7 +536,6 @@ class PostGisDataSource(DataSource):
             if (kwargs['end_date']):
                 sql += " AND {} <= {}".format((kwargs['obs'])["temporal_property"], kwargs['end_date'])
 
-        print(sql)
         # self.open_connection()
 
         return self.execute_query(sql)[0] if self.execute_query(sql) else None
@@ -460,10 +557,39 @@ class WCSDataSource(DataSource):
         return "WCS"
 
     def get_trajectory(self, **kwargs):
-        """Retorn trajectory for ."""
-        self.wfc_poll.list_collection()
+        """Return trajectory for wcs."""
+        invalid_parameters = set(kwargs) - {"image", "temporal",
+                                            "x", "y", "srid", "attribute",
+                                            "grid", "classification_class" , "start_date", "end_date", "time"}
+        if invalid_parameters:
+            raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        return
+        result = list()
+
+        class_property_name = kwargs['classification_class'].get_class_property_name()
+
+        class_name = kwargs['classification_class'].get_name()
+
+        # Todo verificar se existe
+        # self.wfc_poll.check_image(kwargs['image'])
+
+        min_x = kwargs['x'] - 0.1
+        max_x = kwargs['x'] + 0.1
+        min_y = kwargs['y'] - 0.1
+        max_y = kwargs['y'] + 0.1
+
+
+        featureID = self.wfc_poll.get_image(kwargs['image'], kwargs['srid'],
+                                            min_x , min_y, max_x, max_y,
+                                            (kwargs['grid'])['column'], (kwargs['grid'])['row'],
+                                            kwargs['time'], kwargs['x'], kwargs['y'])
+
+        classes_prop = self.wfc_poll.get_class_wfs(featureID[0], class_property_name, class_name)
+
+        result.append(classes_prop)
+        result.append(kwargs['time'])
+
+        return result
 
 class WFSDataSource(DataSource):
     """WCSDataSource Class."""
@@ -476,7 +602,6 @@ class WFSDataSource(DataSource):
 
         self.wfs_poll = WFSConnectionPool(self.get_connection_info())
 
-        print("Inicializando WFSDataSource: {}".format(self.get_id()))
     def get_type(self):
         """Get DataSource Type."""
         return "WFS"
@@ -505,6 +630,7 @@ class WFSDataSource(DataSource):
             "geom_property": kwargs['geom_property'],
             "srid": (kwargs['geom_property'])['srid']
         }
+
 
         if (class_type == "Literal" and (kwargs['temporal'])["type"] == "STRING"):
             response = self.wfs_poll.get_feature(**args)
@@ -619,7 +745,6 @@ class DataSourceManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        print("Inicializando DatasourceManager")
         if DataSourceManager.__instance != None:
             raise Exception("This class is a singleton!")
         else:

@@ -1,7 +1,7 @@
 {
   "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "localhost/wlts/describe_collection_response.json",
+  "$id": "http://www.esensing.dpi.inpe.br/wlts/ddescribe_collection_response.json",
   "type": "object",
   "title": "WLTS - Describe Collection operation",
   "required": [
@@ -9,12 +9,9 @@
     "description",
     "detail",
     "collection_type",
-    "temporal_resolution",
-    "time_format",
+    "resolution_unit",
     "period",
-    "spatial_extent",
-    "scala",
-    "classification_system"
+    "spatial_extent"
   ],
   "properties": {
     "name": {
@@ -23,20 +20,20 @@
       "title": "The Collection Name",
       "default": "",
       "examples": [
-        "prodes"
+        "Prodes"
       ],
       "pattern": "^(.*)$"
     },
     "description": {
       "$id": "#/properties/description",
       "type": "string",
-      "title": "The Description Collection",
+      "title": "The Collection Description",
       "default": ""
     },
     "detail": {
       "$id": "#/properties/detail",
       "type": "string",
-      "title": "The Detail Collection",
+      "title": "The Collection Detail",
       "default": ""
     },
     "collection_type": {
@@ -44,80 +41,76 @@
       "type": "string",
       "title": "The Collection Type",
       "default": "",
-      "examples": "feature",
-      "pattern": "^(.*)$"
+      "examples": [
+        "Feature"
+      ]
     },
-    "temporal_resolution": {
-      "$id": "#/properties/temporal_resolution",
-      "type": "object",
-      "title": "The Temporal Resolution of Collection",
+    "resolution_unit": {
+      "$id": "#/properties/resolution_unit",
+      "type": "string",
+      "title": "The Collection Resolution Unit",
       "required": [
         "unit",
         "value"
       ],
       "properties": {
         "unit": {
-          "$id": "#/properties/temporal_resolution/properties/unit",
+          "$id": "#/properties/resolution_unit/properties/unit",
           "type": "string",
-          "title": "Time resolution unit",
+          "title": "The Unit of Time",
           "default": "",
           "examples": [
-            "YEAR"
+            "Y"
           ]
+
         },
         "value": {
-          "$id": "#/properties/temporal_resolution/properties/value",
+          "$id": "#/properties/resolution_unit/properties/value",
           "type": "number",
-          "title": "Time resolution value",
+          "title": "The Value of Time",
           "default": "",
           "examples": [
-            "1"
+            1
           ]
         }
       }
-    },
-    "time_format": {
-      "$id": "#/properties/time_format",
-      "type": "string",
-      "title": "The String Format of time",
-      "default": "",
-      "examples": [
-        "%Y"
-      ]
+
     },
     "period": {
-      "$id": "#/properties/temporal_resolution",
-      "type": "object",
-      "title": "The Temporal Resolution of Collection",
+      "$id": "#/properties/period",
+      "type": "string",
+      "title": "The Collection period",
       "required": [
         "start_date",
         "end_date"
       ],
       "properties": {
         "start_date": {
-          "$id": "#/properties/temporal_resolution/properties/start_date",
-          "type": "string",
-          "title": "Start Date of Collection",
-          "default": "",
-          "examples": [
-            "2000-02-18"
-          ]
+           "$id": "#/properties/period/properties/start_date",
+           "type": "string",
+            "title": "The Start Date of Collection",
+            "default": "",
+            "examples": [
+              "2017-12-31"
+            ],
+            "pattern": "^(.*)$"
         },
         "end_date": {
-          "$id": "#/properties/temporal_resolution/properties/end_date",
+          "$id": "#/properties/period/properties/end_date",
           "type": "string",
-          "title": "End Date of Collection",
+          "title": "The End Date of Collection",
           "default": "",
           "examples": [
-            "2010-02-18"
-          ]
+            "2017-12-31"
+          ],
+          "pattern": "^(.*)$"
         }
       }
     },
     "spatial_extent": {
       "$id": "#/properties/spatial_extent",
       "type": "object",
-      "title": "The Spatial Extent of Collection",
+      "title": "The Spatial Extent Collection",
       "required": [
         "xmin",
         "xmax",
@@ -128,7 +121,7 @@
         "xmin": {
           "$id": "#/properties/spatial_extent/properties/xmin",
           "type": "number",
-          "title": "The x min value",
+          "title": "The X minimum",
           "default": 0.0,
           "examples": [
             -81.2341289433377
@@ -137,7 +130,7 @@
         "xmax": {
           "$id": "#/properties/spatial_extent/properties/xmax",
           "type": "number",
-          "title": "The x max value",
+          "title": "The X maximum ",
           "default": 0.0,
           "examples": [
             -29.9999999973059
@@ -146,7 +139,7 @@
         "ymin": {
           "$id": "#/properties/spatial_extent/properties/ymin",
           "type": "number",
-          "title": "The y min value",
+          "title": "The Y minimum",
           "default": 0.0,
           "examples": [
             -39.9999999964109
@@ -155,30 +148,14 @@
         "ymax": {
           "$id": "#/properties/spatial_extent/properties/ymax",
           "type": "number",
-          "title": "The y max value",
+          "title": "The Y maximum",
           "default": 0.0,
           "examples": [
             9.99999999910497
           ]
         }
       }
-    },
-    "scala": {
-      "$id": "#/properties/scala",
-      "type": "string",
-      "title": "The scala of collection",
-      "default": "",
-      "examples": [
-        "1:100.000"
-      ]
-    },
-    "classification_system": {
-      "$id": "#/properties/classification_system",
-      "type": "string",
-      "title": "The Collection Classification System Name",
-      "default": "",
-      "examples": "CORINE",
-      "pattern": "^(.*)$"
+
     }
   }
 }

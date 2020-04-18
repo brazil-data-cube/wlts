@@ -2,10 +2,14 @@ sudo: false
 
 language: python
 
-dist: trusty
+cache:
+    directories:
+        - $HOME/.cache/pip
+
+dist: bionic
 
 python:
-  - "3.5"
+   - "3.7"
 
 before_install:
     - pip install --upgrade pip
@@ -13,10 +17,10 @@ before_install:
     - pip install --upgrade wheel
 
 install:
-    - pip install -e .[tests]
+    - pip install -e .[tests,docs]
 
 script:
-    - ./run-test.sh
+    - ./run-tests.sh
 
 after_success:
     - coveralls
