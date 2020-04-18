@@ -6,22 +6,22 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS data source class."""
+import urllib.request
+import uuid
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+from gzip import GzipFile
+from io import BytesIO
 from json import loads as json_loads
 from pathlib import Path
 from xml.dom import minidom
-from gzip import GzipFile
-from io import BytesIO
-import uuid
-from osgeo import osr, ogr
-import gdal
 
+import gdal
 import psycopg2
 import requests
-import urllib.request
+from osgeo import ogr, osr
 from shapely.geometry import Point
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import NotFound
 
 from wlts.config import BASE_DIR
 
@@ -169,11 +169,7 @@ class WCSConnectionPool:
         #     raise NotFound('Feature "{}" not found'.format(ft_name))
 
     def transform_latlong_to_rowcol(self, data_set,  lat, long):
-        """
-        Uses a gdal geomatrix (gdal.GetGeoTransform()) to calculate
-        the pixel location of a geospatial coordinate
-        """
-
+        """Transform the pixel location of a geospatial coordinate."""
         srs = osr.SpatialReference()
         srs.ImportFromWkt(data_set.GetProjection())
 
@@ -214,7 +210,7 @@ class WCSConnectionPool:
     # def get_class_pgis(self):
 
     def open_image(self, url, lat, long, srid):
-
+        """Open Image."""
         image_data = self._get(url)
 
         if not image_data:
@@ -246,7 +242,7 @@ class WCSConnectionPool:
         return intval[0]
 
     def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time,x, y):
-
+        """Get Image."""
         url = "{}/{}&request=GetCoverage&COVERAGE={}&".format(self.base, self.base_path, image)
 
         url += "CRS=EPSG:{}&".format(srid)
@@ -561,8 +557,7 @@ class WCSDataSource(DataSource):
         return "WCS"
 
     def get_trajectory(self, **kwargs):
-        """Return trajectory for ."""
-
+        """Return trajectory for wcs."""
         invalid_parameters = set(kwargs) - {"image", "temporal",
                                             "x", "y", "srid", "attribute",
                                             "grid", "classification_class" , "start_date", "end_date", "time"}

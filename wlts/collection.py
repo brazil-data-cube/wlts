@@ -145,7 +145,6 @@ class ImageCollection(Collection):
 
     def trajectory(self, tj_attr, x, y, start_date, end_date):
         """Get Trajectory."""
-
         ds = self.get_datasource()
 
         for obs in self.attributes_properties:
@@ -204,7 +203,6 @@ class CollectionManager:
 
     def __init__(self):
         """Virtually private constructor."""
-
         if CollectionManager.__instance != None:
             raise Exception("This class is a singleton!")
         else:
