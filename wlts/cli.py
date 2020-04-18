@@ -59,4 +59,4 @@ def insert_db():
 
     _db.session.commit()
 
-    click.echo("Schema Create!")
+    click.echo("Schema wlts create and data insert!")
