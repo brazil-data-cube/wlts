@@ -10,7 +10,7 @@ from abc import ABCMeta, abstractmethod
 from json import loads as json_loads
 from pathlib import Path
 
-from wlts.classificationsys import ClassificationSystemClass as ClassSystem
+from wlts.classificationsys import ClassificationSystemClass as Class
 from wlts.config import BASE_DIR
 from wlts.datasource import datasource_manager
 
@@ -29,8 +29,7 @@ class Collection(metaclass=ABCMeta):
         self.detail = detail
         self.datasource = datasource_manager.get_datasource(datasource_id)
         self.dataset_type = dataset_type
-        self.classification_class = ClassSystem(classification_class["classification_system_id"],
-                                                classification_class["type"], classification_class["property_name"],
+        self.classification_class = Class(classification_class["type"], classification_class["property_name"],
                                                 classification_class["property_description"], classification_class["property_id"],
                                                 classification_class["class_property_name"])
         self.temporal = temporal
@@ -90,15 +89,26 @@ class FeatureCollection(Collection):
 
             # print("Pegando trajectory for obs {}".format(obs))
 
-            result = ds.get_trajectory(self.feature_type, self.temporal,x, y, obs, self.geom_property,
-                                   self.classification_class, start_date, end_date)
+            args = {
+                "feature_type": self.feature_type,
+                "temporal": self.temporal,
+                "x": x,
+                "y": y,
+                "obs": obs,
+                "geom_property": self.geom_property,
+                "classification_class": self.classification_class,
+                "start_date": start_date,
+                "end_date" : end_date
+            }
+
+            result = ds.get_trajectory(**args)
 
             if(result):
                 # print("Result Type {}".format(type(result[0])))
                 trj = {
-                    "collection_name": self.get_name(),
-                    "classification_class": result[0],
-                    "data": str(result[1])
+                    "collection": self.get_name(),
+                    "class": result[0],
+                    "date": str(result[1])
                 }
 
                 tj_attr.append(trj)
@@ -164,16 +174,14 @@ class CollectionManager:
             return None
 
     def get_all_collection_names(self):
-        """Get all Collections Name."""
-        all_collection = {
-            "feature_collection": [],
-            "image_collection": []
-        }
-        for c_key, c_value in self._collenctions.items():
-            for collection_v in c_value:
-                if (collection_v):
-                    all_collection[c_key].append(collection_v.get_name())
-        return all_collection
+        """Get Name of all collections avaliable."""
+        collections_names = list()
+
+        for c_type, c_name in self._collenctions.items():
+            for name in c_name:
+                collections_names.append(name.get_name())
+
+        return collections_names
 
     def get_all_collection(self):
         """Get all Collections."""

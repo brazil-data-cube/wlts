@@ -318,8 +318,7 @@ class DataSource(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
-                       start_date, end_date):
+    def get_trajectory(self, **kwargs):
         """Get Trajectory."""
         pass
 
@@ -357,93 +356,93 @@ class PostGisDataSource(DataSource):
         result = self.pg_poll.execute_query(sql)
 
         return  result
-    def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
-                       start_date=None, end_date=None):
+
+    def get_trajectory(self, **kwargs):
         """Retorn trajectory."""
-        geom = Point(x, y)
+        invalid_parameters = set(kwargs) - {"feature_type", "temporal",
+                                            "x", "y", "obs", "geom_property",
+                                            "classification_class", "start_date", "end_date"}
+        if invalid_parameters:
+            raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
+
+        geom = Point(kwargs['x'], kwargs['y'])
 
         sql = "SELECT"
 
-        where_sql = " WHERE ST_Intersects({}, ST_GeomFromText(\'{}\', {}))".format(geom_property["property_name"], geom.wkt,
-                                                                                   geom_property['srid'])
+        where_sql = " WHERE ST_Intersects({}, ST_GeomFromText(\'{}\', {}))".format(
+            (kwargs['geom_property'])["property_name"],
+            geom.wkt,
+            (kwargs['geom_property'])['srid'])
 
-        class_name = classification_class.get_name()
+        class_name = kwargs['classification_class'].get_name()
 
-        class_id = classification_class.get_id()
+        class_id = kwargs['classification_class'].get_id()
 
-        class_property_name = classification_class.get_class_property_name()
+        class_property_name = kwargs['classification_class'].get_class_property_name()
 
-        temporal_type = temporal["type"]
+        temporal_type = (kwargs['temporal'])["type"]
 
+        if (kwargs['classification_class'].get_type() == "Literal" and temporal_type == "STRING"):
 
-        if(classification_class.get_type() == "Literal" and temporal_type == "STRING"):
-
-            properties = " \'{}\' AS classe, \'{}\' AS data ".format(class_property_name, obs["temporal_property"])
-            from_str = "FROM {}".format(feature_type)
+            properties = " \'{}\' AS classe, \'{}\' AS data ".format(class_property_name,
+                                                                     (kwargs['obs'])["temporal_property"])
+            from_str = "FROM {}".format(kwargs['feature_type'])
             sql += properties + from_str + where_sql
 
-            if (start_date):
-                sql += " AND \'{}\' >= {}".format(obs["temporal_property"], start_date)
+            if (kwargs['start_date']):
+                sql += " AND \'{}\' >= {}".format((kwargs['obs'])["temporal_property"], kwargs['start_date'])
 
-            if (end_date):
-                sql += " AND \'{}\' <= {}".format(obs["temporal_property"], end_date)
+            if (kwargs['end_date']):
+                sql += " AND \'{}\' <= {}".format((kwargs['obs'])["temporal_property"], kwargs['end_date'])
 
 
-        elif(classification_class.get_type() == "Literal" and temporal_type != "STRING"):
+        elif (kwargs['classification_class'].get_type() == "Literal" and temporal_type != "STRING"):
 
-            properties = " \'{}\' AS classe, {} AS data ".format(class_property_name, obs["temporal_property"])
-            from_str = "FROM {}".format(feature_type)
+            properties = " \'{}\' AS classe, {} AS data ".format(class_property_name,
+                                                                 (kwargs['obs'])["temporal_property"])
+            from_str = "FROM {}".format(kwargs['feature_type'])
             sql += properties + from_str + where_sql
 
-            if (start_date):
-                sql += " AND {} >= {}".format(obs["temporal_property"], start_date)
+            if (kwargs['start_date']):
+                sql += " AND {} >= {}".format((kwargs['obs'])["temporal_property"], kwargs['start_date'])
 
-            if (end_date):
-                sql += " AND {} <= {}".format(obs["temporal_property"],end_date)
+            if (kwargs['end_date']):
+                sql += " AND {} <= {}".format((kwargs['obs'])["temporal_property"], kwargs['end_date'])
 
 
-        elif (classification_class.get_type() != "Literal" and temporal_type == "STRING"):
+        elif (kwargs['classification_class'].get_type() != "Literal" and temporal_type == "STRING"):
 
             properties = " class.{} AS classe, \'{}\' AS data ".format(class_property_name, obs["temporal_property"])
-            from_str = "FROM {} AS dado, {} AS class".format(feature_type, class_name)
-            where_sql += " AND dado.{} = class.{} ".format(obs["class_property"], class_id)
+            from_str = "FROM {} AS dado, {} AS class".format(kwargs['feature_type'], class_name)
+            where_sql += " AND dado.{} = class.{} ".format((kwargs['obs'])["class_property"], class_id)
             sql += properties + from_str + where_sql
 
-            if (start_date):
-                sql += " AND \'{}\' >= {}".format(obs["temporal_property"], start_date)
+            if (kwargs['start_date']):
+                sql += " AND \'{}\' >= {}".format((kwargs['obs'])["temporal_property"], kwargs['start_date'])
 
-            if (end_date):
-                sql += " AND \'{}\' <= {}".format(obs["temporal_property"], end_date)
+            if (kwargs['end_date']):
+                sql += " AND \'{}\' <= {}".format((kwargs['obs'])["temporal_property"], kwargs['end_date'])
 
 
         else:
 
-            properties = " class.{} AS classe, {} AS data ".format(class_property_name, obs["temporal_property"])
-            from_str = "FROM {} AS dado, {} AS class".format(feature_type, class_name)
-            where_sql += " AND dado.{} = class.{} ".format(obs["class_property"], class_id)
+            properties = " class.{} AS classe, {} AS data ".format(class_property_name,
+                                                                   (kwargs['obs'])["temporal_property"])
+            from_str = "FROM {} AS dado, {} AS class".format(kwargs['feature_type'], class_name)
+            where_sql += " AND dado.{} = class.{} ".format((kwargs['obs'])["class_property"], class_id)
             sql += properties + from_str + where_sql
 
-            if (start_date):
-                sql += " AND {} >= {}".format(obs["temporal_property"], start_date)
+            if (kwargs['start_date']):
+                sql += " AND {} >= {}".format((kwargs['obs'])["temporal_property"], kwargs['start_date'])
 
-            if (end_date):
-                sql += " AND {} <= {}".format(obs["temporal_property"], end_date)
+            if (kwargs['end_date']):
+                sql += " AND {} <= {}".format((kwargs['obs'])["temporal_property"], kwargs['end_date'])
 
         print(sql)
         # self.open_connection()
 
         return self.execute_query(sql)[0] if self.execute_query(sql) else None
-        #
-        # if(self.execute_query(sql)):
-        #     result_query = self.execute_query(sql)[0]
-        #
-        # else:
-        #     result_query = [None] * 2
-        #     result_query[0] = "No Data found"
-        #     result_query[1] = "No Data found"
-        #
-        # return result_query
-        #
+
 
 class WCSDataSource(DataSource):
     """WCSDataSource Class."""
@@ -460,10 +459,10 @@ class WCSDataSource(DataSource):
         """Get DataSource type."""
         return "WCS"
 
-    def get_trajectory(self, feature_type, temporal, x, y, obs, geom_property, classification_class,
-                       start_date, end_date):
+    def get_trajectory(self, **kwargs):
         """Retorn trajectory for ."""
         self.wfc_poll.list_collection()
+
         return
 
 class WFSDataSource(DataSource):
@@ -482,95 +481,106 @@ class WFSDataSource(DataSource):
         """Get DataSource Type."""
         return "WFS"
 
-    def get_trajectory(self, feature_type,temporal, x, y, obs, geom_property, classification_class,
-                       start_date, end_date):
+    def get_trajectory(self, **kwargs):
         """Return trajectory."""
-        geom = Point(x, y)
+        invalid_parameters = set(kwargs) - {"feature_type", "temporal",
+                                            "x", "y", "obs", "geom_property",
+                                            "classification_class", "start_date", "end_date"}
+        if invalid_parameters:
+            raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        class_property_name = classification_class.get_class_property_name()
+        geom = Point(kwargs['x'], kwargs['y'])
 
-        class_name = classification_class.get_name()
+        class_property_name = kwargs['classification_class'].get_class_property_name()
+
+        class_name = kwargs['classification_class'].get_name()
 
         result = list()
 
-        class_type = classification_class.get_type()
+        class_type = kwargs['classification_class'].get_type()
 
         args = {
-                "feature_type": feature_type,
-                "geom": geom,
-                "geom_property": geom_property,
-                "srid": geom_property['srid']
-                }
+            "feature_type": kwargs['feature_type'],
+            "geom": geom,
+            "geom_property": kwargs['geom_property'],
+            "srid": (kwargs['geom_property'])['srid']
+        }
 
-        if(class_type == "Literal" and temporal["type"] == "STRING"):
+        if (class_type == "Literal" and (kwargs['temporal'])["type"] == "STRING"):
             response = self.wfs_poll.get_feature(**args)
 
-            obs_tm = get_date_from_str(obs["temporal_property"])
+            obs_tm = get_date_from_str((kwargs['obs'])["temporal_property"])
 
-            if(response):
-                result.append(obs["class_property_name"])
-                result.append(obs_tm.strftime(temporal["string_format"]))
+            if (response):
+                result.append((kwargs['obs'])["class_property_name"])
+                result.append(obs_tm.strftime((kwargs['temporal'])["string_format"]))
 
-        elif(class_type == "Literal" and temporal["type"] != "STRING"):
-            
-            args['propertyName'] = "{}".format(obs["temporal_property"])
+        elif (class_type == "Literal" and (kwargs['temporal'])["type"] != "STRING"):
 
-            if (start_date):
-                start_date = get_date_from_str(start_date)
-                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime(temporal["string_format"]))
-            if (end_date):
-                end_date = get_date_from_str(end_date)
-                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime(temporal["string_format"]))
+            args['propertyName'] = "{}".format((kwargs['obs'])["temporal_property"])
+
+            if (kwargs['start_date']):
+                start_date = get_date_from_str(kwargs['start_date'])
+                args['start_date'] = "AND {} >= {}".format((kwargs['obs'])["temporal_property"],
+                                                           start_date.strftime((kwargs['temporal'])["string_format"]))
+            if (kwargs['end_date']):
+                end_date = get_date_from_str(kwargs['end_date'])
+                args['end_date'] = "AND {} <= {}".format((kwargs['obs'])["temporal_property"],
+                                                         end_date.strftime((kwargs['temporal'])["string_format"]))
 
             response = self.wfs_poll.get_feature(**args)
 
-            if(response):
-                result.append(obs["class_property_name"])
-                result.append(response[obs["temporal_property"]])
+            if (response):
+                result.append((kwargs['obs'])["class_property_name"])
+                result.append(response[(kwargs['obs'])["temporal_property"]])
 
-        elif(class_type != "Literal" and temporal["type"] == "STRING"):
+        elif (class_type != "Literal" and (kwargs['temporal'])["type"] == "STRING"):
 
-            obs_temporal = get_date_from_str(obs["temporal_property"])
+            obs_temporal = get_date_from_str((kwargs['obs'])["temporal_property"])
 
-            if (start_date):
-                start_date = get_date_from_str(start_date)
-                if(start_date > obs_temporal):
+            if (kwargs['start_date']):
+                start_date = get_date_from_str(kwargs['start_date'])
+                if (start_date > obs_temporal):
                     return
-            if (end_date):
-                end_date = get_date_from_str(end_date)
-                if(obs_temporal > end_date):
+            if (kwargs['end_date']):
+                end_date = get_date_from_str(kwargs['end_date'])
+                if (obs_temporal > end_date):
                     return
 
-            args['propertyName'] =  "{},{}".format(obs["class_property"], obs["temporal_property"])
+            args['propertyName'] = "{},{}".format((kwargs['obs'])["class_property"],
+                                                  (kwargs['obs'])["temporal_property"])
 
             response = self.wfs_poll.get_feature(**args)
 
-            if(response):
-                featureID = response[obs["class_property"]]
+            if (response):
+                featureID = response[(kwargs['obs'])["class_property"]]
                 classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
 
                 result.append(classes_prop)
-                result.append(obs["temporal_property"])
+                result.append((kwargs['obs'])["temporal_property"])
 
         else:
 
-            args['propertyName'] =  "{},{}".format(obs["class_property"], obs["temporal_property"])
+            args['propertyName'] = "{},{}".format((kwargs['obs'])["class_property"],
+                                                  (kwargs['obs'])["temporal_property"])
 
-            if (start_date):
-                start_date = get_date_from_str(start_date)
-                args['start_date'] = "AND {} >= {}".format(obs["temporal_property"], start_date.strftime(temporal["string_format"]))
-            if (end_date):
-                end_date = get_date_from_str(end_date)
-                args['end_date'] = "AND {} <= {}".format(obs["temporal_property"], end_date.strftime(temporal["string_format"]))
+            if (kwargs['start_date']):
+                start_date = get_date_from_str(kwargs['start_date'])
+                args['start_date'] = "AND {} >= {}".format((kwargs['obs'])["temporal_property"],
+                                                           start_date.strftime((kwargs['temporal'])["string_format"]))
+            if (kwargs['end_date']):
+                end_date = get_date_from_str(kwargs['end_date'])
+                args['end_date'] = "AND {} <= {}".format((kwargs['obs'])["temporal_property"],
+                                                         end_date.strftime((kwargs['temporal'])["string_format"]))
 
             response = self.wfs_poll.get_feature(**args)
 
-            if(response):
-                featureID = response[obs["class_property"]]
+            if (response):
+                featureID = response[(kwargs['obs'])["class_property"]]
                 classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
 
                 result.append(classes_prop)
-                result.append(response[obs["temporal_property"]])
+                result.append(response[(kwargs['obs'])["temporal_property"]])
 
         return result
 

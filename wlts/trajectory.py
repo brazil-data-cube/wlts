@@ -25,11 +25,9 @@ class TrajectoryParams:
         self.latitude = float(properties.get('latitude'))
         self.start_date = properties.get('start_date') if properties.get('start_date') else None
         self.end_date = properties.get('end_date') if properties.get('end_date') else None
-        self.class_type = properties.get('class_type') if properties.get('class_type') else None
         # self.collections =  properties.get('collections').split(',')
         # self.start_date = properties.get('start_date')
         # self.end_date = properties.get('end_date')
-        # self.class_type = properties.get('class_type')
 
     def to_dict(self):
         """Export Trajectory params to Python Dictionary."""
@@ -48,8 +46,7 @@ class Trajectory:
     @classmethod
     def list_collection(cls):
         """Creates a trajectory parameter object."""
-        collections = collection_manager.get_all_collection_names()
-        return collections['feature_collection'] + collections['image_collection']
+        return collection_manager.get_all_collection_names()
 
     @classmethod
     def check_collection(cls, collection):
@@ -107,7 +104,7 @@ class Trajectory:
             collection.trajectory(tj_attr, ts_params.latitude, ts_params.longitude, ts_params.start_date,
                                   ts_params.end_date)
 
-        newtraj = sorted(tj_attr, key=lambda k: k['data'])
+        newtraj = sorted(tj_attr, key=lambda k: k['date'])
 
         return {
             "query": ts_params.to_dict(),
