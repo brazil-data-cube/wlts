@@ -24,6 +24,10 @@ class Config():
     CSRF_ENABLED = False
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "APi-Users-123456"
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI',
+                                                           'postgresql://postgres:postgres@localhost:5432/wlts')
+    WLTS_URL = os.getenv('WLTS_URL', 'http://localhost:5000')
 
 
 class ProductionConfig(Config):

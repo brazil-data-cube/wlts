@@ -17,7 +17,7 @@ before_install:
     - pip install --upgrade wheel
 
 install:
-    - pip install -e .[tests]
+    - pip install -e .[tests,docs]
 
 script:
     - ./run-tests.sh
