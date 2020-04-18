@@ -1,9 +1,9 @@
 {
   "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "localhost/wlts/list_collection_response.json",
+  "$id": "http://www.esensing.dpi.inpe.br/wlts/list_collections_response.json",
   "type": "object",
-  "title": "WLTS - List Collection operation",
+  "title": "WLTS - List Collections operation",
   "description": "Retrieves list of offered collections",
   "required": [
     "collections"
@@ -13,17 +13,17 @@
       "$id": "#/properties/collections",
       "type": "array",
       "title": "Collections Names",
-      "description": "Defines list of collections names from server",
+      "description": "Defines list of collections from server",
       "default": false,
       "items": {
         "$id": "#/properties/collections/items",
         "type": "string",
-        "title": "Collection Identifier",
-        "description": "Collection identifier",
+        "title": "Collection Name",
+        "description": "Collection Name",
         "default": "",
         "examples": [
-          "prodes",
-          "deter"
+          "Prodes",
+          "TerraClass"
         ]
       }
     }
