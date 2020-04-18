@@ -43,28 +43,24 @@ class DescribeCollection(APIResource):
         :returns: Collection Description
         :rtype: dict
         """
-        collection_name = request.args['name']
+        collection_name = request.args['collection_id']
+
+        collection = collection_manager.get_collection(collection_name)
+
         data = {
-            "name": collection_name,
-            "description": "string",
-            "detail": "",
-            "collection_type": "string",
+            "name": collection.name,
+            "description": collection.description,
+            "detail": collection.detail,
+            "collection_type": collection.get_collectiontype(),
             "resolution_unit": {
-                "unit": "string",
-                "value": 0
+                "unit": collection.get_resolution_unit(),
+                "value": collection.get_resolution_value()
             },
-            "time_format": "",
             "period": {
-                "start_date": "string",
-                "end_date": "string"
+                "start_date": collection.get_start_date(),
+                "end_date": collection.get_end_date()
             },
-            "spatial_extent": {
-                "xmin": 0,
-                "xmax": 0,
-                "ymin": 0,
-                "ymax": 0
-            },
-            "classification_system": "string"
+            "spatial_extent": collection.get_spatial_extent()
         }
 
         return jsonify(data)

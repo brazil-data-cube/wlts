@@ -21,7 +21,7 @@ class Collection(metaclass=ABCMeta):
     """Abstract Collection Class."""
 
     def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
-                 classification_class, temporal, scala, spatial_extent):
+                 classification_class, temporal, scala, spatial_extent, period):
         """Creates Collection."""
         self.name = name
         self.authority_name = authority_name
@@ -35,6 +35,7 @@ class Collection(metaclass=ABCMeta):
         self.temporal = temporal
         self.scala = scala
         self.spatial_extent = spatial_extent
+        self.period = period
 
     def get_name(self):
         """Get Collection Name."""
@@ -48,11 +49,25 @@ class Collection(metaclass=ABCMeta):
         """Get Collection DataSource."""
         return self.datasource
 
+    def get_resolution_unit(self):
+        """Get Collection Time resolution unit."""
+        return self.temporal["resolution"]["unit"]
 
-    @abstractmethod
-    def get_collectiontype(self):
-        """Get Collection Type Abstract Method."""
-        pass
+    def get_resolution_value(self):
+        """Get Collection Time resolution value."""
+        return self.temporal["resolution"]["value"]
+
+    def get_spatial_extent(self):
+        """Get Collection Spatial_extent."""
+        return self.spatial_extent
+
+    def get_start_date(self):
+        """Get Collection start_date."""
+        return self.period["start_date"]
+
+    def get_end_date(self):
+        """Get Collection end_date."""
+        return self.period["end_date"]
 
     @abstractmethod
     def trajectory(self, tj_attr, x, y, start_date, end_date):
@@ -68,7 +83,7 @@ class FeatureCollection(Collection):
         super().__init__(collections_info["name"], collections_info["authority_name"], collections_info["description"],
                          collections_info["detail"], collections_info["datasource_id"], collections_info["dataset_type"],
                          collections_info["classification_class"], collections_info["temporal"],
-                         collections_info["scala"], collections_info["spatial_extent"])
+                         collections_info["scala"], collections_info["spatial_extent"], collections_info["period"])
         self.feature_type = collections_info["feature_type"]
         self.feature_id_property = collections_info["feature_id_property"]
         self.geom_property = collections_info["geom_property"]
@@ -117,7 +132,7 @@ class ImageCollection(Collection):
                          collections_info["detail"], collections_info["datasource_id"],
                          collections_info["dataset_type"],
                          collections_info["classification_class"], collections_info["temporal"],
-                         collections_info["scala"], collections_info["spatial_extent"])
+                         collections_info["scala"], collections_info["spatial_extent"],collections_info["period"])
         self.image = collections_info["image"]
         self.grid = collections_info["grid"]
         self.spatial_ref_system = collections_info["spatial_reference_system"]
@@ -228,7 +243,7 @@ class CollectionManager:
             for name in c_name:
                 collections_names.append(name.get_name())
 
-        return collections_names
+        return {"collections": collections_names}
 
     def get_all_collection(self):
         """Get all Collections."""
