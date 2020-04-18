@@ -7,10 +7,5 @@
 #
 """Unit-test for WLTS' controller."""
 
-import pytest
-
-from wlts import create_app
-
-
 def test_query():
     pass
