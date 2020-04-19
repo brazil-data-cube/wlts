@@ -10,7 +10,7 @@
 from pkg_resources import resource_string as load
 
 
-def load_exemple_data(file):
+def load_example_data(file):
     """Load data."""
     sql_dir = "example/{}".format(file)
 
