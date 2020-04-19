@@ -52,7 +52,7 @@ def db():
 @db.command()
 @with_appcontext
 def insert_db():
-    """Insert Exemple Data into Database."""
+    """Insert Example Data into Database."""
     sql = load_example_data('wlts_example.sql')
 
     _db.session.execute(sql)
