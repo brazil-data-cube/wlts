@@ -10,9 +10,8 @@
 from flask import Flask
 from flask_cors import CORS
 
-from wlts.blueprint import blueprint
-from wlts.config import get_settings
-
+from .blueprint import blueprint
+from .config import get_settings
 from .ext import WLTSDatabase
 from .version import __version__
 

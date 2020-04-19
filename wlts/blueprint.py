@@ -9,7 +9,7 @@
 from flask import Blueprint
 from flask_restplus import Api
 
-from wlts.controller import api as wlts_ns
+from .controller import api as wlts_ns
 
 blueprint = Blueprint('wlts', __name__)
 

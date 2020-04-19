@@ -8,7 +8,7 @@
 """This class implements a  for WLTS."""
 from werkzeug.exceptions import BadRequest, NotFound
 
-from wlts.collection import collection_manager
+from .collection import collection_manager
 
 
 class TrajectoryParams:

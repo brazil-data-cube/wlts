@@ -11,9 +11,9 @@ from bdc_core.utils.flask import APIResource
 from flask import jsonify, request
 from flask_restplus import Namespace
 
-from wlts.collection import collection_manager
-from wlts.schemas import collections_list, describe_collection, trajectory
-from wlts.trajectory import Trajectory, TrajectoryParams
+from .collection import collection_manager
+from .schemas import collections_list, describe_collection, trajectory
+from .trajectory import Trajectory, TrajectoryParams
 
 api = Namespace('wlts', description='status')
 

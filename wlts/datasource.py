@@ -16,14 +16,14 @@ from json import loads as json_loads
 from pathlib import Path
 from xml.dom import minidom
 
+import gdal
 import psycopg2
 import requests
+from osgeo import ogr, osr
 from shapely.geometry import Point
 from werkzeug.exceptions import NotFound
 
-import gdal
-from osgeo import ogr, osr
-from wlts.config import BASE_DIR
+from .config import BASE_DIR
 
 config_folder = Path(BASE_DIR) / 'json-config/'
 

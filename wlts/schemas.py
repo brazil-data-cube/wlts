@@ -11,7 +11,7 @@ from pathlib import Path
 
 from wlts.config import BASE_DIR
 
-schemas_folder = Path(BASE_DIR) / 'json-schemas/'
+schemas_folder = Path(BASE_DIR) / 'jsonschemas/'
 
 
 def load_schema(file_name):
