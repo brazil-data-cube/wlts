@@ -1,4 +1,9 @@
 --
+-- Enable PostGIS extension
+--
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+--
 -- PostgreSQL database dump
 --
 
@@ -16,11 +21,12 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+
 --
 -- Name: wlts; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
-CREATE SCHEMA wlts;
+CREATE SCHEMA IF NOT EXISTS wlts;
 
 
 ALTER SCHEMA wlts OWNER TO postgres;

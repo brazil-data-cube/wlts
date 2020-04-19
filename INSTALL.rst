@@ -75,7 +75,7 @@ In the source code folder, enter the following command:
       FLASK_ENV="development" \
       SQLALCHEMY_URI="postgresql://user:password@localhost:5432/dbname" \
       WLTS_URL="http://localhost:5000" \
-      wlts run
+      flask run
 
 You may need to replace the definition of some environment variables:
 
@@ -83,7 +83,7 @@ You may need to replace the definition of some environment variables:
 
   - ``WLTS_URL="http://localhost:5000"``: Base URI of the service.
 
-  - ``SQLALCHEMY_URI="postgresql://user:password@localhost:5432/dbname"``: The database URI to be used.
+  - ``SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname"``: The database URI to be used.
 
 
 The above command should output some messages in the console as showed below:
@@ -97,6 +97,7 @@ The above command should output some messages in the console as showed below:
      * Debugger is active!
      * Debugger PIN: 184-616-293
 
+
 Running a Example Data
 ----------------------
 
@@ -104,14 +105,16 @@ You can load example data with the CLI:
 
 .. code-block:: shell
 
-    SQLALCHEMY_DATABASE_URI=""postgresql://user:password@localhost:5432/dbname" \
+    SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname" \
     wlts db insert-db
+
 
 Go to ``wlts/json-config`` folder:
 
 .. code-block:: shell
 
      $ cd wlts/json-config
+
 
 In the ``wlts_config.json`` file alter ``dbms_source`` configuration:
 
@@ -131,6 +134,7 @@ In the ``wlts_config.json`` file alter ``dbms_source`` configuration:
         ]
       }
 
+
 You may need to replace definition of some information about database you loaded example data:
 
   - ``"host": "localhost"``: set the database host address.
@@ -139,19 +143,20 @@ You may need to replace definition of some information about database you loaded
   - ``"password": "password"``: the user password for connecting to the database server.
   - ``"database": "wlts"``: the name of the database containing the example data.
 
+
 Enter the following command to run the service:
 
 .. code-block:: shell
 
-    FLASK_APP="wlts" \
-    FLASK_ENV="development" \
     WLTS_URL="http://localhost:5000" \
     SQLALCHEMY_DATABASE_URI=""postgresql://user:password@localhost:5432/dbname" \
     wlts run
 
+
 If you want to check if the system is up and running, try the following URL in your web browser:
 
-* http://localhost:5000/wlts/wlts/list_collections
+* http://localhost:5000/wlts/list_collections
+
 
 You should see an output like:
 
@@ -162,6 +167,7 @@ You should see an output like:
         "sampledb"
       ]
     }
+
 
 * http://localhost:5000/wlts/describe_collection?collection_id=sampledb
 
@@ -220,6 +226,7 @@ You should see an output like:
           }
         ]
       }
+
 
 .. rubric:: Footnotes
 
