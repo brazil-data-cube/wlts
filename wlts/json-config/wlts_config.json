@@ -6,8 +6,8 @@
         "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
         "host": "localhost",
         "port": "5432",
-        "user": "postgres",
-        "password": "123456",
+        "user": "user",
+        "password": "password",
         "database": "wlts"
       }
     ]
