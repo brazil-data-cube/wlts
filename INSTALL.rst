@@ -75,7 +75,7 @@ In the source code folder, enter the following command:
       FLASK_ENV="development" \
       SQLALCHEMY_URI="postgresql://user:password@localhost:5432/dbname" \
       WLTS_URL="http://localhost:5000" \
-      flask run
+      wlts run
 
 You may need to replace the definition of some environment variables:
 
@@ -97,6 +97,129 @@ The above command should output some messages in the console as showed below:
      * Debugger is active!
      * Debugger PIN: 184-616-293
 
+Running a Example Data
+----------------------
+
+You can load example data with the CLI:
+
+.. code-block:: shell
+
+    SQLALCHEMY_DATABASE_URI=""postgresql://user:password@localhost:5432/dbname" \
+    wlts db insert-db
+
+Go to ``wlts/json-config`` folder:
+
+.. code-block:: shell
+
+     $ cd wlts/json-config
+
+In the ``wlts_config.json`` file alter ``dbms_source`` configuration:
+
+.. code-block:: js
+
+    "datasources": {
+         "dbms_source": [
+          {
+            "type": "POSTGIS",
+            "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
+            "host": "localhost",
+            "port": "5432",
+            "user": "user",
+            "password": "password",
+            "database": "wlts"
+          }
+        ]
+      }
+
+You may need to replace definition of some information about database you loaded example data:
+
+  - ``"host": "localhost"``: set the database host address.
+  - ``"port": "port"``: set the database port.
+  - ``"user": "user"``: the user name for connecting to the database server.
+  - ``"password": "password"``: the user password for connecting to the database server.
+  - ``"database": "wlts"``: the name of the database containing the example data.
+
+Enter the following command to run the service:
+
+.. code-block:: shell
+
+    FLASK_APP="wlts" \
+    FLASK_ENV="development" \
+    WLTS_URL="http://localhost:5000" \
+    SQLALCHEMY_DATABASE_URI=""postgresql://user:password@localhost:5432/dbname" \
+    wlts run
+
+If you want to check if the system is up and running, try the following URL in your web browser:
+
+* http://localhost:5000/wlts/wlts/list_collections
+
+You should see an output like:
+
+.. code-block:: js
+
+    {
+      "collections": [
+        "sampledb"
+      ]
+    }
+
+* http://localhost:5000/wlts/describe_collection?collection_id=sampledb
+
+.. code-block:: js
+
+    {
+      "collection_type": "Feature",
+      "description": "Exemple Data",
+      "detail": "http://www.obt.inpe.br/",
+      "name": "sampledb",
+      "period": {
+        "end_date": "2014",
+        "start_date": "2012"
+      },
+      "resolution_unit": {
+        "unit": "YEAR",
+        "value": "1"
+      },
+      "spatial_extent": {
+        "xmax": "-27.9904",
+        "xmin": "-73.9905",
+        "ymax": "5.27184",
+        "ymin": "-34.7282"
+      }
+    }
+
+
+* http://localhost:5000/wlts/trajectory?latitude=-8.706&longitude=-64.285
+
+.. code-block:: js
+
+    {
+      "query": {
+        "collections": null,
+        "end_date": null,
+        "latitude": -8.706,
+        "longitude": -64.285,
+        "start_date": null
+      },
+      "result": {
+        "trajectory": [
+          {
+            "class": "Pasto Limpo",
+            "collection": "sampledb",
+            "date": "2012"
+          },
+          {
+            "class": "Mosaico de Ocupações",
+            "collection": "sampledb",
+            "date": "2013"
+          },
+          {
+            "class": "Pasto Limpo",
+            "collection": "sampledb",
+            "date": "2014"
+          }
+        ]
+      }
 
 .. rubric:: Footnotes
 

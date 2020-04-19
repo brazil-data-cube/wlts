@@ -22,5 +22,6 @@ recursive-include doc *.xml
 recursive-include doc Makefile
 recursive-include tests *.py
 recursive-include wlts *.json
+recursive-include wlts *.sql
 recursive-include wlts *.py
 

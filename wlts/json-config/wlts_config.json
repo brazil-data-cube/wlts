@@ -1,110 +1,28 @@
 {
   "datasources": {
-    "webservice_source": [
+     "dbms_source": [
       {
-        "type": "WFS",
-        "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "host": "http://127.0.0.1",
-        "port": "8081",
-        "location": "geoserver",
-        "user": "XXXX",
-        "password": "XXXX"
+        "type": "POSTGIS",
+        "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
+        "host": "localhost",
+        "port": "5432",
+        "user": "postgres",
+        "password": "123456",
+        "database": "wlts"
       }
     ]
   },
-  "classification_system": [
-    {
-      "id": "1",
-      "name": "prodes",
-      "authority_name": "INPE",
-      "description": "Sistema de Classificacao do PRODES",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "version": "1.0"
-    },
-    {
-      "id": "2",
-      "name": "deter A",
-      "authority_name": "INPE",
-      "description": "Sistema de Classificacao do Deter",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
-      "version": "1.0"
-    },
-    {
-      "id": "3",
-      "name": "TerraClass",
-      "authority_name": "INPE",
-      "description": "Sistema de Classificacao do TerraClass",
-      "detail": "https://www.terraclass.gov.br",
-      "version": "1.0"
-    },
-    {
-      "id": "4",
-      "name": "MapBiomas",
-      "authority_name": "INPE",
-      "description": "Sistema de Classificacao do MapBiomas",
-      "detail": "http://mapbiomas.org",
-      "version": "1.0"
-    },
-    {
-      "id": "5",
-      "name": "Deter B",
-      "authority_name": "INPE",
-      "description": "Sistema de Classificacao do Deter",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
-      "version": "1.0"
-    }
-  ],
   "feature_collection": [
     {
-      "name": "deterb_amz",
+      "name": "sampledb",
       "authority_name": "INPE",
-      "description": "Alertas de Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-      "dataset_type": "Feature",
-      "classification_class": {
-        "classification_system_id": "5",
-        "type": "Feature",
-        "property_name": "datacube:deterb_amz_classes",
-        "property_id": "id",
-        "class_property_name": "nome",
-        "property_description": "descricao"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "DAY",
-          "value": "1"
-        },
-        "string_format": "%Y-%m-%d"
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "datacube:deterb_amz",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4674,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "classe_id",
-          "temporal_property": "data_observacao"
-        }
-      ]
-    },
-    {
-      "name": "terraclass",
-      "authority_name": "INPE",
-      "description": "Mapeamento do uso e cobertura da Terra",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "description": "Exemple Data",
+      "detail": "http://www.obt.inpe.br/",
+      "datasource_id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
       "dataset_type": "Table",
       "classification_class": {
-        "classification_system_id": "3",
         "type": "Feature",
-        "property_name": "datacube:terraclass_classes",
+        "property_name": "wlts.sample_db_classes",
         "property_id": "id",
         "class_property_name": "nome",
         "property_description": "descricao"
@@ -113,107 +31,22 @@
         "type": "STRING",
         "resolution": {
           "unit": "YEAR",
-          "value": "2"
-        },
-        "string_format": "%Y"
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "datacube:terraclass",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4618,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "classe_2004",
-          "temporal_property": "2004"
-        },
-        {
-          "class_property": "classe_2008",
-          "temporal_property": "2008"
-        },
-        {
-          "class_property": "classe_2010",
-          "temporal_property": "2010"
-        },
-        {
-          "class_property": "classe_2012",
-          "temporal_property": "2012"
-        },
-        {
-          "class_property": "classe_2014",
-          "temporal_property": "2014"
-        }
-      ]
-    },
-    {
-      "name": "deter_amz",
-      "authority_name": "INPE",
-      "description": "Alertas de desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-      "dataset_type": "Table",
-      "classification_class": {
-        "classification_system_id": "2",
-        "type": "Literal",
-        "property_name": "",
-        "property_id": "",
-        "class_property_name": "",
-        "property_description": "Unica Classe Deter"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "YEAR",
-          "value": "1"
-        },
-        "string_format": "%Y-%m-%d"
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "datacube:deter_amz",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4618,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property_name": "Alerta",
-          "temporal_property": "data_observacao"
-        }
-      ]
-    },
-    {
-      "name": "prodes",
-      "authority_name": "INPE",
-      "description": "Taxas anuais de Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-      "dataset_type": "Feature",
-      "classification_class": {
-        "classification_system_id": "1",
-        "type": "Feature",
-        "property_name": "datacube:prodes_classes",
-        "property_id": "id",
-        "class_property_name": "nome",
-        "property_description": "descricao"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "YEAR",
           "value": "1"
         },
         "string_format": "%Y"
       },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_type": "datacube:prodes",
+      "period": {
+        "start_date": "2012",
+        "end_date": "2014"
+      },
+      "scala": "1:16.287.126",
+      "spatial_extent": {
+        "xmin":"-73.9905",
+        "ymin": "-34.7282",
+        "xmax": "-27.9904",
+        "ymax": "5.27184"
+      },
+      "feature_type": "wlts.sample_db",
       "feature_id_property": "gid",
       "geom_property": {
         "property_name": "geom",
@@ -222,8 +55,16 @@
       },
       "observations_properties": [
         {
-          "class_property": "classe_id",
-          "temporal_property": "ano"
+          "class_property": "classe_2012",
+          "temporal_property": "2012"
+        },
+        {
+          "class_property": "classe_2013",
+          "temporal_property": "2013"
+        },
+        {
+          "class_property": "classe_2014",
+          "temporal_property": "2014"
         }
       ]
     }

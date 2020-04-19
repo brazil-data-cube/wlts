@@ -8,9 +8,11 @@
 """Command Line Interface Web Land Trajectory Service."""
 
 import click
-from flask.cli import FlaskGroup
+from flask.cli import FlaskGroup, with_appcontext
 
 from . import create_app
+from .ext import db as _db
+from .utils import load_exemple_data
 
 
 def create_cli(create_app=None):
@@ -39,3 +41,22 @@ def create_cli(create_app=None):
 
 
 cli = create_cli(create_app=create_app)
+
+
+@cli.group()
+@with_appcontext
+def db():
+    """Database operations."""
+
+
+@db.command()
+@with_appcontext
+def insert_db():
+    """Insert Exemple Data into Database."""
+    sql = load_exemple_data('wlts_example.sql')
+
+    _db.session.execute(sql)
+
+    _db.session.commit()
+
+    click.echo("Schema Create!")
