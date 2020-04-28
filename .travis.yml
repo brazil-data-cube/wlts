@@ -30,7 +30,7 @@ before_install:
     - pip install --upgrade pip
     - pip install --upgrade setuptools
     - pip install --upgrade wheel
-    - pip install "gdal==2.4.2"
+    - pip install GDAL==`gdalinfo --version | cut -d' ' -f2 | cut -d',' -f1`
 
 install:
     - pip install -e .[tests,docs]
