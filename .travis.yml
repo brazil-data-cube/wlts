@@ -6,8 +6,23 @@ cache:
     directories:
         - $HOME/.cache/pip
 
+branches:
+    only:
+        - master
+        - b-0.2
+
 dist: bionic
 
+env:
+  global:
+    - CPLUS_INCLUDE_PATH=/usr/include/gdal
+    - C_INCLUDE_PATH=/usr/include/gdal
+
+addons:
+  apt:
+    packages:
+    - libhdf5-serial-dev
+    - libgdal-dev
 python:
    - "3.7"
 
@@ -15,8 +30,6 @@ before_install:
     - pip install --upgrade pip
     - pip install --upgrade setuptools
     - pip install --upgrade wheel
-    - export C_INCLUDE_PATH="/usr/include/gdal"
-    - export CPLUS_INCLUDE_PATH="/usr/include/gdal"
     - pip install "gdal==2.4.2"
 
 install:
