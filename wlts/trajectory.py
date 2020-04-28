@@ -50,7 +50,8 @@ class Trajectory:
         """Utility to check collection existence in memory."""
         # print(collection)
         # print(cls.list_collection())
-        if collection not in cls.list_collection():
+        collection_list = cls.list_collection()
+        if collection not in collection_list['collections']:
             raise NotFound('Collection "{}" not found'.format(collection))
 
     @staticmethod

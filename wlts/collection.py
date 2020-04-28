@@ -12,7 +12,7 @@ from pathlib import Path
 
 from .classificationsys import ClassificationSystemClass as Class
 from .config import BASE_DIR
-from .datasource import datasource_manager
+from .datasource import datasource_manager, get_date_from_str
 
 config_folder = Path(BASE_DIR) / 'json-config/'
 
@@ -29,13 +29,34 @@ class Collection(metaclass=ABCMeta):
         self.detail = detail
         self.datasource = datasource_manager.get_datasource(datasource_id)
         self.dataset_type = dataset_type
-        self.classification_class = Class(classification_class["type"], classification_class["property_name"],
-                                                classification_class["property_description"], classification_class["property_id"],
-                                                classification_class["class_property_name"])
+        self.classification_class = self.init_classification_system(classification_class)
         self.temporal = temporal
         self.scala = scala
         self.spatial_extent = spatial_extent
         self.period = period
+
+    def init_classification_system(self, classification_class):
+        """Creates Class."""
+        args = dict()
+
+        args['type'] = classification_class["type"]
+        args['name'] = classification_class["property_name"]
+        args['class_name'] = classification_class["class_property_name"]
+        args['id'] = classification_class["property_id"]
+        args['code'] = None
+        args['description'] = None
+        args['base'] = None
+
+        if 'property_code' in classification_class:
+            args['code'] = classification_class["property_code"]
+
+        if 'property_description' in classification_class:
+            args['description'] = classification_class["property_description"]
+
+        if 'property_base' in classification_class:
+            args['base'] = classification_class["property_base"]
+
+        return Class(**args)
 
     def get_name(self):
         """Get Collection Name."""
@@ -148,8 +169,7 @@ class ImageCollection(Collection):
         ds = self.get_datasource()
 
         for obs in self.attributes_properties:
-            for tl in self.timeline:
-
+            for time in self.timeline:
                 args = {
                     "image": self.image,
                     "temporal": self.temporal,
@@ -161,7 +181,7 @@ class ImageCollection(Collection):
                     "classification_class": self.classification_class,
                     "start_date": start_date,
                     "end_date": end_date,
-                    "time": tl
+                    "time": time
                 }
 
                 result = ds.get_trajectory(**args)
@@ -265,7 +285,7 @@ class CollectionManager:
         """Load all Collection."""
         config_file = config_folder / 'wlts_config.json'
 
-        with config_file.open()  as json_data:
+        with config_file.open(encoding='utf-8')  as json_data:
 
             config = json_loads(json_data.read())
 

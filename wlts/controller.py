@@ -8,8 +8,9 @@
 """Controllers of Web Land Trajectory Service."""
 from bdc_core.decorators.validators import require_model
 from bdc_core.utils.flask import APIResource
-from flask import jsonify, request
+from flask import abort, jsonify, request
 from flask_restplus import Namespace
+from werkzeug.exceptions import NotFound
 
 from .collection import collection_manager
 from .schemas import collections_list, describe_collection, trajectory
@@ -47,23 +48,26 @@ class DescribeCollection(APIResource):
 
         collection = collection_manager.get_collection(collection_name)
 
-        data = {
-            "name": collection.name,
-            "description": collection.description,
-            "detail": collection.detail,
-            "collection_type": collection.get_collectiontype(),
-            "resolution_unit": {
-                "unit": collection.get_resolution_unit(),
-                "value": collection.get_resolution_value()
-            },
-            "period": {
-                "start_date": collection.get_start_date(),
-                "end_date": collection.get_end_date()
-            },
-            "spatial_extent": collection.get_spatial_extent()
-        }
+        if collection is None:
+           return abort(404, "Collection Not Found")
+        else:
+            data = {
+                "name": collection.name,
+                "description": collection.description,
+                "detail": collection.detail,
+                "collection_type": collection.get_collectiontype(),
+                "resolution_unit": {
+                    "unit": collection.get_resolution_unit(),
+                    "value": collection.get_resolution_value()
+                },
+                "period": {
+                    "start_date": collection.get_start_date(),
+                    "end_date": collection.get_end_date()
+                },
+                "spatial_extent": collection.get_spatial_extent()
+            }
 
-        return jsonify(data)
+            return jsonify(data)
 
 
 @api.route('/trajectory')

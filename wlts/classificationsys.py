@@ -10,13 +10,20 @@
 class ClassificationSystemClass:
     """ClassificationSystemClass Class."""
 
-    def __init__(self, type, name, description, id, class_property_name):
+    def __init__(self, **kwargs):
         """Creates a ClassificationSystemClass object."""
-        self.type = type
-        self.name = name
-        self.description = description
-        self.id = id
-        self.class_property_name = class_property_name
+        invalid_parameters = set(kwargs) - {"type", "name", "class_name", "id", "base", "code", "description"}
+
+        if invalid_parameters:
+            raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
+
+        self.type = kwargs['type']
+        self.name = kwargs['name']
+        self.id =  kwargs['id']
+        self.class_name = kwargs['class_name']
+        self.base = kwargs['base']
+        self.code = kwargs['code']
+        self.description = kwargs['description']
 
     def get_type(self):
         """Get ClassificationSystemClass type."""
@@ -35,5 +42,13 @@ class ClassificationSystemClass:
         return self.id
 
     def get_class_property_name(self):
-        """Get ClassificationSystemClass propertyname."""
-        return self.class_property_name
+        """Get ClassificationSystemClass property_name."""
+        return self.class_name
+
+    def get_base(self):
+        """Get ClassificationSystemClass base : Workspace or schema."""
+        return self.base
+
+    def get_code(self):
+        """Get ClassificationSystemClass workspace."""
+        return self.code
