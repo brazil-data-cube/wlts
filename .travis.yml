@@ -9,20 +9,16 @@ cache:
 branches:
     only:
         - master
-        - b-0.2
 
 dist: bionic
 
-env:
-  global:
-    - CPLUS_INCLUDE_PATH=/usr/include/gdal
-    - C_INCLUDE_PATH=/usr/include/gdal
-
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ppa'
     packages:
-    - libhdf5-serial-dev
-    - libgdal-dev
+      - libgdal-dev
+
 python:
    - "3.7"
 
@@ -30,9 +26,10 @@ before_install:
     - pip install --upgrade pip
     - pip install --upgrade setuptools
     - pip install --upgrade wheel
-    - pip install GDAL==`gdalinfo --version | cut -d' ' -f2 | cut -d',' -f1`
 
 install:
+    - pip install numpy
+    - pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="$(gdal-config --cflags)"
     - pip install -e .[tests,docs]
 
 script:
