@@ -6,7 +6,18 @@ cache:
     directories:
         - $HOME/.cache/pip
 
+branches:
+    only:
+        - master
+
 dist: bionic
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ppa'
+    packages:
+      - libgdal-dev
 
 python:
    - "3.7"
@@ -17,6 +28,8 @@ before_install:
     - pip install --upgrade wheel
 
 install:
+    - pip install numpy
+    - pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="$(gdal-config --cflags)"
     - pip install -e .[tests,docs]
 
 script:

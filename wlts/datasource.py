@@ -7,13 +7,13 @@
 #
 """WLTS data source class."""
 import urllib.request
-import uuid
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from gzip import GzipFile
 from io import BytesIO
 from json import loads as json_loads
 from pathlib import Path
+from uuid import uuid4
 from xml.dom import minidom
 
 import gdal
@@ -124,7 +124,7 @@ class WCSConnectionPool:
         self.host = connection_info["host"]
         self.port = connection_info["port"]
         self.location = connection_info["location"]
-        self.workspace = "datacube"
+        self.workspace = "geoserver"
         self.base_path = "wcs?service=WCS&version=1.0.0"
         self.auth = None
 
@@ -193,15 +193,16 @@ class WCSConnectionPool:
 
         return response.content.decode('utf-8')
 
-    def get_class_wfs(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
+    def get_class_wfs(self, featureID, class_name, ft_name, workspace):
         """Get classes of given feature."""
-        url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, "wfs?service=WFS&version=1.0.0", ft_name, featureID)
-
+        # url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, "wfs?service=WFS&version=1.0.0", ft_name, featureID)
+        url = "{}/{}&request=GetFeature&typeName={}&cql_filter=code={}".format(self.base, "wfs?service=WFS&version=1.0.0",
+                                                                         ft_name, featureID)
         doc = self.get_uri(url)
 
         xmldoc = minidom.parseString(doc)
 
-        tagName = workspace + ":" + class_property_name
+        tagName = str(workspace) + ":" + class_name
 
         itemlist = xmldoc.getElementsByTagName(tagName)
 
@@ -215,31 +216,37 @@ class WCSConnectionPool:
 
         if not image_data:
             return None
-        mmap_name = "/vsimem/" + uuid.uuid4().hex
+
+        mmap_name = "/vsimem/" + uuid4().hex
 
         gdal.FileFromMemBuffer(mmap_name, image_data.read())
         gdal_dataset = gdal.Open(mmap_name)
 
-        target = osr.SpatialReference(wkt=gdal_dataset.GetProjection())
+        if gdal_dataset is not None:
 
-        source = osr.SpatialReference()
-        source.ImportFromEPSG(srid)
+            target = osr.SpatialReference(wkt=gdal_dataset.GetProjection())
 
-        transform = osr.CoordinateTransformation(source, target)
+            source = osr.SpatialReference()
+            source.ImportFromEPSG(srid)
 
-        point = ogr.Geometry(ogr.wkbPoint)
-        point.AddPoint(long, lat)
-        point.Transform(transform)
+            transform = osr.CoordinateTransformation(source, target)
 
-        x, y = self.transform_latlong_to_rowcol(gdal_dataset, point.GetX(), point.GetY())
+            point = ogr.Geometry(ogr.wkbPoint)
+            point.AddPoint(long, lat)
+            point.Transform(transform)
 
-        intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1)
+            x, y = self.transform_latlong_to_rowcol(gdal_dataset, point.GetX(), point.GetY())
 
-        gdal_dataset = None
-        # Free memory associated with the in-memory file
-        gdal.Unlink(mmap_name)
+            intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1)
 
-        return intval[0]
+            gdal_dataset = None
+            # Free memory associated with the in-memory file
+            gdal.Unlink(mmap_name)
+
+            return intval[0]
+
+        else:
+            return None
 
     def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time,x, y):
         """Get Image."""
@@ -270,9 +277,13 @@ class WFSConnectionPool:
         self.host = connection_info["host"]
         self.port = connection_info["port"]
         self.location = connection_info["location"]
-        self.workspace = "datacube"
         self.base_path = "wfs?service=WFS&version=1.0.0"
         self.auth = None
+
+        if "workspace" in connection_info:
+            self.workspace = connection_info["workspace"]
+        else:
+            self.workspace = None
 
         if(connection_info["user"] and connection_info["password"]):
             self.auth = (connection_info["user"], connection_info["password"])
@@ -290,7 +301,10 @@ class WFSConnectionPool:
 
     def mount_url(self):
         """Mount url WFS."""
-        all_url = self.host + ":" + self.port + "/" + self.location + "/" + self.workspace
+        all_url = self.host + ":" + self.port + "/" + self.location
+
+        if(self.workspace):
+            all_url += "/" + self.workspace
 
         return all_url
 
@@ -383,6 +397,7 @@ class WFSConnectionPool:
         features = self.list_feature()
 
         if ft_name not in features['features']:
+            print("Entrou")
             raise NotFound('Feature "{}" not found'.format(ft_name))
 
 
@@ -564,13 +579,25 @@ class WCSDataSource(DataSource):
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
+        ts = get_date_from_str(kwargs['time'])
+        if kwargs['start_date']:
+            start_date = get_date_from_str(kwargs['start_date'])
+            if  ts < start_date:
+                return None
+        if kwargs['end_date']:
+            end_date = get_date_from_str(kwargs['end_date'])
+            if ts > end_date:
+                return None
+
         result = list()
 
         class_property_name = kwargs['classification_class'].get_class_property_name()
 
         class_name = kwargs['classification_class'].get_name()
 
-        # Todo verificar se existe
+        workspace =  kwargs['classification_class'].get_base()
+
+        # TODO verificar a imagem existe
         # self.wfc_poll.check_image(kwargs['image'])
 
         min_x = kwargs['x'] - 0.1
@@ -584,10 +611,15 @@ class WCSDataSource(DataSource):
                                             (kwargs['grid'])['column'], (kwargs['grid'])['row'],
                                             kwargs['time'], kwargs['x'], kwargs['y'])
 
-        classes_prop = self.wfc_poll.get_class_wfs(featureID[0], class_property_name, class_name)
 
-        result.append(classes_prop)
-        result.append(kwargs['time'])
+        if featureID:
+            classes_prop = self.wfc_poll.get_class_wfs(featureID[0], class_property_name, class_name, workspace)
+
+            result.append(classes_prop)
+            result.append(kwargs['time'])
+
+        else:
+            result = None
 
         return result
 
@@ -713,12 +745,8 @@ class WFSDataSource(DataSource):
     def open(self):
         """Open WFS Connection."""
         self.wfs_poll = WFSConnectionPool(self.get_connection_info())
-        self.wfs_poll.describe_feature("deterb_amz")
+        # self.wfs_poll.describe_feature()
         # self.wfs_poll.openConection()
-
-
-        # def close(self):
-        #     print("close")
 
 
 class DataSourceFactory:
@@ -773,10 +801,10 @@ class DataSourceManager:
         self._datasources[dsType].append(DataSourceFactory.make(connInfo["type"], connInfo["id"], connInfo))
 
     def load_all(self):
-        """Carrega Todos os DataSources."""
+        """Load All DataSources."""
         config_file = config_folder / 'wlts_config.json'
 
-        with config_file.open()  as json_data:
+        with config_file.open(encoding='utf-8')  as json_data:
 
             config = json_loads(json_data.read())
 
