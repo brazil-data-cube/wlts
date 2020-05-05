@@ -1,8 +1,6 @@
 FROM brazildatacube/base:0.1
 
-#RUN apt-get update && apt-get install -y libpq-dev libgdal-dev libgeos-dev build-essential manpages-dev git
-
-RUN apt-get update && apt-get install -y build-essential libpq-dev libgdal-dev manpages-dev git
+RUN apt-get update && apt-get install -y build-essential libpq-dev libgdal-dev manpages-dev git vim
  
 ADD . /wlts
 
