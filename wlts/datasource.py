@@ -243,7 +243,10 @@ class WCSConnectionPool:
             # Free memory associated with the in-memory file
             gdal.Unlink(mmap_name)
 
-            return intval[0]
+            if intval is not None:
+                return intval[0]
+            else:
+                return intval
 
         else:
             return None
