@@ -8,13 +8,11 @@
 """Python Collection Class and methods for WLTS."""
 from abc import ABCMeta, abstractmethod
 from json import loads as json_loads
-from pathlib import Path
+
+import pkg_resources
 
 from .classificationsys import ClassificationSystemClass as Class
-from .config import BASE_DIR
-from .datasource import datasource_manager, get_date_from_str
-
-config_folder = Path(BASE_DIR) / 'json-config/'
+from .datasource import datasource_manager
 
 
 class Collection(metaclass=ABCMeta):
@@ -214,10 +212,7 @@ class CollectionFactory:
 class CollectionManager:
     """CollectionManager Class."""
 
-    _collenctions = {
-        "feature_collection": [],
-        "image_collection": []
-    }
+    _collections = list()
 
     __instance = None
 
@@ -236,67 +231,48 @@ class CollectionManager:
             CollectionManager()
         return CollectionManager.__instance
 
-    def insert(self, dsType, collection_info):
+    def insert(self, collectionType, collection_info):
         """Insert Collection."""
-        collection = CollectionFactory.make(dsType, collection_info)
-        self._collenctions[dsType].append(collection)
+        collection = CollectionFactory.make(collectionType, collection_info)
+        self._collections.append(collection)
 
 
     def get_collection(self, name):
         """Get Collection."""
         try:
-            for c_list in self._collenctions.values():
-                for collection in c_list:
-                    if collection.get_name() == name:
-                        print("Collection found! {} ".format(type(collection)))
-                        return collection
+            for collection in self._collections:
+                if name == collection.get_name():
+                    return collection
         except:
             return None
 
-    def get_all_collection_names(self):
+    def collection_names(self):
         """Get Name of all collections avaliable."""
         collections_names = list()
 
-        for c_type, c_name in self._collenctions.items():
-            for name in c_name:
-                collections_names.append(name.get_name())
+        for collection in self._collections:
+            collections_names.append(collection.get_name())
 
-        return {"collections": collections_names}
+        return collections_names
 
-    def get_all_collection(self):
+    def get_all_collections(self):
         """Get all Collections."""
-        all_collection = []
-
-        for c_list in self._collenctions.values():
-            for collection in c_list:
-                if collection:
-                    all_collection.append(collection)
-        return all_collection
-
-    def get_collection_name(self, c_type):
-        """Get Collection by name."""
-        all_collection = []
-        for cl in self._collenctions[c_type]:
-            if(cl):
-                all_collection.append(cl.get_name())
-        return all_collection
+        return self._collections
 
     def load_all(self):
         """Load all Collection."""
-        config_file = config_folder / 'wlts_config.json'
+        json_string = pkg_resources.resource_string(__name__, '/json-config/wlts_config.json').decode('utf-8')
 
-        with config_file.open(encoding='utf-8')  as json_data:
+        config = json_loads(json_string)
 
-            config = json_loads(json_data.read())
+        if "feature_collection" in config:
+            feature_collection = config["feature_collection"]
+            for ft_collection in feature_collection:
+                self.insert("feature_collection", ft_collection)
 
-            if "image_collection" in config:
-                image_collection = config["image_collection"]
-                for img_collection in image_collection:
-                    self.insert("image_collection", img_collection)
-
-            if "feature_collection" in config:
-                feature_collection = config["feature_collection"]
-                for ft_collection in feature_collection:
-                    self.insert("feature_collection", ft_collection)
+        if "image_collection" in config:
+            image_collection = config["image_collection"]
+            for img_collection in image_collection:
+                self.insert("image_collection", img_collection)
 
 collection_manager = CollectionManager()

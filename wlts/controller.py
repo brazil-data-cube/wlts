@@ -30,7 +30,9 @@ class ListCollectionsController(APIResource):
         :returns: Collection list avaliable in server.
         :rtype: dict
         """
-        return jsonify(collection_manager.get_all_collection_names())
+        result = {"collections": collection_manager.collection_names()}
+
+        return jsonify(result)
 
 
 @api.route('/describe_collection')

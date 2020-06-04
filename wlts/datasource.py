@@ -17,6 +17,7 @@ from uuid import uuid4
 from xml.dom import minidom
 
 import gdal
+import pkg_resources
 import psycopg2
 import requests
 from osgeo import ogr, osr
@@ -805,20 +806,18 @@ class DataSourceManager:
 
     def load_all(self):
         """Load All DataSources."""
-        config_file = config_folder / 'wlts_config.json'
+        json_string = pkg_resources.resource_string(__name__, '/json-config/wlts_config.json').decode('utf-8')
 
-        with config_file.open(encoding='utf-8')  as json_data:
+        config = json_loads(json_string)
 
-            config = json_loads(json_data.read())
+        if "datasources" not in config:
+            raise ValueError("No datasource in wlts json config file")
+        else:
+            datasources = config["datasources"]
 
-            if "datasources" not in config:
-                raise ValueError("No datasource in json config file")
-            else:
-                datasources = config["datasources"]
-
-                for dstype, datasources_info in datasources.items():
-                    for ds_info in datasources_info:
-                        self.insert_datasource(dstype, ds_info)
+            for dstype, datasources_info in datasources.items():
+                for ds_info in datasources_info:
+                    self.insert_datasource(dstype, ds_info)
 
 
 datasource_manager = DataSourceManager()

@@ -43,15 +43,12 @@ class Trajectory:
     @classmethod
     def list_collection(cls):
         """Creates a trajectory parameter object."""
-        return collection_manager.get_all_collection_names()
+        return collection_manager.collection_names()
 
     @classmethod
     def check_collection(cls, collection):
         """Utility to check collection existence in memory."""
-        # print(collection)
-        # print(cls.list_collection())
-        collection_list = cls.list_collection()
-        if collection not in collection_list['collections']:
+        if collection not in cls.list_collection():
             raise NotFound('Collection "{}" not found'.format(collection))
 
     @staticmethod
@@ -59,12 +56,9 @@ class Trajectory:
         """Retrieves collections."""
         features = []
         try:
-
             for collections_name in ts_params.collections:
                 features.append(collection_manager.get_collection(collections_name))
-
             return features
-
         except RuntimeError:
             raise BadRequest('No Collection found')
 
@@ -81,19 +75,15 @@ class Trajectory:
 
         """
         if (ts_params.collections):
-
             # Validate collection existence
             for collection in ts_params.collections:
                 cls.check_collection(collection)
-
             collections = cls.get_collections(ts_params)
         else:
-            collections = collection_manager.get_all_collection()
+            collections = collection_manager.get_all_collections()
 
         # Retrieves the collections that matches the Trajectory collections name arguments
-
         tj_attr = []
-
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
                                   ts_params.end_date)
