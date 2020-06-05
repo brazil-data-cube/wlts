@@ -19,10 +19,11 @@ def load_example_data(file):
     return sql
 
 class CollectionsUtils:
+    """CollectionsUtils Class."""
 
     @classmethod
     def describe(cls, collection):
-
+        """Describe Collection."""
         try:
             data = {
                 "name": collection.name,
