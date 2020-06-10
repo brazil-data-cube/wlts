@@ -381,10 +381,11 @@ class WFSConnectionPool:
 
         return
 
-    def get_class(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
+    def get_class(self, featureID, class_property_name, ft_name, workspace):
         """Get classes of given feature."""
-        url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, self.base_path, ft_name, featureID)
-
+        url = "{}/{}&request=GetFeature&typeName={}&cql_filter=id={}".format(self.base,
+                                                                             "wfs?service=WFS&version=1.0.0",
+                                                                             ft_name, featureID)
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
@@ -394,7 +395,6 @@ class WFSConnectionPool:
         itemlist = xmldoc.getElementsByTagName(tagName)
 
         return itemlist[0].firstChild.nodeValue
-
 
     def check_feature(self, ft_name):
         """Utility to check feature existence in wfs."""
@@ -660,13 +660,14 @@ class WFSDataSource(DataSource):
 
         class_type = kwargs['classification_class'].get_type()
 
+        workspace = kwargs['classification_class'].get_base()
+
         args = {
             "feature_type": kwargs['feature_type'],
             "geom": geom,
             "geom_property": kwargs['geom_property'],
             "srid": (kwargs['geom_property'])['srid']
         }
-
 
         if (class_type == "Literal" and (kwargs['temporal'])["type"] == "STRING"):
             response = self.wfs_poll.get_feature(**args)
@@ -716,7 +717,7 @@ class WFSDataSource(DataSource):
 
             if (response):
                 featureID = response[(kwargs['obs'])["class_property"]]
-                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name, workspace)
 
                 result.append(classes_prop)
                 result.append((kwargs['obs'])["temporal_property"])
@@ -739,7 +740,7 @@ class WFSDataSource(DataSource):
 
             if (response):
                 featureID = response[(kwargs['obs'])["class_property"]]
-                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name, workspace)
 
                 result.append(classes_prop)
                 result.append(response[(kwargs['obs'])["temporal_property"]])
