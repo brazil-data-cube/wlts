@@ -89,26 +89,3 @@ class ImageCollection(Collection):
                 }
 
                 tj_attr.append(trj)
-
-
-
-
-
-
-
-
-
-
-
-
-                #
-                # if (result):
-                #
-                #     trj = {
-                #         "collection": self.get_name(),
-                #         "class": result[0],
-                #         "date": str(result[1])
-                #     }
-                #
-                #     tj_attr.append(trj)
-                #
