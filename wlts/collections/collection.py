@@ -18,7 +18,6 @@ class Collection(metaclass=ABCMeta):
     def __init__(self,  name, authority_name, description, detail, datasource_id, dataset_type,
                  classification_class, temporal, scala, spatial_extent, period):
         """Create Collection."""
-        print("Collection INIT")
         self.name = name
         self.authority_name = authority_name
         self.description = description
@@ -30,52 +29,8 @@ class Collection(metaclass=ABCMeta):
         self.period = period
         self.classification_class = self.init_classification_system(classification_class)
 
-        print("Init datasource")
         self.datasource = datasource_manager.get_datasource(datasource_id)
-        print(self.datasource.get_id)
 
-        # invalid_parameters = set(kwargs) - {"name", "authority_name", "description",
-        #                                     "detail", "datasource_id", "dataset_type",
-        #                                     "classification_class", "temporal", "scala",
-        #                                     "spatial_extent", "period"}
-        # if invalid_parameters:
-        #     raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
-        #
-        # if not type(kwargs['name']) is str:
-        #     raise AttributeError('name must be str')
-
-        # self.name = kwargs['name']
-        #
-        # if not type(kwargs['authority_name']) is str:
-        #     raise AttributeError('authority name must be str')
-        #
-        # self.authority_name = kwargs['authority_name']
-        #
-        # if not type(kwargs['description']) is str:
-        #     raise AttributeError('description must be str')
-        #
-        # self.description = kwargs['description']
-        #
-        # if not type(kwargs['detail']) is str:
-        #     raise AttributeError('detail must be str')
-        #
-        # self.detail = kwargs['detail']
-        #
-        # if not type(kwargs['dataset_type']) is str:
-        #     raise AttributeError('dataset_type be str')
-        #
-        # if (kwargs['dataset_type'] is not "Feature") or ((kwargs['dataset_type'] is not "Image")):
-        #     raise AttributeError('dataset_type be Feature or Image')
-        #
-        # self.dataset_type = kwargs['dataset_type']
-        #
-        # #Todo verificar o tipo
-        # self.scala = kwargs['scala']
-        # self.temporal = kwargs['temporal']
-        # self.spatial_extent = kwargs['spatial_extent']
-        # self.period = kwargs['period']
-        # self.classification_class = self.init_classification_system(kwargs['classification_class'])
-        # self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
 
 
     def init_classification_system(self, classification_class):
