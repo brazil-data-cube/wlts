@@ -52,8 +52,6 @@ class DescribeCollection(APIResource):
 
         collection = controller.describe_collection(collection_name)
 
-        # collection = collection_manager.get_collection(collection_name)
-
         if collection is None:
            return abort(404, "Collection Not Found")
 
