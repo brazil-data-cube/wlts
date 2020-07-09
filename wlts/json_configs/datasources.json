@@ -4,26 +4,8 @@
       {
         "type": "WFS",
         "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "host": " http://127.0.0.1:8080/wlts/geoserver",
-        "user": "user",
-        "password": "password",
-        "workspace": "datacube"
-      },
-      {
-        "type": "WCS",
-        "id": "1bf51b65-a489-44de-b4bb-1fcf34e13f83",
-        "host": " http://127.0.0.1:8080/wlts/geoserver",
-        "user": "user",
-        "password": "password",
-        "workspace": "mapbiomas"
-      },
-       {
-        "type": "WFS",
-        "id": "5c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "host": " http://127.0.0.1:8080/wlts/geoserver",
-        "user": "user",
-        "password": "password",
-        "workspace": "mapbiomas"
+        "host": "http://terrabrasilis.dpi.inpe.br/geoserver",
+        "workspace": "deter-amz"
       }
     ]
   }

@@ -1,18 +1,15 @@
 {
   "feature_collection": [
     {
-      "name": "deterb_amz",
+      "name": "deter_amz",
       "authority_name": "INPE",
       "description": "Alertas de Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
       "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
       "dataset_type": "Feature",
       "classification_class": {
         "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "type": "Feature",
-        "property_name": "deterb_amz_classes",
-        "property_value": "id",
-        "class_property_name": "codigo"
+        "type": "Self"
       },
       "temporal": {
         "type": "DATE",
@@ -23,193 +20,30 @@
         "string_format": "%Y-%m-%d"
       },
       "period": {
-        "start_date": "2000",
-        "end_date": "2007"
-      },
-      "scala": "1:100.000",
-      "spatial_extent": {
-        "xmin": 0,
-        "xmax": 0,
-        "ymin": 0,
-        "ymax": 0
-      },
-      "feature_name": "deterb_amz",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4674,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "classe_id",
-          "temporal_property": "data_observacao"
-        }
-      ]
-    },
-    {
-      "name": "PRODES",
-      "authority_name": "INPE",
-      "description": "Taxas anuais de Desmatamento",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-      "dataset_type": "Feature",
-      "classification_class": {
-        "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "type": "Feature",
-        "property_name": "prodes_classes",
-        "property_value": "id",
-        "class_property_name": "nome"
-      },
-      "temporal": {
-        "type": "DATE",
-        "resolution": {
-          "unit": "YEAR",
-          "value": "1"
-        },
-        "string_format": "%Y"
-      },
-      "period": {
-        "start_date": "2007",
+        "start_date": "2006",
         "end_date": "2017"
       },
       "scala": "1:100.000",
       "spatial_extent": {
-        "xmin": "-73.9783172607422",
-        "xmax": "-43.9135818481445",
-        "ymin": "-18.0406684875488",
-        "ymax": "5.27149105072021"
+        "xmin": -73.5490878282397,
+        "xmax": -44.0003914444064,
+        "ymin": -18.0364406523564,
+        "ymax": 4.55537642867927
       },
-      "feature_name": "prodes",
+      "feature_name": "deter_amz",
       "feature_id_property": "gid",
       "geom_property": {
         "property_name": "geom",
         "srid": 4674,
-        "type": "Polygon"
+        "type": "MultiPolygon"
       },
       "observations_properties": [
         {
-          "class_property": "classe_id",
-          "temporal_property": "ano"
-        }
-      ]
-    },
-    {
-      "name": "TerraClassAMZ",
-      "authority_name": "INPE",
-      "description": "Projeto TerraClass realiza o mapeamento do uso e cobertura da Terra na Amazônia",
-      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
-      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-      "dataset_type": "Feature",
-      "classification_class": {
-        "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "type": "Feature",
-        "property_name": "terraclass_classes",
-        "property_value": "id",
-        "class_property_name": "nome"
-      },
-      "temporal": {
-        "type": "STRING",
-        "resolution": {
-          "unit": "YEAR",
-          "value": "2"
-        },
-        "string_format": "%Y"
-      },
-      "period": {
-        "start_date": "2004",
-        "end_date": "2014"
-      },
-      "scala": "1:50",
-      "spatial_extent": "80",
-      "feature_name": "terraclass",
-      "feature_id_property": "gid",
-      "geom_property": {
-        "property_name": "geom",
-        "srid": 4618,
-        "type": "Polygon"
-      },
-      "observations_properties": [
-        {
-          "class_property": "classe_2004",
-          "temporal_property": "2004"
-        },
-        {
-          "class_property": "classe_2008",
-          "temporal_property": "2008"
-        },
-        {
-          "class_property": "classe_2010",
-          "temporal_property": "2010"
-        },
-        {
-          "class_property": "classe_2012",
-          "temporal_property": "2012"
-        },
-        {
-          "class_property": "classe_2014",
-          "temporal_property": "2014"
+          "class_property": "classname",
+          "temporal_property": "date"
         }
       ]
     }
-  ],
-  "image_collection": [
-    {
-      "name": "MapBiomasAmz",
-      "authority_name": "SEEG/OC",
-      "description": "Projeto de Mapeamento Anual da Cobertura e Uso do Solo no Brasil",
-      "detail": "https://mapbiomas.org/",
-      "datasource_id": "1bf51b65-a489-44de-b4bb-1fcf34e13f83",
-      "dataset_type": "Image",
-       "classification_class": {
-        "datasource_id": "5c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "type": "Feature",
-        "property_name": "v_classes",
-        "property_value": "code",
-        "class_property_name": "name"
-      },
-      "temporal": {
-        "type": "STRING",
-        "resolution": {
-          "unit": "YEAR",
-          "value": "1"
-        },
-        "string_format": "%Y"
-      },
-      "period": {
-        "start_date": "2007",
-        "end_date": "2017"
-      },
-      "scala": "1:250.000",
-      "spatial_extent": {
-        "min_x": "-74.1425418063331421",
-        "min_y": "6.0956980234498381",
-        "max_x": "-43.2487605332354974",
-        "max_y": "-16.4690835983484227"
-      },
-      "image": "mapbiomasamz",
-      "grid": {
-        "row": "2833",
-        "column": "3199"
-      },
-      "spatial_reference_system": {
-        "srid": 4326
-      },
-      "attributes_properties": [
-        {
-          "name": "GRAY_INDEX",
-          "data_type": "int",
-          "valid_range": {
-            "min": "1",
-            "max": "33"
-          },
-          "no_data": "0",
-          "description": "Esta banda contem os valores que ligam com a tabela de classificacao do mapbiomas"
-        }
-      ],
-      "timeline": [
-        "2018-01-01"
-      ]
-    }
-  ]
+
+    ]
 }

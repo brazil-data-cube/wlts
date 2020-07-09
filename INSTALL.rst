@@ -98,51 +98,35 @@ The above command should output some messages in the console as showed below:
      * Debugger PIN: 184-616-293
 
 
-Running a Example Data
-----------------------
+Running WLTS with a real data
+-----------------------------
 
-You can load example data with the CLI:
+We will use **DETER Amazônia Legal** data to present how to configure and use WLTS to recover trajectories.
+For this we use the data available by `TerraBrasilis <http://terrabrasilis.dpi.inpe.br/>`_ via GeoServer
 
-.. code-block:: shell
-
-    SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname" \
-    wlts db insert-db
-
-
-Go to ``wlts/json-config`` folder:
-
-.. code-block:: shell
-
-     $ cd wlts/json-config
-
-
-In the ``wlts_config.json`` file alter ``dbms_source`` configuration:
+In ``wlts/json_configs/datasources.json`` file the necessary settings must be added:
 
 .. code-block:: js
 
-    "datasources": {
-         "dbms_source": [
+     "datasources": {
+        "webservice_source": [
           {
-            "type": "POSTGIS",
-            "id": "95b8acfa-5625-416e-a77a-b3e0f211553b",
-            "host": "localhost",
-            "port": "5432",
-            "user": "user",
-            "password": "password",
-            "database": "wlts"
+            "type": "WFS",
+            "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+            "host": "http://terrabrasilis.dpi.inpe.br/geoserver",
+            "workspace": "deter-amz"
           }
         ]
       }
 
-
 You may need to replace definition of some information about database you loaded example data:
 
-  - ``"host": "localhost"``: set the database host address.
-  - ``"port": "port"``: set the database port.
-  - ``"user": "user"``: the user name for connecting to the database server.
-  - ``"password": "password"``: the user password for connecting to the database server.
-  - ``"database": "wlts"``: the name of the database containing the example data.
+  - ``"type": "WFS"``: The Web Service Type (WCS or WFS).
+  - ``"id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683"``: unique identifier to identify the datasource.
+  - ``"host"``: Geoserver data address.
+  - ``"workspace": "deter-amz"``: the wokspace name containing the DETER data.
 
+In ``wlts/json_configs/collections.json`` file the necessary settings must be added for accessing the collection :
 
 Enter the following command to run the service:
 
@@ -164,38 +148,38 @@ You should see an output like:
 
     {
       "collections": [
-        "sampledb"
+        "deter_amz"
       ]
     }
 
 
-* http://localhost:5000/wlts/describe_collection?collection_id=sampledb
+* http://localhost:5000/wlts/describe_collection?collection_id=deter_amz
 
 .. code-block:: js
 
     {
-      "collection_type": "Feature",
-      "description": "Exemple Data",
-      "detail": "http://www.obt.inpe.br/",
-      "name": "sampledb",
+     "collection_type": "Feature",
+      "description": "Alertas de Desmatamento",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
+      "name": "deter_amz",
       "period": {
-        "end_date": "2014",
-        "start_date": "2012"
+        "end_date": "2017",
+        "start_date": "2006"
       },
       "resolution_unit": {
-        "unit": "YEAR",
+        "unit": "DAY",
         "value": "1"
       },
       "spatial_extent": {
-        "xmax": "-27.9904",
-        "xmin": "-73.9905",
-        "ymax": "5.27184",
-        "ymin": "-34.7282"
+        "xmax": -44.0003914444064,
+        "xmin": -73.5490878282397,
+        "ymax": 4.55537642867927,
+        "ymin": -18.0364406523564
       }
     }
 
 
-* http://localhost:5000/wlts/trajectory?latitude=-8.706&longitude=-64.285
+* http://localhost:5000/wlts/trajectory?latitude=-9.091&longitude=-66.031
 
 .. code-block:: js
 
@@ -203,29 +187,20 @@ You should see an output like:
       "query": {
         "collections": null,
         "end_date": null,
-        "latitude": -8.706,
-        "longitude": -64.285,
+        "latitude": -9.091,
+        "longitude": -66.031,
         "start_date": null
       },
       "result": {
         "trajectory": [
           {
-            "class": "Pasto Limpo",
-            "collection": "sampledb",
-            "date": "2012"
-          },
-          {
-            "class": "Mosaico de Ocupações",
-            "collection": "sampledb",
-            "date": "2013"
-          },
-          {
-            "class": "Pasto Limpo",
-            "collection": "sampledb",
-            "date": "2014"
+            "class": "DEGRADACAO",
+            "collection": "deter_amz",
+            "date": "2016-10-06Z"
           }
         ]
-      }
+        }
+    }
 
 
 .. rubric:: Footnotes
