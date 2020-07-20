@@ -46,7 +46,7 @@ install_requires = [
     'Flask-Cors>=3.0.8',
     'Flask-Script>=2.0.6',
     'Flask-SQLAlchemy>=2.4.1',
-    'GDAL>=2.4',
+    'GDAL>=2.2',
     'psycopg2>=2.8.3',
     'requests>=2.9.1',
     'SQLAlchemy==1.3.4',

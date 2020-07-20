@@ -77,17 +77,20 @@ class CollectionManager:
 
     def load_all(self):
         """Load all Collection."""
-        json_string = pkg_resources.resource_string('wlts', '/json_configs/collections.json').decode('utf-8')
+        json_string_feature = pkg_resources.resource_string('wlts', '/json_configs/feature_collection.json').decode('utf-8')
 
-        config = json_loads(json_string)
+        json_string_image = pkg_resources.resource_string('wlts', '/json_configs/image_collection.json').decode('utf-8')
 
-        if "feature_collection" in config:
-            feature_collection = config["feature_collection"]
+        config_feature = json_loads(json_string_feature)
+        config_image = json_loads(json_string_image)
+
+        if "feature_collection" in config_feature:
+            feature_collection = config_feature["feature_collection"]
             for ft_collection in feature_collection:
                 self.insert("feature_collection", ft_collection)
 
-        if "image_collection" in config:
-            image_collection = config["image_collection"]
+        if "image_collection" in config_image:
+            image_collection = config_image["image_collection"]
             for img_collection in image_collection:
                 self.insert("image_collection", img_collection)
 
