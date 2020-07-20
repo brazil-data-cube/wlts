@@ -16,6 +16,7 @@ from xml.dom import minidom
 import gdal
 import requests
 from osgeo import ogr, osr
+from shapely.geometry import Point
 
 from wlts.datasources.datasource import DataSource
 from wlts.utils import get_date_from_str
@@ -193,10 +194,7 @@ class WCSDataSource(DataSource):
         # TODO verificar a imagem existe
         # self.wfc_poll.check_image(kwargs['image'])
 
-        min_x = kwargs['x'] - 0.1
-        max_x = kwargs['x'] + 0.1
-        min_y = kwargs['y'] - 0.1
-        max_y = kwargs['y'] + 0.1
+        min_x, max_x, min_y, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.001).bounds
 
         image_name = self.workspace + ":" + kwargs['image']
 

@@ -149,14 +149,18 @@ class WFSDataSource(DataSource):
         """WFS DataSource Type."""
         return "WFS"
 
-    def get_classe(self, featureID, value, class_property_name, ft_name):
+    def get_classe(self, featureID, value, class_property_name, ft_name, **kwargs):
         """Get Class."""
         typeName = self.workspace + ":" + ft_name
 
         tagName = self.workspace + ":" + class_property_name
 
-        return  self._wfs.get_class(featureID=featureID, value=value,
-                            typeName=typeName, tagName=tagName)
+        if 'class_system' in kwargs:
+            return  self._wfs.get_class(featureID=featureID, value=value,
+                            typeName=typeName, tagName=tagName, class_system=kwargs['class_system'])
+        else:
+            return self._wfs.get_class(featureID=featureID, value=value,
+                                       typeName=typeName, tagName=tagName)
 
     def get_trajectory(self, **kwargs):
         """Get Trajectory."""

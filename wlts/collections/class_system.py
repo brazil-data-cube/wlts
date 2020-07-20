@@ -25,6 +25,11 @@ class ClassificationSystemClass:
         self.value = kwargs['value']
         self.class_name = kwargs['class_name']
 
+        self.class_system = None
+
+        if 'class_system' in kwargs:
+            self.class_system = kwargs['class_system']
+
         if self.type == 'Self':
             self.datasource = None
 
@@ -50,4 +55,8 @@ class ClassificationSystemClass:
     def get_class_ds(self):
         """Get DataSource of Classification System."""
         return self.datasource
+
+    def get_class_system(self):
+        """Get DataSource of Classification System."""
+        return self.class_system
 

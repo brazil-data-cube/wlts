@@ -79,10 +79,16 @@ class FeatureCollection(Collection):
 
                     ds_class = self.classification_class.get_class_ds()
 
-                    class_info = ds_class.get_classe(featureID,
-                                        self.classification_class.get_value(),
-                                        self.classification_class.get_class_property_name(),
-                                        self.classification_class.get_name() )
+                    if self.classification_class.get_class_system() is None:
+                        class_info = ds_class.get_classe(featureID,
+                                            self.classification_class.get_value(),
+                                            self.classification_class.get_class_property_name(),
+                                            self.classification_class.get_name())
+                    else:
+                        class_info = ds_class.get_classe(featureID,
+                                            self.classification_class.get_value(),
+                                            self.classification_class.get_class_property_name(),
+                                            self.classification_class.get_name(),  class_system=self.classification_class)
 
                 trj = {
                     "collection": self.get_name(),

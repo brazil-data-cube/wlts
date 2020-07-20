@@ -1,0 +1,136 @@
+{
+  "feature_collection": [
+    {
+      "name": "deter_amz_legal",
+      "authority_name": "INPE",
+      "description": "Alertas de Desmatamento da Amazônia Legal",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Feature",
+      "classification_class": {
+        "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+        "type": "Self"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "DAY",
+          "value": "1"
+        },
+        "string_format": "%Y-%m-%d"
+      },
+      "period": {
+        "start_date": "2016-08-02",
+        "end_date": "2020-06-18"
+      },
+      "scala": "1:100.000",
+      "spatial_extent": {
+        "xmin": -73.5490878282397,
+        "xmax": -44.0003914444064,
+        "ymin": -18.0364406523564,
+        "ymax": 4.55537642867927
+      },
+      "feature_name": "deter_amz_legal",
+      "feature_id_property": "id",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4674,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property": "class_name",
+          "temporal_property": "view_date"
+        }
+      ]
+    },
+    {
+      "name": "deter_cerrado",
+      "authority_name": "INPE",
+      "description": "Alertas de Desmatamento Cerrado",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Feature",
+      "classification_class": {
+        "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+        "type": "Self"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "DAY",
+          "value": "1"
+        },
+        "string_format": "%Y-%m-%d"
+      },
+      "period": {
+        "start_date": "2018-05-01",
+        "end_date": "2020-06-18"
+      },
+      "scala": "1:100.000",
+      "spatial_extent": {
+        "xmin": -73.5490878282397,
+        "xmax": -44.0003914444064,
+        "ymin": -18.0364406523564,
+        "ymax": 4.55537642867927
+      },
+      "feature_name": "deter_cerrado",
+      "feature_id_property": "id",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4674,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property": "class_name",
+          "temporal_property": "view_date"
+        }
+      ]
+    },
+    {
+      "name": "prodes_cerrado",
+      "authority_name": "INPE",
+      "description": "Alertas de Desmatamento Cerrado",
+      "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes",
+      "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+      "dataset_type": "Feature",
+      "classification_class": {
+        "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
+        "type": "Self"
+      },
+      "temporal": {
+        "type": "DATE",
+        "resolution": {
+          "unit": "YEAR",
+          "value": "1"
+        },
+        "string_format": "%Y-%m-%d"
+      },
+      "period": {
+        "start_date": "2000",
+        "end_date": "2019"
+      },
+      "scala": "1:100.000",
+      "spatial_extent": {
+        "xmin": -60.0939559936523,
+        "xmax": -24.6851196289062,
+        "ymin": -41.5224685668945,
+        "ymax": -2.32670903205872
+      },
+      "feature_name": "prodes_cerrado",
+      "feature_id_property": "id",
+      "geom_property": {
+        "property_name": "geom",
+        "srid": 4674,
+        "type": "Polygon"
+      },
+      "observations_properties": [
+        {
+          "class_property": "class_name",
+          "temporal_property": "view_date"
+        }
+      ]
+    }
+  ]
+}
