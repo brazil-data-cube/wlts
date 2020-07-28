@@ -15,6 +15,7 @@ from werkzeug.exceptions import NotFound
 from .collection import collection_manager
 from .schemas import collections_list, describe_collection, trajectory
 from .trajectory import Trajectory, TrajectoryParams
+from .utils import CollectionsUtils
 
 api = Namespace('wlts', description='status')
 
@@ -30,7 +31,9 @@ class ListCollectionsController(APIResource):
         :returns: Collection list avaliable in server.
         :rtype: dict
         """
-        return jsonify(collection_manager.get_all_collection_names())
+        result = {"collections": collection_manager.collection_names()}
+
+        return jsonify(result)
 
 
 @api.route('/describe_collection')
@@ -51,23 +54,12 @@ class DescribeCollection(APIResource):
         if collection is None:
            return abort(404, "Collection Not Found")
         else:
-            data = {
-                "name": collection.name,
-                "description": collection.description,
-                "detail": collection.detail,
-                "collection_type": collection.get_collectiontype(),
-                "resolution_unit": {
-                    "unit": collection.get_resolution_unit(),
-                    "value": collection.get_resolution_value()
-                },
-                "period": {
-                    "start_date": collection.get_start_date(),
-                    "end_date": collection.get_end_date()
-                },
-                "spatial_extent": collection.get_spatial_extent()
-            }
+            result = CollectionsUtils.describe(collection)
 
-            return jsonify(data)
+            if result is None:
+                return abort(404, "Collection metadata Found")
+
+            return jsonify(result)
 
 
 @api.route('/trajectory')

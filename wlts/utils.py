@@ -17,3 +17,31 @@ def load_example_data(file):
     sql = load(__name__, sql_dir).decode()
 
     return sql
+
+class CollectionsUtils:
+    """CollectionsUtils Class."""
+
+    @classmethod
+    def describe(cls, collection):
+        """Describe Collection."""
+        try:
+            data = {
+                "name": collection.name,
+                "description": collection.description,
+                "detail": collection.detail,
+                "collection_type": collection.get_collectiontype(),
+                "resolution_unit": {
+                    "unit": collection.get_resolution_unit(),
+                    "value": collection.get_resolution_value()
+                },
+                "period": {
+                    "start_date": collection.get_start_date(),
+                    "end_date": collection.get_end_date()
+                },
+                "spatial_extent": collection.get_spatial_extent()
+            }
+
+            return data
+
+        except:
+            return None

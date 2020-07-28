@@ -7,12 +7,16 @@
 #
 
 exclude doc/sphinx/_build
+exclude doc/spec
+exclude docker
+exclude .dockerignore
 include *.rst
 include *.sh
 include *.txt
 include *.py
 include LICENSE
 include pytest.ini
+include *.yml
 recursive-exclude doc/sphinx/_build *
 recursive-include doc *.bat
 recursive-include doc *.css
@@ -24,4 +28,5 @@ recursive-include tests *.py
 recursive-include wlts *.json
 recursive-include wlts *.sql
 recursive-include wlts *.py
+recursive-exclude docker *
 

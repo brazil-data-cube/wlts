@@ -17,6 +17,7 @@ from uuid import uuid4
 from xml.dom import minidom
 
 import gdal
+import pkg_resources
 import psycopg2
 import requests
 from osgeo import ogr, osr
@@ -243,7 +244,10 @@ class WCSConnectionPool:
             # Free memory associated with the in-memory file
             gdal.Unlink(mmap_name)
 
-            return intval[0]
+            if intval is not None:
+                return intval[0]
+            else:
+                return intval
 
         else:
             return None
@@ -377,10 +381,11 @@ class WFSConnectionPool:
 
         return
 
-    def get_class(self, featureID, class_property_name, ft_name, workspace = 'datacube'):
+    def get_class(self, featureID, class_property_name, ft_name, workspace):
         """Get classes of given feature."""
-        url = "{}/{}&request=GetFeature&typeName={}&featureID={}".format(self.base, self.base_path, ft_name, featureID)
-
+        url = "{}/{}&request=GetFeature&typeName={}&cql_filter=id={}".format(self.base,
+                                                                             "wfs?service=WFS&version=1.0.0",
+                                                                             ft_name, featureID)
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
@@ -390,7 +395,6 @@ class WFSConnectionPool:
         itemlist = xmldoc.getElementsByTagName(tagName)
 
         return itemlist[0].firstChild.nodeValue
-
 
     def check_feature(self, ft_name):
         """Utility to check feature existence in wfs."""
@@ -656,13 +660,14 @@ class WFSDataSource(DataSource):
 
         class_type = kwargs['classification_class'].get_type()
 
+        workspace = kwargs['classification_class'].get_base()
+
         args = {
             "feature_type": kwargs['feature_type'],
             "geom": geom,
             "geom_property": kwargs['geom_property'],
             "srid": (kwargs['geom_property'])['srid']
         }
-
 
         if (class_type == "Literal" and (kwargs['temporal'])["type"] == "STRING"):
             response = self.wfs_poll.get_feature(**args)
@@ -712,7 +717,7 @@ class WFSDataSource(DataSource):
 
             if (response):
                 featureID = response[(kwargs['obs'])["class_property"]]
-                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name, workspace)
 
                 result.append(classes_prop)
                 result.append((kwargs['obs'])["temporal_property"])
@@ -735,7 +740,7 @@ class WFSDataSource(DataSource):
 
             if (response):
                 featureID = response[(kwargs['obs'])["class_property"]]
-                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name)
+                classes_prop = self.wfs_poll.get_class(featureID, class_property_name, class_name, workspace)
 
                 result.append(classes_prop)
                 result.append(response[(kwargs['obs'])["temporal_property"]])
@@ -802,20 +807,18 @@ class DataSourceManager:
 
     def load_all(self):
         """Load All DataSources."""
-        config_file = config_folder / 'wlts_config.json'
+        json_string = pkg_resources.resource_string(__name__, '/json-config/wlts_config.json').decode('utf-8')
 
-        with config_file.open(encoding='utf-8')  as json_data:
+        config = json_loads(json_string)
 
-            config = json_loads(json_data.read())
+        if "datasources" not in config:
+            raise ValueError("No datasource in wlts json config file")
+        else:
+            datasources = config["datasources"]
 
-            if "datasources" not in config:
-                raise ValueError("No datasource in json config file")
-            else:
-                datasources = config["datasources"]
-
-                for dstype, datasources_info in datasources.items():
-                    for ds_info in datasources_info:
-                        self.insert_datasource(dstype, ds_info)
+            for dstype, datasources_info in datasources.items():
+                for ds_info in datasources_info:
+                    self.insert_datasource(dstype, ds_info)
 
 
 datasource_manager = DataSourceManager()
