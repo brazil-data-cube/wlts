@@ -6,73 +6,35 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Controllers of Web Land Trajectory Service."""
-from bdc_core.decorators.validators import require_model
-from bdc_core.utils.flask import APIResource
-from flask import abort, jsonify, request
-from flask_restplus import Namespace
-from werkzeug.exceptions import NotFound
 
-from .collection import collection_manager
-from .schemas import collections_list, describe_collection, trajectory
-from .trajectory import Trajectory, TrajectoryParams
-from .utils import CollectionsUtils
-
-api = Namespace('wlts', description='status')
+from wlts.collections.collection_manager import collection_manager
 
 
-@api.route('/list_collections')
-class ListCollectionsController(APIResource):
-    """WLTS ListCollections Operation."""
+def describe_collection(collection_name):
+    """Describe Collection."""
+    collection = collection_manager.get_collection(collection_name)
 
-    @require_model(collections_list)
-    def get(self):
-        """Retrieve list of collection offered.
+    if collection is None:
+        return collection
+    try:
+        data = {
+            "name": collection.name,
+            "description": collection.description,
+            "detail": collection.detail,
+            "collection_type": collection.collection_type(),
+            "resolution_unit": {
+                "unit": collection.get_resolution_unit(),
+                "value": collection.get_resolution_value()
+            },
+            "period": {
+                "start_date": collection.get_start_date(),
+                "end_date": collection.get_end_date()
+            },
+            "spatial_extent": collection.get_spatial_extent()
+        }
 
-        :returns: Collection list avaliable in server.
-        :rtype: dict
-        """
-        result = {"collections": collection_manager.collection_names()}
+        return data
 
-        return jsonify(result)
-
-
-@api.route('/describe_collection')
-class DescribeCollection(APIResource):
-    """WLTS DescribeCollection Operation."""
-
-    @require_model(describe_collection)
-    def get(self):
-        """Retrieves collection metadata.
-
-        :returns: Collection Description
-        :rtype: dict
-        """
-        collection_name = request.args['collection_id']
-
-        collection = collection_manager.get_collection(collection_name)
-
-        if collection is None:
-           return abort(404, "Collection Not Found")
-        else:
-            result = CollectionsUtils.describe(collection)
-
-            if result is None:
-                return abort(404, "Collection metadata Found")
-
-            return jsonify(result)
-
-
-@api.route('/trajectory')
-class TrajectoryController(APIResource):
-    """WLTS Trajectory Operation."""
-
-    @require_model(trajectory)
-    def get(self):
-        """Retrieves collection metadata.
-
-        :returns: Collection Description
-        :rtype: dict
-        """
-        params = TrajectoryParams(**request.args.to_dict())
-
-        return jsonify(Trajectory.get_trajectory(params))
+    # TODO melhorar o retorno dos erros
+    except:
+        return None

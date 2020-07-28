@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Utils for Web Land Trajectory Service."""
+from datetime import datetime
 
 from pkg_resources import resource_string as load
 
@@ -18,30 +19,20 @@ def load_example_data(file):
 
     return sql
 
-class CollectionsUtils:
-    """CollectionsUtils Class."""
 
-    @classmethod
-    def describe(cls, collection):
-        """Describe Collection."""
+def get_date_from_str(date, date_ref=None):
+    """Utility to build date from str."""
+    date = date.replace('/', '-')
+
+    try:
+        date = datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
         try:
-            data = {
-                "name": collection.name,
-                "description": collection.description,
-                "detail": collection.detail,
-                "collection_type": collection.get_collectiontype(),
-                "resolution_unit": {
-                    "unit": collection.get_resolution_unit(),
-                    "value": collection.get_resolution_value()
-                },
-                "period": {
-                    "start_date": collection.get_start_date(),
-                    "end_date": collection.get_end_date()
-                },
-                "spatial_extent": collection.get_spatial_extent()
-            }
+            date = datetime.strptime(date, '%Y-%m')
+        except ValueError:
+            date = datetime.strptime(date, '%Y')
 
-            return data
+    if date_ref:
+        date = date.replace(day=31, month=12)
 
-        except:
-            return None
+    return date

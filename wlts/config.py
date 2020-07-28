@@ -26,7 +26,7 @@ class Config():
     SECRET_KEY = "APi-Users-123456"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI',
-                                                           'postgresql://postgres:postgres@localhost:5432/wlts')
+                                             'postgresql://postgres:postgres@localhost:5432/wlts')
     WLTS_URL = os.getenv('WLTS_URL', 'http://localhost:5000')
 
 
