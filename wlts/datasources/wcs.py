@@ -7,9 +7,6 @@
 #
 """WLTS WCS DataSource."""
 import urllib.request
-import requests
-from gzip import GzipFile
-from io import BytesIO
 from uuid import uuid4
 from xml.dom import minidom
 
@@ -52,7 +49,7 @@ class WCS:
             request = urllib.request.Request(uri, headers={"Accept-Encoding": "gzip"})
             response = urllib.request.urlopen(request, timeout=30)
             if response.info().get('Content-Encoding') == 'gzip':
-                return GzipFile(fileobj=BytesIO(response.read()))
+                return None
             else:
                 return response
         except urllib.request.URLError:
@@ -216,9 +213,6 @@ class WCSDataSource(DataSource):
         self._wcs.check_image(image_name)
 
         min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
-
-
-
 
         imageID = self._wcs.get_image(image_name, kwargs['srid'],
                                             min_x , min_y, max_x, max_y,

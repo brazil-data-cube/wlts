@@ -82,10 +82,10 @@ class ImageCollection(Collection):
                                                          self.classification_class.get_class_property_name(),
                                                          self.classification_class.get_name())
 
-                trj = {
-                    "collection": self.get_name(),
-                    "class": class_info,
-                    "date": str(obs_info)
-                }
+                    trj = {
+                        "collection": self.get_name(),
+                        "class": class_info,
+                        "date": str(obs_info)
+                    }
 
-                tj_attr.append(trj)
+                    tj_attr.append(trj)
