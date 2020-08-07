@@ -7,6 +7,7 @@
 #
 """WLTS WCS DataSource."""
 import urllib.request
+import requests
 from gzip import GzipFile
 from io import BytesIO
 from uuid import uuid4
@@ -17,6 +18,7 @@ import gdal
 import requests
 from osgeo import ogr, osr
 from shapely.geometry import Point
+from werkzeug.exceptions import NotFound
 
 from wlts.datasources.datasource import DataSource
 from wlts.utils import get_date_from_str
@@ -44,7 +46,7 @@ class WCS:
                     raise AttributeError('auth must be a tuple with 2 values ("user", "pass")')
                 self._auth = kwargs['auth']
 
-    def _get(self, uri):
+    def _get_image(self, uri):
         """Get Response."""
         try:
             request = urllib.request.Request(uri, headers={"Accept-Encoding": "gzip"})
@@ -56,7 +58,16 @@ class WCS:
         except urllib.request.URLError:
             return None
 
-    def get_uri(self, uri):
+    def _get_request(self, uri):
+        """Get requester."""
+        response = requests.get(uri, auth=self._auth)
+
+        if (response.status_code) != 200:
+            raise Exception("Request Fail: {} ".format(response.status_code))
+
+        return response.content.decode('utf-8')
+
+    def _get(self, uri):
         """Get URI."""
         response = requests.get(uri, auth=self._auth)
 
@@ -68,20 +79,28 @@ class WCS:
 
     def list_image(self):
         """List collection."""
-        url = "{}/{}&request=GetCapabilities".format(self.host, self.base_path)
+        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
 
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
 
-        itemlist = xmldoc.getElementsByTagName('wcs:Contents')
+        itemlist = xmldoc.getElementsByTagName('wcs:ContentMetadata')
+
+        avaliables = []
+
+        for s in itemlist[0].childNodes:
+            avaliables.append(s.childNodes[0].firstChild.nodeValue)
+
+        return avaliables
 
     def check_image(self, ft_name):
-        """Utility to check feature existence in wfs."""
+        """Utility to check image existence in wcs."""
         images = self.list_image()
 
-        # if ft_name not in images['Contents']:
-        #     raise NotFound('Feature "{}" not found'.format(ft_name))
+        if ft_name not in images:
+            raise NotFound('Image "{}" not found'.format(ft_name))
+
 
     def transform_latlong_to_rowcol(self, data_set, lat, long):
         """Transform the pixel location of a geospatial coordinate."""
@@ -101,7 +120,7 @@ class WCS:
 
     def open_image(self, url, lat, long, srid):
         """Open Image."""
-        image_data = self._get(url)
+        image_data = self._get_image(url)
 
         if not image_data:
             return None
@@ -191,12 +210,14 @@ class WCSDataSource(DataSource):
             if ts > end_date:
                 return None
 
-        # TODO verificar a imagem existe
-        # self.wfc_poll.check_image(kwargs['image'])
-
-        min_x, max_x, min_y, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.001).bounds
-
         image_name = self.workspace + ":" + kwargs['image']
+
+        # verifica se a image existe no geoserver
+        self._wcs.check_image(image_name)
+
+        min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
+
+
 
 
         imageID = self._wcs.get_image(image_name, kwargs['srid'],
