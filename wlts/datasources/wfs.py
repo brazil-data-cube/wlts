@@ -111,7 +111,7 @@ class WFS():
 
     def get_class(self, featureID, **kwargs):
         """Get classes of given feature."""
-        invalid_parameters = set(kwargs) - {'value', 'class_property_name', 'typeName', 'tagName'}
+        invalid_parameters = set(kwargs) - {'value', 'class_property_name', 'typeName', 'tagName', 'class_system'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
@@ -120,7 +120,13 @@ class WFS():
         #TODO verificar os parametros
         #TODO verficar se a feature de class existe
 
-        url = "{}/{}&request=GetFeature&typeName={}&cql_filter={}={}".format(self.host,"wfs?service=WFS&version=1.0.0",
+        if 'class_system' in kwargs:
+            url = "{}/{}&request=GetFeature&typeName={}&cql_filter={}={} AND class_system_name=\'{}\'".format(self.host,
+                                                                                 "wfs?service=WFS&version=1.0.0",
+                                                                                 kwargs['typeName'], kwargs['value'],
+                                                                                 featureID, kwargs['class_system'])
+        else:
+            url = "{}/{}&request=GetFeature&typeName={}&cql_filter={}={}".format(self.host,"wfs?service=WFS&version=1.0.0",
                                                                              kwargs['typeName'], kwargs['value'],
                                                                              featureID)
         doc = self._get(url)
@@ -156,7 +162,7 @@ class WFSDataSource(DataSource):
         tagName = self.workspace + ":" + class_property_name
 
         if 'class_system' in kwargs:
-            return  self._wfs.get_class(featureID=featureID, value=value,
+            return self._wfs.get_class(featureID=featureID, value=value,
                             typeName=typeName, tagName=tagName, class_system=kwargs['class_system'])
         else:
             return self._wfs.get_class(featureID=featureID, value=value,

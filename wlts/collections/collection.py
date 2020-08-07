@@ -46,7 +46,6 @@ class Collection(metaclass=ABCMeta):
             args['value'] = None
 
         else:
-
             args['type'] = classification_class["type"]
             args['name'] = classification_class["property_name"]
             args['class_name'] = classification_class["class_property_name"]
@@ -55,6 +54,9 @@ class Collection(metaclass=ABCMeta):
 
         if 'datasource_id' in classification_class:
             args['datasource_id'] = classification_class["datasource_id"]
+
+        if 'class_system' in classification_class:
+            args['class_system'] = classification_class['class_system']
 
         return Class(**args)
 

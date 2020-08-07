@@ -149,7 +149,7 @@ class WCS:
             gdal.Unlink(mmap_name)
 
             if intval is not None:
-                return intval[0]
+                return intval[0][0]
             else:
                 return intval
 
