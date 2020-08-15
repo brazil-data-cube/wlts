@@ -184,14 +184,14 @@ class WFSDataSource(DataSource):
 
         if (kwargs['temporal'])["type"] == "STRING":
 
-            temporal_observation = get_date_from_str((kwargs['obs'])["temporal_property"])
+            temporal_observation = get_date_from_str((kwargs['obs'])["temporal_property"]).strftime((kwargs['temporal'])["string_format"])
 
             if kwargs['start_date']:
-                start_date = get_date_from_str(kwargs['start_date'])
+                start_date = get_date_from_str(kwargs['start_date']).strftime((kwargs['temporal'])["string_format"])
                 if (start_date > temporal_observation):
                     return
             if kwargs['end_date']:
-                end_date = get_date_from_str(kwargs['end_date'])
+                end_date = get_date_from_str(kwargs['end_date']).strftime((kwargs['temporal'])["string_format"])
                 if (temporal_observation > end_date):
                     return
         else:
