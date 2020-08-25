@@ -11,6 +11,7 @@ from xml.dom import minidom
 from json import loads as json_loads
 from werkzeug.exceptions import NotFound
 from shapely.geometry import Point
+from functools import lru_cache
 
 from wlts.datasources.datasource import DataSource
 from wlts.utils import get_date_from_str
@@ -76,29 +77,36 @@ class WFS():
         if ft_name not in features['features']:
             raise NotFound('Feature "{}" not found'.format(ft_name))
 
-    def get_feature(self, **kwargs):
-        """Retrieve the feature collection given feature."""
-        invalid_parameters = set(kwargs) - {'typeName', 'srid', 'propertyName', 'filter'}
+    def mount_url(self, typeName, **kwargs):
+        """Mount get feature url."""
+        invalid_parameters = set(kwargs) - {'srid', 'propertyName', 'filter', 'outputformat'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        #TODO verificar a feature
-        # self.check_feature(kwargs['typeName'])
-
-        url = "{}/{}&request=GetFeature&typeName={}".format(self.host, self.base_path, kwargs['typeName'])
+        url = "{}/{}&request=GetFeature&typeName={}".format(self.host, self.base_path, typeName)
 
         if 'propertyName' in kwargs:
             url += "&propertyName={}".format(kwargs['propertyName'])
 
-        url += "&outputformat=json"
+        if 'outputformat' in kwargs:
+            url += kwargs['outputformat']
 
-        url += "&CRS=EPSG:{}".format(kwargs['srid'])
+        if 'srid' in kwargs:
+            url += "&CRS=EPSG:{}".format(kwargs['srid'])
 
         if 'filter' in kwargs:
             if type(kwargs['filter']) is not str:
                 raise AttributeError('filter must be a string')
             url += kwargs['filter']
+
+        return url
+
+    def get_feature(self, typeName, srid, filter):
+        """Retrieve the feature collection given feature."""
+        args = {"srid": srid, "filter": filter, "outputformat": "&outputformat=json"}
+
+        url = self.mount_url(typeName, **args)
 
         doc = self._get(url)
 
@@ -109,31 +117,18 @@ class WFS():
         else:
             return js["features"][0]["properties"]
 
-    def get_class(self, featureID, **kwargs):
+    @lru_cache()
+    def get_class(self, typeName, tagName, filter):
         """Get classes of given feature."""
-        invalid_parameters = set(kwargs) - {'value', 'class_property_name', 'typeName', 'tagName', 'class_system'}
+        args = {"filter": "&cql_filter={}".format(filter)}
 
-        if invalid_parameters:
-            raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
+        url = self.mount_url(typeName, **args)
 
-
-        #TODO verificar os parametros
-        #TODO verficar se a feature de class existe
-
-        if 'class_system' in kwargs:
-            url = "{}/{}&request=GetFeature&typeName={}&cql_filter={}={} AND class_system_name=\'{}\'".format(self.host,
-                                                                                 "wfs?service=WFS&version=1.0.0",
-                                                                                 kwargs['typeName'], kwargs['value'],
-                                                                                 featureID, kwargs['class_system'])
-        else:
-            url = "{}/{}&request=GetFeature&typeName={}&cql_filter={}={}".format(self.host,"wfs?service=WFS&version=1.0.0",
-                                                                             kwargs['typeName'], kwargs['value'],
-                                                                             featureID)
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
 
-        itemlist = xmldoc.getElementsByTagName(kwargs['tagName'])
+        itemlist = xmldoc.getElementsByTagName(tagName)
 
         return itemlist[0].firstChild.nodeValue
 
@@ -162,11 +157,11 @@ class WFSDataSource(DataSource):
         tagName = self.workspace + ":" + class_property_name
 
         if 'class_system' in kwargs:
-            return self._wfs.get_class(featureID=featureID, value=value,
-                            typeName=typeName, tagName=tagName, class_system=kwargs['class_system'])
+            filter = "{}={} AND class_system_name=\'{}\'".format(value, featureID, kwargs['class_system'])
         else:
-            return self._wfs.get_class(featureID=featureID, value=value,
-                                       typeName=typeName, tagName=tagName)
+            filter = "{}={}".format(value, featureID)
+
+        return self._wfs.get_class(typeName=typeName, tagName=tagName, filter=filter)
 
     def get_trajectory(self, **kwargs):
         """Get Trajectory."""
@@ -205,12 +200,6 @@ class WFSDataSource(DataSource):
                 cql_filter += " AND {} <= {}".format((kwargs['obs'])["temporal_property"],
                                                          end_date.strftime((kwargs['temporal'])["string_format"]))
 
-        args = {
-            "typeName": typeName,
-            "filter": cql_filter,
-            "srid": (kwargs['geom_property'])['srid']
-        }
-
-        retval = self._wfs.get_feature(**args)
+        retval = self._wfs.get_feature(typeName, (kwargs['geom_property'])['srid'], cql_filter)
 
         return retval
