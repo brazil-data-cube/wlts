@@ -7,16 +7,16 @@
 #
 """WLTS WCS DataSource."""
 import urllib.request
-from gzip import GzipFile
-from io import BytesIO
 from uuid import uuid4
 from xml.dom import minidom
 
-
+import base64
 import gdal
 import requests
-from osgeo import ogr, osr
+from osgeo import osr
 from shapely.geometry import Point
+from werkzeug.exceptions import NotFound
+from functools import lru_cache
 
 from wlts.datasources.datasource import DataSource
 from wlts.utils import get_date_from_str
@@ -44,19 +44,30 @@ class WCS:
                     raise AttributeError('auth must be a tuple with 2 values ("user", "pass")')
                 self._auth = kwargs['auth']
 
-    def _get(self, uri):
+    def _get_image(self, uri):
         """Get Response."""
-        try:
+        if self._auth:
+            request = urllib.request.Request(uri)
+
+            credentials = ('%s:%s' % (self._auth[0], self._auth[1])).replace('\n', '')
+            encoded_credentials = base64.b64encode(credentials.encode('ascii'))
+
+            request.add_header('Accept-Encoding', "gzip")
+            request.add_header('Authorization', 'Basic %s' % encoded_credentials.decode("ascii"))
+
+        else:
             request = urllib.request.Request(uri, headers={"Accept-Encoding": "gzip"})
+
+        try:
             response = urllib.request.urlopen(request, timeout=30)
             if response.info().get('Content-Encoding') == 'gzip':
-                return GzipFile(fileobj=BytesIO(response.read()))
+               return None
             else:
                 return response
         except urllib.request.URLError:
             return None
 
-    def get_uri(self, uri):
+    def _get(self, uri):
         """Get URI."""
         response = requests.get(uri, auth=self._auth)
 
@@ -68,28 +79,36 @@ class WCS:
 
     def list_image(self):
         """List collection."""
-        url = "{}/{}&request=GetCapabilities".format(self.host, self.base_path)
+        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
 
         doc = self._get(url)
 
         xmldoc = minidom.parseString(doc)
 
-        itemlist = xmldoc.getElementsByTagName('wcs:Contents')
+        itemlist = xmldoc.getElementsByTagName('wcs:ContentMetadata')
+
+        avaliables = []
+
+        for s in itemlist[0].childNodes:
+            avaliables.append(s.childNodes[0].firstChild.nodeValue)
+
+        return avaliables
 
     def check_image(self, ft_name):
-        """Utility to check feature existence in wfs."""
+        """Utility to check image existence in wcs."""
         images = self.list_image()
 
-        # if ft_name not in images['Contents']:
-        #     raise NotFound('Feature "{}" not found'.format(ft_name))
+        if ft_name not in images:
+            raise NotFound('Image "{}" not found'.format(ft_name))
+
 
     def transform_latlong_to_rowcol(self, data_set, lat, long):
         """Transform the pixel location of a geospatial coordinate."""
         srs = osr.SpatialReference()
         srs.ImportFromWkt(data_set.GetProjection())
 
-        srs_lat_ong = srs.CloneGeogCS()
-        ct = osr.CoordinateTransformation(srs_lat_ong, srs)
+        srs_lat_long = srs.CloneGeogCS()
+        ct = osr.CoordinateTransformation(srs_lat_long, srs)
         x, y, _ = ct.TransformPoint(long, lat)
 
         transform = data_set.GetGeoTransform()
@@ -99,9 +118,9 @@ class WCS:
 
         return x, y
 
-    def open_image(self, url, lat, long, srid):
+    def open_image(self, url, long, lat):
         """Open Image."""
-        image_data = self._get(url)
+        image_data = self._get_image(url)
 
         if not image_data:
             return None
@@ -112,45 +131,34 @@ class WCS:
         gdal_dataset = gdal.Open(mmap_name)
 
         if gdal_dataset is not None:
+            x, y = self.transform_latlong_to_rowcol(gdal_dataset, lat, long)
 
-            target = osr.SpatialReference(wkt=gdal_dataset.GetProjection())
-
-            source = osr.SpatialReference()
-            source.ImportFromEPSG(srid)
-
-            transform = osr.CoordinateTransformation(source, target)
-
-            point = ogr.Geometry(ogr.wkbPoint)
-            point.AddPoint(long, lat)
-            point.Transform(transform)
-
-            x, y = self.transform_latlong_to_rowcol(gdal_dataset, point.GetX(), point.GetY())
-
-            intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1)
+            intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1).astype("int")
 
             gdal_dataset = None
             # Free memory associated with the in-memory file
             gdal.Unlink(mmap_name)
 
             if intval is not None:
-                return intval[0]
+                return intval[0][0]
             else:
                 return intval
 
         else:
             return None
 
+    @lru_cache()
     def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time, x, y):
         """Get Image."""
         url = "{}/{}&request=GetCoverage&COVERAGE={}&".format(self.host, self.base_path, image)
 
-        url += "CRS=EPSG:{}&".format(srid)
+        url += "CRS=EPSG:4326&RESPONSE_CRS=EPSG:{}&".format(srid)
 
         url += "BBOX={},{},{},{}".format(min_x, max_x, min_y, max_y)
 
         url += "&FORMAT=GeoTIFF&WIDTH={}&HEIGHT={}&time={}".format(column, row, time)
 
-        featureID = self.open_image(url, x, y, srid)
+        featureID = self.open_image(url, x, y)
 
         return featureID
 
@@ -191,18 +199,16 @@ class WCSDataSource(DataSource):
             if ts > end_date:
                 return None
 
-        # TODO verificar a imagem existe
-        # self.wfc_poll.check_image(kwargs['image'])
-
-        min_x, max_x, min_y, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.001).bounds
-
         image_name = self.workspace + ":" + kwargs['image']
 
+        # verifica se a image existe no geoserver
+        # self._wcs.check_image(image_name)
+
+        min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
 
         imageID = self._wcs.get_image(image_name, kwargs['srid'],
                                             min_x , min_y, max_x, max_y,
                                             (kwargs['grid'])['column'], (kwargs['grid'])['row'],
                                             kwargs['time'], kwargs['x'], kwargs['y'])
-
 
         return imageID

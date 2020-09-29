@@ -80,12 +80,13 @@ class ImageCollection(Collection):
                         class_info = ds_class.get_classe(imageID,
                                                          self.classification_class.get_value(),
                                                          self.classification_class.get_class_property_name(),
-                                                         self.classification_class.get_name())
+                                                         self.classification_class.get_name(),
+                                                         class_system=self.classification_class.get_class_system())
 
-                trj = {
-                    "collection": self.get_name(),
-                    "class": class_info,
-                    "date": str(obs_info)
-                }
+                    trj = {
+                        "collection": self.get_name(),
+                        "class": class_info,
+                        "date": str(obs_info)
+                    }
 
-                tj_attr.append(trj)
+                    tj_attr.append(trj)

@@ -10,8 +10,6 @@ from werkzeug.exceptions import BadRequest, NotFound
 
 from wlts.collections.collection_manager import collection_manager
 
-from .utils import get_date_from_str
-
 
 class TrajectoryParams:
     """Object wrapper for Trajectory Request Parameters.

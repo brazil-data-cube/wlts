@@ -14,7 +14,7 @@ class ClassificationSystemClass:
 
     def __init__(self, **kwargs):
         """Creates a ClassificationSystemClass object."""
-        invalid_parameters = set(kwargs) - {"type", "name", "class_name", "value", "datasource_id"}
+        invalid_parameters = set(kwargs) - {"type", "name", "class_name", "value", "datasource_id", 'class_system'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
