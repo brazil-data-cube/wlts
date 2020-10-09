@@ -5,58 +5,63 @@
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-"""WLTS Collection Abstract Class."""
+"""WLTS Classification System Class."""
 
 from wlts.datasources.ds_manager import datasource_manager
+
 
 class ClassificationSystemClass:
     """ClassificationSystemClass Class."""
 
     def __init__(self, **kwargs):
         """Creates a ClassificationSystemClass object."""
-        invalid_parameters = set(kwargs) - {"type", "name", "class_name", "value", "datasource_id", 'class_system'}
+        invalid_parameters = set(kwargs) - {"type", "datasource_id", "property_name", "class_property_name",
+                                            "class_property_value", 'class_property_id', 'classification_system_name',
+                                            'classification_system_id', 'class_property_id'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
         self.type = kwargs['type']
 
-        self.name = kwargs['name']
-        self.value = kwargs['value']
-        self.class_name = kwargs['class_name']
+        self.property_name = kwargs['property_name']
+        self.class_property_name = kwargs['class_property_name']
+        self.class_property_value = kwargs['class_property_value']
+        self.class_property_id = kwargs['class_property_id']
 
-        self.class_system = None
+        self.classification_system_name = kwargs['classification_system_name']
+        self.classification_system_id = kwargs['classification_system_id']
 
-        if 'class_system' in kwargs:
-            self.class_system = kwargs['class_system']
-
-        if self.type == 'Self':
-            self.datasource = None
-
-        else:
-            self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
+        self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
 
     def get_type(self):
-        """Get ClassificationSystemClass type."""
+        """Get Classification System Class type."""
         return self.type
 
-    def get_name(self):
-        """Get ClassificationSystemClass name."""
-        return self.name
+    def get_property_name(self):
+        """Get Classification System Class property name."""
+        return self.property_name
 
-    def get_value(self):
-        """Get ClassificationSystemClass id."""
-        return self.value
+    def get_class_property_value(self):
+        """Get Classification System Class property value."""
+        return self.class_property_value
 
     def get_class_property_name(self):
-        """Get ClassificationSystemClass property_name."""
-        return self.class_name
+        """Get Classification System Class property class name."""
+        return self.class_property_name
+
+    def get_class_property_id(self):
+        """Get Classification System Class property class id."""
+        return self.class_property_id
 
     def get_class_ds(self):
         """Get DataSource of Classification System."""
         return self.datasource
 
-    def get_class_system(self):
-        """Get DataSource of Classification System."""
-        return self.class_system
+    def get_classification_system_name(self):
+        """Get Classification System Name."""
+        return self.classification_system_name
 
+    def get_classification_system_id(self):
+        """Get Classification System Id."""
+        return self.classification_system_id

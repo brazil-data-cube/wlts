@@ -8,6 +8,7 @@
 """Utils for Web Land Trajectory Service."""
 from datetime import datetime
 
+from osgeo import osr
 from pkg_resources import resource_string as load
 
 
@@ -36,3 +37,20 @@ def get_date_from_str(date, date_ref=None):
         date = date.replace(day=31, month=12)
 
     return date
+
+
+def transform_latlong_to_rowcol(data_set, lat, long):
+    """Transform the pixel location of a geospatial coordinate."""
+    srs = osr.SpatialReference()
+    srs.ImportFromWkt(data_set.GetProjection())
+
+    srs_lat_long = srs.CloneGeogCS()
+    ct = osr.CoordinateTransformation(srs_lat_long, srs)
+    x, y, _ = ct.TransformPoint(long, lat)
+
+    transform = data_set.GetGeoTransform()
+
+    x = int((x - transform[0]) / transform[1])
+    y = int((transform[3] - y) / -transform[5])
+
+    return x, y

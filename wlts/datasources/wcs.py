@@ -6,20 +6,20 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS WCS DataSource."""
+import base64
 import urllib.request
+from functools import lru_cache
 from uuid import uuid4
 from xml.dom import minidom
 
-import base64
 import gdal
 import requests
-from osgeo import osr
 from shapely.geometry import Point
 from werkzeug.exceptions import NotFound
-from functools import lru_cache
 
 from wlts.datasources.datasource import DataSource
-from wlts.utils import get_date_from_str
+from wlts.utils import get_date_from_str, transform_latlong_to_rowcol
+
 
 class WCS:
     """WCS Utility Class."""
@@ -61,7 +61,7 @@ class WCS:
         try:
             response = urllib.request.urlopen(request, timeout=30)
             if response.info().get('Content-Encoding') == 'gzip':
-               return None
+                return None
             else:
                 return response
         except urllib.request.URLError:
@@ -71,11 +71,10 @@ class WCS:
         """Get URI."""
         response = requests.get(uri, auth=self._auth)
 
-        if (response.status_code) != 200:
+        if response.status_code != 200:
             raise Exception("Request Fail: {} ".format(response.status_code))
 
         return response.content.decode('utf-8')
-
 
     def list_image(self):
         """List collection."""
@@ -102,22 +101,6 @@ class WCS:
             raise NotFound('Image "{}" not found'.format(ft_name))
 
 
-    def transform_latlong_to_rowcol(self, data_set, lat, long):
-        """Transform the pixel location of a geospatial coordinate."""
-        srs = osr.SpatialReference()
-        srs.ImportFromWkt(data_set.GetProjection())
-
-        srs_lat_long = srs.CloneGeogCS()
-        ct = osr.CoordinateTransformation(srs_lat_long, srs)
-        x, y, _ = ct.TransformPoint(long, lat)
-
-        transform = data_set.GetGeoTransform()
-
-        x = int((x - transform[0]) / transform[1])
-        y = int((transform[3] - y) / -transform[5])
-
-        return x, y
-
     def open_image(self, url, long, lat):
         """Open Image."""
         image_data = self._get_image(url)
@@ -131,7 +114,7 @@ class WCS:
         gdal_dataset = gdal.Open(mmap_name)
 
         if gdal_dataset is not None:
-            x, y = self.transform_latlong_to_rowcol(gdal_dataset, lat, long)
+            x, y = transform_latlong_to_rowcol(gdal_dataset, lat, long)
 
             intval = gdal_dataset.GetRasterBand(1).ReadAsArray(x, y, 1, 1).astype("int")
 
@@ -192,7 +175,7 @@ class WCSDataSource(DataSource):
         ts = get_date_from_str(kwargs['time'])
         if kwargs['start_date']:
             start_date = get_date_from_str(kwargs['start_date'])
-            if  ts < start_date:
+            if ts < start_date:
                 return None
         if kwargs['end_date']:
             end_date = get_date_from_str(kwargs['end_date'])
@@ -207,8 +190,8 @@ class WCSDataSource(DataSource):
         min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
 
         imageID = self._wcs.get_image(image_name, kwargs['srid'],
-                                            min_x , min_y, max_x, max_y,
-                                            (kwargs['grid'])['column'], (kwargs['grid'])['row'],
-                                            kwargs['time'], kwargs['x'], kwargs['y'])
+                                      min_x, min_y, max_x, max_y,
+                                      (kwargs['grid'])['column'], (kwargs['grid'])['row'],
+                                      kwargs['time'], kwargs['x'], kwargs['y'])
 
         return imageID

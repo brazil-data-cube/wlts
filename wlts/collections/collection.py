@@ -8,14 +8,14 @@
 """WLTS Collection Class."""
 from abc import ABCMeta, abstractmethod
 
-from wlts.datasources.ds_manager import datasource_manager
 from wlts.collections.class_system import ClassificationSystemClass as Class
+from wlts.datasources.ds_manager import datasource_manager
 
 
 class Collection(metaclass=ABCMeta):
     """Abstract Collection Class."""
 
-    def __init__(self,  name, authority_name, description, detail, datasource_id, dataset_type,
+    def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
                  classification_class, temporal, scala, spatial_extent, period):
         """Create Collection."""
         self.name = name
@@ -27,36 +27,30 @@ class Collection(metaclass=ABCMeta):
         self.scala = scala
         self.spatial_extent = spatial_extent
         self.period = period
-        self.classification_class = self.init_classification_system(classification_class)
+        self.classification_class = self.create_classification_system(classification_class)
 
         self.datasource = datasource_manager.get_datasource(datasource_id)
 
-
-
-    def init_classification_system(self, classification_class):
+    @staticmethod
+    def create_classification_system(classification_class):
         """Creates Class."""
         args = dict()
 
-        args['datasource_id'] = None
+        args['type'] = classification_class["type"]
+        args['datasource_id'] = classification_class["datasource_id"]
+        args['class_property_id'] = classification_class.get('class_property_id', None)
+        args['classification_system_name'] = classification_class.get('classification_system_name', None)
+        args['classification_system_id'] = classification_class.get('classification_system_id', None)
 
         if classification_class["type"] == 'Self':
-            args['type'] = classification_class["type"]
-            args['name'] = None
-            args['class_name'] = None
-            args['value'] = None
+            args['property_name'] = None
+            args['class_property_name'] = None
+            args['class_property_value'] = None
 
         else:
-            args['type'] = classification_class["type"]
-            args['name'] = classification_class["property_name"]
-            args['class_name'] = classification_class["class_property_name"]
-            args['value'] = classification_class["property_value"]
-
-
-        if 'datasource_id' in classification_class:
-            args['datasource_id'] = classification_class["datasource_id"]
-
-        if 'class_system' in classification_class:
-            args['class_system'] = classification_class['class_system']
+            args['property_name'] = classification_class["property_name"]
+            args['class_property_name'] = classification_class["class_property_name"]
+            args['class_property_value'] = classification_class["class_property_value"]
 
         return Class(**args)
 

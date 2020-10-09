@@ -8,15 +8,12 @@
 """WLTS DataSource Abstract Collection."""
 from abc import ABCMeta, abstractmethod
 
+
 class DataSource(metaclass=ABCMeta):
     """Abstract Class DataSource.
 
-    :param id: DataSource id
+    :param id: DataSource identification
     :type id: string.
-
-    :param m_conninfo: Connection info
-    :type m_conninfo: dict.
-
     """
 
     def __init__(self, id):

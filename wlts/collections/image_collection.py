@@ -6,8 +6,9 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Image Collection Class."""
-from .collection import Collection
 from ..utils import get_date_from_str
+from .collection import Collection
+
 
 class ImageCollection(Collection):
     """ImageCollection Class."""
@@ -48,7 +49,7 @@ class ImageCollection(Collection):
                     "x": x,
                     "y": y,
                     "grid": self.grid,
-                    "srid" : self.spatial_ref_system["srid"],
+                    "srid": self.spatial_ref_system["srid"],
                     "start_date": start_date,
                     "end_date": end_date,
                     "time": time
@@ -78,10 +79,10 @@ class ImageCollection(Collection):
                         ds_class = self.classification_class.get_class_ds()
 
                         class_info = ds_class.get_classe(imageID,
-                                                         self.classification_class.get_value(),
+                                                         self.classification_class.get_class_property_value(),
                                                          self.classification_class.get_class_property_name(),
-                                                         self.classification_class.get_name(),
-                                                         class_system=self.classification_class.get_class_system())
+                                                         self.classification_class.get_property_name(),
+                                                         class_system=self.classification_class.get_classification_system_name())
 
                     trj = {
                         "collection": self.get_name(),

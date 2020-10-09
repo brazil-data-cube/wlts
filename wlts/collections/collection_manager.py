@@ -6,8 +6,9 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Collection Manager."""
-import pkg_resources
 from json import loads as json_loads
+
+import pkg_resources
 
 from wlts.collections.feature_collection import FeatureCollection
 from wlts.collections.image_collection import ImageCollection
@@ -25,6 +26,7 @@ class CollectionFactory:
 
         return collection
 
+
 class CollectionManager:
     """CollectionManager Class."""
 
@@ -34,24 +36,23 @@ class CollectionManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        if CollectionManager.__instance != None:
+        if CollectionManager.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             CollectionManager.__instance = self
             CollectionManager.__instance.load_all()
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """Static access method."""
-        if CollectionManager.__instance == None:
+        if CollectionManager.__instance is None:
             CollectionManager()
         return CollectionManager.__instance
 
-    def insert(self, collectionType, collection_info):
+    def insert(self, collection_type, collection_info):
         """Insert Collection."""
-        collection = CollectionFactory.make(collectionType, collection_info)
+        collection = CollectionFactory.make(collection_type, collection_info)
         self._collections.append(collection)
-
 
     def get_collection(self, name):
         """Get Collection."""
@@ -77,7 +78,8 @@ class CollectionManager:
 
     def load_all(self):
         """Load all Collection."""
-        json_string_feature = pkg_resources.resource_string('wlts', '/json_configs/feature_collection.json').decode('utf-8')
+        json_string_feature = pkg_resources.resource_string('wlts', '/json_configs/feature_collection.json').decode(
+            'utf-8')
 
         json_string_image = pkg_resources.resource_string('wlts', '/json_configs/image_collection.json').decode('utf-8')
 
@@ -93,5 +95,6 @@ class CollectionManager:
             image_collection = config_image["image_collection"]
             for img_collection in image_collection:
                 self.insert("image_collection", img_collection)
+
 
 collection_manager = CollectionManager()

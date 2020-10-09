@@ -6,23 +6,27 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS DataSource Manager."""
-import pkg_resources
 from json import loads as json_loads
 
-from .wfs import WFSDataSource
+import pkg_resources
+
 from .wcs import WCSDataSource
+from .wfs import WFSDataSource
+
 
 class DataSourceFactory:
     """Factory for DataSource."""
 
     @staticmethod
-    def make(dsType, id, connInfo):
-        """Factory method for creates datasource."""
-        # factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", "WFS": "WFSDataSource",
-        #             "RASTER FILE": "RasterFileDataSource"}
-        #TODO colocar todos
-        factorys = { "WFS": "WFSDataSource", "WCS": "WCSDataSource"}
-        datasource = eval(factorys[dsType])(id, connInfo)
+    def make(ds_type, id, conn_info):
+        """Factory method for creates datasource.
+
+        New datasources must be add in factorys.
+        Ex: factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", "WFS": "WFSDataSource",
+                        "RASTER FILE": "RasterFileDataSource"}
+        """
+        factorys = {"WFS": "WFSDataSource", "WCS": "WCSDataSource"}
+        datasource = eval(factorys[ds_type])(id, conn_info)
         return datasource
 
 
@@ -35,16 +39,16 @@ class DataSourceManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        if DataSourceManager.__instance != None:
+        if DataSourceManager.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             DataSourceManager.__instance = self
             DataSourceManager.__instance.load_all()
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """Static access method."""
-        if DataSourceManager.__instance == None:
+        if DataSourceManager.__instance is None:
             DataSourceManager()
         return DataSourceManager.__instance
 
@@ -52,14 +56,14 @@ class DataSourceManager:
         """Get DataSource."""
         try:
             for ds in self._datasources:
-                if (ds.get_id == ds_id):
+                if ds.get_id == ds_id:
                     return ds
         except:
             return None
 
-    def insert_datasource(self, dsType, connInfo):
+    def insert_datasource(self, conn_info):
         """Insert DataSource."""
-        self._datasources.append(DataSourceFactory.make(connInfo["type"], connInfo["id"], connInfo))
+        self._datasources.append(DataSourceFactory.make(conn_info["type"], conn_info["id"], conn_info))
 
     def load_all(self):
         """Load All DataSources."""
@@ -71,9 +75,9 @@ class DataSourceManager:
         else:
             datasources = config["datasources"]
 
-            for dstype, datasources_info in datasources.items():
+            for _, datasources_info in datasources.items():
                 for ds_info in datasources_info:
-                    self.insert_datasource(dstype, ds_info)
+                    self.insert_datasource(ds_info)
 
 
 datasource_manager = DataSourceManager()

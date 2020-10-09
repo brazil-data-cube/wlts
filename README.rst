@@ -37,9 +37,9 @@ Web Land Trajectory Service
         :target: https://github.com/brazil-data-cube/wlts/releases
         :alt: Release
 
-.. image:: https://badges.gitter.im/brazil-data-cube/community.svg/
-        :target: https://gitter.im/brazil-data-cube/community#
-        :alt: Join the chat
+.. image:: https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8
+        :target: https://discord.com/channels/689541907621085198#
+        :alt: Join us at Discord
 
 
 About

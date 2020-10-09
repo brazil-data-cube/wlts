@@ -7,8 +7,9 @@
 #
 """WLTS Feature Collection Class."""
 
-from .collection import Collection
 from ..utils import get_date_from_str
+from .collection import Collection
+
 
 class FeatureCollection(Collection):
     """FeatureCollection Class."""
@@ -58,7 +59,6 @@ class FeatureCollection(Collection):
 
             if result is not None:
 
-                # TODO verficar se os tipos estão corretos
                 # Get Class information by passing trajectory result
                 if self.temporal["type"] == "STRING":
                     obs_info = get_date_from_str(obs["temporal_property"])
@@ -67,7 +67,6 @@ class FeatureCollection(Collection):
                 elif self.temporal["type"] == "DATE":
                     obs_info = result[obs["temporal_property"]]
 
-
                 # Get Class
                 if self.classification_class.get_type() == "Literal":
                     class_info = obs["class_property_name"]
@@ -75,20 +74,21 @@ class FeatureCollection(Collection):
                 elif self.classification_class.get_type() == "Self":
                     class_info = result[obs["class_property"]]
                 else:
-                    featureID = result[obs["class_property"]]
+                    feature_id = result[obs["class_property"]]
 
                     ds_class = self.classification_class.get_class_ds()
 
-                    if self.classification_class.get_class_system() is None:
-                        class_info = ds_class.get_classe(featureID,
-                                            self.classification_class.get_value(),
-                                            self.classification_class.get_class_property_name(),
-                                            self.classification_class.get_name())
+                    if self.classification_class.get_type() == 'Self':
+                        class_info = ds_class.get_classe(feature_id,
+                                                         self.classification_class.get_class_property_value(),
+                                                         self.classification_class.get_class_property_name(),
+                                                         self.classification_class.get_classification_system_name())
                     else:
-                        class_info = ds_class.get_classe(featureID,
-                                            self.classification_class.get_value(),
-                                            self.classification_class.get_class_property_name(),
-                                            self.classification_class.get_name(),  class_system=self.classification_class)
+                        class_info = ds_class.get_classe(feature_id,
+                                                         self.classification_class.get_class_property_value(),
+                                                         self.classification_class.get_class_property_name(),
+                                                         self.classification_class.get_property_name(),
+                                                         class_system=self.get_classification_system_name)
 
                 trj = {
                     "collection": self.get_name(),
