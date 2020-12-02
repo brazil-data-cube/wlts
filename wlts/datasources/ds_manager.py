@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -10,8 +10,8 @@ from json import loads as json_loads
 
 import pkg_resources
 
-from .wcs import WCSDataSource
 from .wfs import WFSDataSource
+from .wcs import WCSDataSource
 
 
 class DataSourceFactory:
@@ -58,8 +58,8 @@ class DataSourceManager:
             for ds in self._datasources:
                 if ds.get_id == ds_id:
                     return ds
-        except:
-            return None
+        except ValueError:
+            raise RuntimeError(f"Datasource identifier {ds_id} not found in WLTS Datasources!")
 
     def insert_datasource(self, conn_info):
         """Insert DataSource."""

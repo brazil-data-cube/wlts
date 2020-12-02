@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -60,8 +60,8 @@ class CollectionManager:
             for collection in self._collections:
                 if name == collection.get_name():
                     return collection
-        except:
-            return None
+        except ValueError:
+            raise RuntimeError(f"Collection {name} not found!")
 
     def collection_names(self):
         """Get Name of all collections avaliable."""
@@ -86,10 +86,10 @@ class CollectionManager:
         config_feature = json_loads(json_string_feature)
         config_image = json_loads(json_string_image)
 
-        if "feature_collection" in config_feature:
-            feature_collection = config_feature["feature_collection"]
-            for ft_collection in feature_collection:
-                self.insert("feature_collection", ft_collection)
+        # if "feature_collection" in config_feature:
+        #     feature_collection = config_feature["feature_collection"]
+        #     for ft_collection in feature_collection:
+        #         self.insert("feature_collection", ft_collection)
 
         if "image_collection" in config_image:
             image_collection = config_image["image_collection"]

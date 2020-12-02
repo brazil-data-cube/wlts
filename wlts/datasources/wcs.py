@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -99,7 +99,6 @@ class WCS:
 
         if ft_name not in images:
             raise NotFound('Image "{}" not found'.format(ft_name))
-
 
     def open_image(self, url, long, lat):
         """Open Image."""
