@@ -12,10 +12,14 @@ from .collection import Collection
 
 
 class FeatureCollection(Collection):
-    """FeatureCollection Class."""
+    """Implement a feature collection."""
 
     def __init__(self, collections_info):
-        """Creates FeatureCollection."""
+        """Creates FeatureCollection.
+
+        Args:
+            collections_info (dict): The collection information.
+        """
         super().__init__(collections_info["name"],
                          collections_info["authority_name"],
                          collections_info["description"],
@@ -33,11 +37,22 @@ class FeatureCollection(Collection):
         self.observations_properties = collections_info["observations_properties"]
 
     def collection_type(self):
-        """Get Collection Feature Type."""
+        """Return collection type."""
         return "Feature"
 
     def trajectory(self, tj_attr, x, y, start_date, end_date):
-        """Get Trajectory."""
+        """Return the trajectory.
+
+        Args:
+            tj_attr (list): The list of trajectories.
+            x (int/float): A longitude value according to EPSG:4326.
+            y (int/float): A latitude value according to EPSG:4326.
+            start_date (:obj:`str`, optional): The begin of a time interval.
+            end_date (:obj:`str`, optional): The begin of a time interval.
+
+         Returns:
+            list: A trajectory object as a list.
+        """
         ds = self.datasource
 
         for obs in self.observations_properties:

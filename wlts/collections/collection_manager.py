@@ -19,7 +19,15 @@ class CollectionFactory:
 
     @staticmethod
     def make(collection_type, collections_info):
-        """Factory method creates Collection."""
+        """Factory method to creates a collection.
+
+        Args:
+            collection_type (str): The collection type to be create.
+            collections_info (dict): The collection information.
+
+        Returns:
+            collection: A collection object.
+        """
         factorys = {"feature_collection": "FeatureCollection", "image_collection": "ImageCollection"}
 
         collection = eval(factorys[collection_type])(collections_info)
@@ -28,7 +36,7 @@ class CollectionFactory:
 
 
 class CollectionManager:
-    """CollectionManager Class."""
+    """This is a singleton to manage all collections instances available."""
 
     _collections = list()
 
@@ -50,12 +58,27 @@ class CollectionManager:
         return CollectionManager.__instance
 
     def insert(self, collection_type, collection_info):
-        """Insert Collection."""
+        """Method to creates a new collection and stores in list of collections.
+
+        Args:
+            collection_type (str): The collection type to be create.
+            collection_info (dict): The collection information.
+        """
         collection = CollectionFactory.make(collection_type, collection_info)
         self._collections.append(collection)
 
     def get_collection(self, name):
-        """Get Collection."""
+        """Return the collection.
+
+        Args:
+            name (str): Identifier (name) of an collection.
+
+        Returns:
+            collection: A collection available in the server.
+
+        Raises:
+            RuntimeError: If the collection not found.
+        """
         try:
             for collection in self._collections:
                 if name == collection.get_name():
@@ -64,7 +87,11 @@ class CollectionManager:
             raise RuntimeError(f"Collection {name} not found!")
 
     def collection_names(self):
-        """Get Name of all collections avaliable."""
+        """Return all available collections.
+
+        Returns:
+            list: A list with all collections identifier (name) available in the server.
+        """
         collections_names = list()
 
         for collection in self._collections:
@@ -73,11 +100,11 @@ class CollectionManager:
         return collections_names
 
     def get_all_collections(self):
-        """Get all Collections."""
+        """Returns a list with all collections objects."""
         return self._collections
 
     def load_all(self):
-        """Load all Collection."""
+        """Creates all collection based on json of image and feature collection."""
         json_string_feature = pkg_resources.resource_string('wlts', '/json_configs/feature_collection.json').decode(
             'utf-8')
 
@@ -86,10 +113,10 @@ class CollectionManager:
         config_feature = json_loads(json_string_feature)
         config_image = json_loads(json_string_image)
 
-        # if "feature_collection" in config_feature:
-        #     feature_collection = config_feature["feature_collection"]
-        #     for ft_collection in feature_collection:
-        #         self.insert("feature_collection", ft_collection)
+        if "feature_collection" in config_feature:
+            feature_collection = config_feature["feature_collection"]
+            for ft_collection in feature_collection:
+                self.insert("feature_collection", ft_collection)
 
         if "image_collection" in config_image:
             image_collection = config_image["image_collection"]

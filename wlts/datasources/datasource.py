@@ -10,22 +10,22 @@ from abc import ABCMeta, abstractmethod
 
 
 class DataSource(metaclass=ABCMeta):
-    """Abstract Class DataSource.
-
-    :param id: DataSource identification
-    :type id: string.
-    """
+    """Abstract class to represent an Data Source."""
 
     def __init__(self, id):
-        """Abstraction to make DataSource."""
+        """Abstraction to make DataSource.
+
+        Args:
+            id (str): Identifier of an datasource.
+        """
         self._id = id
 
     @property
     def get_id(self):
-        """Get datasource id."""
+        """Return the datasource identifier (id)."""
         return self._id
 
     @abstractmethod
     def get_type(self):
-        """Get DataSource Type."""
+        """Return the datasource type."""
         pass

@@ -18,10 +18,13 @@ WLTS implementation depends essentially on:
 - `GDAL <https://gdal.org/>`_ ``(Version 2+)``
 
 
-Development Installation
-------------------------
+Development Installation - GitHub
+---------------------------------
 
-Clone the software repository:
+Clone the Software Repository
++++++++++++++++++++++++++++++
+
+Use ``git`` to clone the software repository:
 
 .. code-block:: shell
 
@@ -43,6 +46,38 @@ Install in development mode:
 
 .. note::
 
+    If you want to create a new *Python Virtual Environment*, please, follow this instruction:
+
+    **1.** Create a new virtual environment linked to Python 3.7::
+
+        python3.7 -m venv venv
+
+
+    **2.** Activate the new environment::
+
+        source venv/bin/activate
+
+
+    **3.** Update pip and setuptools::
+
+        pip3 install --upgrade pip
+
+        pip3 install --upgrade setuptools
+
+    For more information, see [#f1]_.
+
+    Or you can use Python Anaconda Environment:
+
+    **1.** Create an virtual environment using conda with Python Interpreter Version +3::
+
+        conda create --name bdc_wlts python=3
+
+    **2.** Activate environment::
+
+        conda activate bdc_wlts
+
+.. note::
+
     | If you have problems during the GDAL Python package installation, please, make sure to have the GDAL library support installed in your system with its command line tools.
     |
     | You can check the GDAL version with:
@@ -57,11 +92,36 @@ Install in development mode:
     | For more information, see [#f1]_ e [#f2]_.
 
 
+Run the Tests
++++++++++++++
+
+Run the tests:
+
+.. code-block:: shell
+
+        $ ./run-test.sh
+
+
+Build the Documentation
++++++++++++++++++++++++
+
 Generate the documentation:
 
 .. code-block:: shell
 
-    $ python setup.py build_sphinx
+        $ python setup.py build_sphinx
+
+The above command will generate the documentation in HTML and it will place it under:
+
+.. code-block:: shell
+
+    docs/sphinx/_build/html/
+
+You can open the above documentation in your favorite browser, as:
+
+.. code-block:: shell
+
+    firefox docs/sphinx/_build/html/index.html
 
 
 Running in Development Mode
@@ -73,7 +133,7 @@ In the source code folder, enter the following command:
 
     $ FLASK_APP="wlts" \
       FLASK_ENV="development" \
-      SQLALCHEMY_URI="postgresql://user:password@localhost:5432/dbname" \
+      SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname" \
       WLTS_URL="http://localhost:5000" \
       flask run
 
@@ -205,18 +265,15 @@ You should see an output like:
 
 .. rubric:: Footnotes
 
-.. [#f1]
+.. [#f1] During GDAL installation, if you have a build message such as the one showed below
 
-    During GDAL installation, if you have a build message such as the one showed below:
-
-    .. code-block::
+    .. code-block:: shell
 
         Skipping optional fixer: ws_comma
         running build_ext
         building 'osgeo._gdal' extension
         creating build/temp.linux-x86_64-3.7
         creating build/temp.linux-x86_64-3.7/extensions
-        x86_64-linux-gnu-gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -I../../port -I../../gcore -I../../alg -I../../ogr/ -I../../ogr/ogrsf_frmts -I../../gnm -I../../apps -I/home/gribeiro/Devel/github/brazil-data-cube/wtss/venv/include -I/usr/include/python3.7m -I. -I/usr/include -c extensions/gdal_wrap.cpp -o build/temp.linux-x86_64-3.7/extensions/gdal_wrap.o
         extensions/gdal_wrap.cpp:3168:10: fatal error: cpl_port.h: No such file or directory
          #include "cpl_port.h"
                   ^~~~~~~~~~~~
@@ -234,11 +291,10 @@ You should see an output like:
           pip install "gdal==2.4.2"
 
 
-.. [#f2]
+.. [#f2] On Linux Ubuntu 18.04 LTS you can install GDAL 2.4.2 from the UbuntuGIS repository:
 
-    On Linux Ubuntu 18.04 LTS you can install GDAL 2.4.2 from the UbuntuGIS repository:
-
-    1. Create a file named ``/etc/apt/sources.list.d/ubuntugis-ubuntu-ppa-bionic.list`` and add the following content:
+    | 1. Create a file named ``/etc/apt/sources.list.d/ubuntugis-ubuntu-ppa-bionic.list`` and
+    | add the following content:
 
     .. code-block:: shell
 
@@ -250,7 +306,8 @@ You should see an output like:
 
     .. code-block:: shell
 
-        $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B827C12C2D425E227EDCA75089EBE08314DF160
+        $ sudo apt-key adv --keyserver keyserver.ubuntu.com \
+        --recv-keys 6B827C12C2D425E227EDCA75089EBE08314DF160
 
 
     3. Then, update your repository index:

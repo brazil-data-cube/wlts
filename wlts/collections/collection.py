@@ -13,7 +13,7 @@ from wlts.datasources.ds_manager import datasource_manager
 
 
 class Collection(metaclass=ABCMeta):
-    """Abstract Collection Class."""
+    """Abstract class to represent an collection."""
 
     def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
                  classification_class, temporal, scala, spatial_extent, period):
@@ -33,7 +33,15 @@ class Collection(metaclass=ABCMeta):
 
     @staticmethod
     def create_classification_system(classification_class):
-        """Creates Class."""
+        """Creates a Classification System for Collection.
+
+        Args:
+            classification_class (dict): The classification system information.
+
+        Returns:
+            Class: The classification system class.
+
+        """
         args = dict()
 
         args['type'] = classification_class["type"]
@@ -55,43 +63,58 @@ class Collection(metaclass=ABCMeta):
         return Class(**args)
 
     def get_name(self):
-        """Get Collection Name."""
+        """Return the collection name."""
         return self.name
 
     def get_datasource_id(self):
-        """Get Collection id."""
+        """Return the collection datasource identifier (id)."""
         return self.datasource.get_id()
 
     def get_datasource(self):
-        """Get Collection DataSource."""
+        """Return datasource of the collection."""
         return self.datasource
 
     def get_resolution_unit(self):
-        """Get Collection Time resolution unit."""
+        """Return the collection resolution unit."""
         return self.temporal["resolution"]["unit"]
 
     def get_resolution_value(self):
-        """Get Collection Time resolution value."""
+        """Return the collection resolution value."""
         return self.temporal["resolution"]["value"]
 
     def get_spatial_extent(self):
-        """Get Collection Spatial_extent."""
+        """Return the collection spatial extent."""
         return self.spatial_extent
 
     def get_start_date(self):
-        """Get Collection start_date."""
+        """Return the collection start date."""
         return self.period["start_date"]
 
     def get_end_date(self):
-        """Get Collection end_date."""
+        """Return the collection end_date."""
         return self.period["end_date"]
 
     @abstractmethod
     def trajectory(self, tj_attr, x, y, start_date, end_date):
-        """Get Trajectory Type Abstract Method."""
+        """Abstract Method to get trajectory.
+
+        Args:
+            tj_attr (list): The list of trajectories.
+            x (int/float): A longitude value according to EPSG:4326.
+            y (int/float): A latitude value according to EPSG:4326.
+            start_date (:obj:`str`, optional): The begin of a time interval.
+            end_date (:obj:`str`, optional): The begin of a time interval.
+
+         Returns:
+            list: A trajectory object as a list.
+        """
         pass
 
     @abstractmethod
     def collection_type(self):
-        """Get Collections Type Abstract Method."""
+        """Abstract Method to get collections type.
+
+        Returns:
+            collection_type (str): A string that represents a collection type.
+        """
         pass

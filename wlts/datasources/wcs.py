@@ -22,10 +22,15 @@ from wlts.utils import get_date_from_str, transform_latlong_to_rowcol
 
 
 class WCS:
-    """WCS Utility Class."""
+    """This class implements the WCS client.."""
 
     def __init__(self, host, **kwargs):
-        """Create a WFS client attached to the given host address (an URL)."""
+        """Create a WCS client attached to the given host address (an URL).
+
+        Args:
+            host (str): the server URL.
+            **kwargs: The keyword arguments with credentials to access WFS.
+        """
         invalid_parameters = set(kwargs) - {"auth"}
 
         if invalid_parameters:
@@ -45,7 +50,11 @@ class WCS:
                 self._auth = kwargs['auth']
 
     def _get_image(self, uri):
-        """Get Response."""
+        """Query the WCS service using HTTP GET verb and return the image result.
+
+        Args:
+            uri (str): URL for the WCS server.
+        """
         if self._auth:
             request = urllib.request.Request(uri)
 
@@ -68,7 +77,11 @@ class WCS:
             return None
 
     def _get(self, uri):
-        """Get URI."""
+        """Query the WCS service using HTTP GET verb.
+
+        Args:
+            uri (str): URL for the WCS server.
+        """
         response = requests.get(uri, auth=self._auth)
 
         if response.status_code != 200:
@@ -77,7 +90,7 @@ class WCS:
         return response.content.decode('utf-8')
 
     def list_image(self):
-        """List collection."""
+        """Returns the list of all available image in service."""
         url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
 
         doc = self._get(url)
@@ -94,14 +107,24 @@ class WCS:
         return avaliables
 
     def check_image(self, ft_name):
-        """Utility to check image existence in wcs."""
+        """Utility to check image existence in wcs.
+
+        Args:
+            ft_name (str): The image name.
+        """
         images = self.list_image()
 
         if ft_name not in images:
             raise NotFound('Image "{}" not found'.format(ft_name))
 
     def open_image(self, url, long, lat):
-        """Open Image."""
+        """Return the image value for a location.
+
+        Args:
+            url (str): URL for the WCS server.
+            long (int/float): A longitude value according to EPSG:4326.
+            lat (int/float): A latitude value according to EPSG:4326.
+        """
         image_data = self._get_image(url)
 
         if not image_data:
@@ -131,7 +154,21 @@ class WCS:
 
     @lru_cache()
     def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time, x, y):
-        """Get Image."""
+        """Mount the url for get a image(coverage) from server based on GetCoverage request.
+
+        Args:
+            image (str): The image(coverage) name to retrieve from service.
+            srid (int): The CRS of the image(coverage).
+            min_x (int/float): The min x the extent of the image(coverage)
+            max_x (int/float): The max x the extent of the image(coverage)
+            min_y (int/float): The min y the extent of the image(coverage)
+            max_y (int/float): The max y the extent of the image(coverage)
+            column (int): Grid resolution.
+            row (int): Grid resolution.
+            time (str): Time dimension.
+            x (int/float): The location x to retrieve.
+            x (int/float): The location y to retrieve.
+        """
         url = "{}/{}&request=GetCoverage&COVERAGE={}&".format(self.host, self.base_path, image)
 
         url += "CRS=EPSG:4326&RESPONSE_CRS=EPSG:{}&".format(srid)
@@ -140,16 +177,21 @@ class WCS:
 
         url += "&FORMAT=GeoTIFF&WIDTH={}&HEIGHT={}&time={}".format(column, row, time)
 
-        featureID = self.open_image(url, x, y)
+        image_value = self.open_image(url, x, y)
 
-        return featureID
+        return image_value
 
 
 class WCSDataSource(DataSource):
-    """WCSDataSource Class."""
+    """This class implemente a WCSDataSource."""
 
     def __init__(self, id, ds_info):
-        """WCS Init Method."""
+        """Create a WCSDataSource.
+
+        Args:
+            id (str): the datasource identifier.
+            ds_info (dict): A datasource information as a dictionary.
+        """
         super().__init__(id)
 
         if 'user' in ds_info and 'password' in ds_info:
@@ -160,11 +202,15 @@ class WCSDataSource(DataSource):
         self.workspace = ds_info['workspace']
 
     def get_type(self):
-        """Get DataSource type."""
+        """Return the datasource type."""
         return "WCS"
 
     def get_trajectory(self, **kwargs):
-        """Return trajectory for wcs."""
+        """Return a trajectory instance for wcs datasource.
+
+        Args:
+            **kwargs: The keyword arguments.
+        """
         invalid_parameters = set(kwargs) - {"image", "temporal",
                                             "x", "y", "srid",
                                             "grid", "start_date", "end_date", "time"}
@@ -183,14 +229,11 @@ class WCSDataSource(DataSource):
 
         image_name = self.workspace + ":" + kwargs['image']
 
-        # verifica se a image existe no geoserver
-        # self._wcs.check_image(image_name)
-
         min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
 
-        imageID = self._wcs.get_image(image_name, kwargs['srid'],
+        image_value = self._wcs.get_image(image_name, kwargs['srid'],
                                       min_x, min_y, max_x, max_y,
                                       (kwargs['grid'])['column'], (kwargs['grid'])['row'],
                                       kwargs['time'], kwargs['x'], kwargs['y'])
 
-        return imageID
+        return image_value

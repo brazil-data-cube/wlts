@@ -16,6 +16,10 @@ Version 0.2.0 (2020-12-x)
 
 - First experimental version.
 
+- Support for OGC WFS and OGC WCS datasource.
+
+- Support for vector and raster data.
+
 - Documentation system based on Sphinx.
 
 - Documentation integrated to ``Read the Docs``.

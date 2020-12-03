@@ -11,10 +11,10 @@ from wlts.datasources.ds_manager import datasource_manager
 
 
 class ClassificationSystemClass:
-    """ClassificationSystemClass Class."""
+    """This class represents a Classification System of a collection."""
 
     def __init__(self, **kwargs):
-        """Creates a ClassificationSystemClass object."""
+        """Creates a ClassificationSystemClass."""
         invalid_parameters = set(kwargs) - {"type", "datasource_id", "property_name", "class_property_name",
                                             "class_property_value", 'class_property_id', 'classification_system_name',
                                             'classification_system_id', 'class_property_id'}
@@ -35,33 +35,33 @@ class ClassificationSystemClass:
         self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
 
     def get_type(self):
-        """Get Classification System Class type."""
+        """Return classification system type based on WLTS model."""
         return self.type
 
     def get_property_name(self):
-        """Get Classification System Class property name."""
+        """Return classification system property name."""
         return self.property_name
 
     def get_class_property_value(self):
-        """Get Classification System Class property value."""
+        """Return classification system property value."""
         return self.class_property_value
 
     def get_class_property_name(self):
-        """Get Classification System Class property class name."""
+        """Return classification system property class name."""
         return self.class_property_name
 
     def get_class_property_id(self):
-        """Get Classification System Class property class id."""
+        """Return classification system property class id."""
         return self.class_property_id
 
     def get_class_ds(self):
-        """Get DataSource of Classification System."""
+        """Return classification system datasource."""
         return self.datasource
 
     def get_classification_system_name(self):
-        """Get Classification System Name."""
+        """Return classification system name."""
         return self.classification_system_name
 
     def get_classification_system_id(self):
-        """Get Classification System Id."""
+        """Return classification system id."""
         return self.classification_system_id

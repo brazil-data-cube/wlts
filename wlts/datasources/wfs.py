@@ -19,15 +19,15 @@ from wlts.utils import get_date_from_str
 
 
 class WFS:
-    """WFSOperations.
-
-    :param host: Host
-    :type host: string.
-
-    """
+    """This class implements the WCS client."""
 
     def __init__(self, host, **kwargs):
-        """Create a WFS client attached to the given host address (an URL)."""
+        """Create a WFS client attached to the given host address (an URL).
+
+        Args:
+            host (str): the server URL.
+            **kwargs: The keyword arguments with credentials to access WFS.
+        """
         invalid_parameters = set(kwargs) - {"auth"}
 
         if invalid_parameters:
@@ -47,7 +47,11 @@ class WFS:
                 self._auth = kwargs['auth']
 
     def _get(self, uri):
-        """Get WFS."""
+        """Query the WFS service using HTTP GET verb.
+
+        Args:
+            uri (str): URL for the WCS server.
+        """
         response = requests.get(uri, auth=self._auth)
 
         if response.status_code != 200:
@@ -56,7 +60,7 @@ class WFS:
         return response.content.decode('utf-8')
 
     def _list_features(self):
-        """List Features."""
+        """Returns the list of all available feature in service."""
         url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
 
         doc = self._get(url)
@@ -73,14 +77,28 @@ class WFS:
         return features
 
     def check_feature(self, ft_name):
-        """Utility to check feature existence in wfs."""
+        """Utility to check feature existence in wfs.
+
+        Args:
+            ft_name (str): The feature name to check.
+        """
         features = self._list_features()
 
         if ft_name not in features['features']:
             raise NotFound('Feature "{}" not found'.format(ft_name))
 
     def mount_url(self, type_name, **kwargs):
-        """Mount get feature url."""
+        """Mount the url for get a feature from server based on GetFeature request.
+
+        Args:
+            type_name (str): Name of the feature type.
+            **kwargs: The keyword arguments:
+                srid (int): EPSG code
+                propertyName (str): Feature property names
+                filter (str): Filter to use in request.
+                outputformat (str): Requested response format of the request.
+
+        """
         invalid_parameters = set(kwargs) - {'srid', 'propertyName', 'filter', 'outputformat'}
 
         if invalid_parameters:
@@ -121,7 +139,7 @@ class WFS:
 
     @lru_cache()
     def get_class(self, type_name, tag_name, filter):
-        """Get classes of given feature."""
+        """Return a class of given feature."""
         args = {"filter": "&cql_filter={}".format(filter)}
 
         url = self.mount_url(type_name, **args)
@@ -136,10 +154,15 @@ class WFS:
 
 
 class WFSDataSource(DataSource):
-    """WFS DataSource Class."""
+    """This class implements a WFSDataSource."""
 
     def __init__(self, id, ds_info):
-        """Init Method of WFSDataSource."""
+        """Create a WFSDataSource.
+
+        Args:
+            id (str): the datasource identifier.
+            ds_info (dict): A datasource information as a dictionary.
+        """
         super().__init__(id)
 
         if 'user' in ds_info and 'password' in ds_info:
@@ -150,11 +173,11 @@ class WFSDataSource(DataSource):
         self.workspace = ds_info['workspace']
 
     def get_type(self):
-        """WFS DataSource Type."""
+        """Return the datasource type."""
         return "WFS"
 
     def get_classe(self, feature_id, value, class_property_name, ft_name, **kwargs):
-        """Get Class."""
+        """Return a class of feature based on his classification system."""
         type_name = self.workspace + ":" + ft_name
 
         tag_name = self.workspace + ":" + class_property_name
@@ -167,7 +190,7 @@ class WFSDataSource(DataSource):
         return self._wfs.get_class(type_name=type_name, tag_name=tag_name, filter=filter)
 
     def get_trajectory(self, **kwargs):
-        """Get Trajectory."""
+        """Return a trajectory observation of this datasource."""
         invalid_parameters = set(kwargs) - {"feature_name", "temporal",
                                             "x", "y", "obs", "geom_property",
                                             "classification_class", "start_date", "end_date"}
