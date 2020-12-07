@@ -60,7 +60,7 @@
           "title": "The Unit of Time",
           "default": "",
           "examples": [
-            "Y"
+            "DAY"
           ]
 
         },
@@ -154,8 +154,46 @@
             9.99999999910497
           ]
         }
+      },
+      "classification_system":{
+        "$id": "#/properties/classification_system",
+        "type": "object",
+        "title": "The Classification System",
+        "required": [
+          "classification_system_id",
+          "classification_system_name",
+          "type"
+        ],
+        "properties": {
+          "classification_system_id": {
+            "$id": "#/properties/classification_system/properties/classification_system",
+            "type": "number",
+            "title": "The classification system id",
+            "default": 1,
+            "examples": [
+              21
+            ]
+          },
+          "classification_system_name": {
+            "$id": "#/properties/classification_system/properties/classification_system_name",
+            "type": "string",
+            "title": "The classification system name",
+            "default": "",
+            "examples": [
+              "Deter Amazônia"
+            ]
+          },
+          "type": {
+            "$id": "#/properties/classification_system/properties/type",
+            "type": "string",
+            "title": "The classification system type",
+            "default": "",
+            "examples": [
+              "Self"
+            ]
+          }
+        }
       }
-
     }
   }
 }

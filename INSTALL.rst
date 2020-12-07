@@ -218,7 +218,12 @@ You should see an output like:
 .. code-block:: js
 
     {
-     "collection_type": "Feature",
+      "classification_system": {
+        "classification_system_id": null,
+        "classification_system_name": null,
+        "type": "Self"
+      },
+      "collection_type": "Feature",
       "description": "Alertas de Desmatamento",
       "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
       "name": "deter_amz",
