@@ -1,33 +1,44 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS DataSource Manager."""
-import pkg_resources
 from json import loads as json_loads
 
-from .wfs import WFSDataSource
+import pkg_resources
+
 from .wcs import WCSDataSource
+from .wfs import WFSDataSource
+
 
 class DataSourceFactory:
-    """Factory for DataSource."""
+    """Factory Class for DataSource."""
 
     @staticmethod
-    def make(dsType, id, connInfo):
-        """Factory method for creates datasource."""
-        # factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", "WFS": "WFSDataSource",
-        #             "RASTER FILE": "RasterFileDataSource"}
-        #TODO colocar todos
-        factorys = { "WFS": "WFSDataSource", "WCS": "WCSDataSource"}
-        datasource = eval(factorys[dsType])(id, connInfo)
+    def make(ds_type, id, conn_info):
+        """Factory method for creates a datasource.
+
+        Args:
+            ds_type (str): The datasource type to be create.
+            id (str): The datasource identifier.
+            conn_info (dict): The datasource connection information.
+
+        .. note::
+            New datasources must be add in factorys.
+
+            Ex: factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", \
+                            "WFS": "WFSDataSource", "RASTER FILE": "RasterFileDataSource"}
+        """
+        factorys = {"WFS": "WFSDataSource", "WCS": "WCSDataSource"}
+        datasource = eval(factorys[ds_type])(id, conn_info)
         return datasource
 
 
 class DataSourceManager:
-    """DataSourceManager Class."""
+    """This is a singleton to manage all datasource instances available."""
 
     _datasources = list()
 
@@ -35,34 +46,48 @@ class DataSourceManager:
 
     def __init__(self):
         """Virtually private constructor."""
-        if DataSourceManager.__instance != None:
+        if DataSourceManager.__instance is not None:
             raise Exception("This class is a singleton!")
         else:
             DataSourceManager.__instance = self
             DataSourceManager.__instance.load_all()
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         """Static access method."""
-        if DataSourceManager.__instance == None:
+        if DataSourceManager.__instance is None:
             DataSourceManager()
         return DataSourceManager.__instance
 
     def get_datasource(self, ds_id):
-        """Get DataSource."""
+        """Return a datasource object.
+
+        Args:
+            ds_id (str): Identifier of a datasource.
+
+        Returns:
+            datasource: A datasource available in the server.
+
+        Raises:
+            RuntimeError: If the datasource not found.
+        """
         try:
             for ds in self._datasources:
-                if (ds.get_id == ds_id):
+                if ds.get_id == ds_id:
                     return ds
-        except:
-            return None
+        except ValueError:
+            raise RuntimeError(f"Datasource identifier {ds_id} not found in WLTS Datasources!")
 
-    def insert_datasource(self, dsType, connInfo):
-        """Insert DataSource."""
-        self._datasources.append(DataSourceFactory.make(connInfo["type"], connInfo["id"], connInfo))
+    def insert_datasource(self, conn_info):
+        """Creates a new datasource and stores in list of datasource.
+
+        Args:
+            conn_info (dict): The datasource connection information.
+        """
+        self._datasources.append(DataSourceFactory.make(conn_info["type"], conn_info["id"], conn_info))
 
     def load_all(self):
-        """Load All DataSources."""
+        """Creates all datasource based on json of datasource."""
         json_string = pkg_resources.resource_string('wlts', '/json_configs/datasources.json').decode('utf-8')
         config = json_loads(json_string)
 
@@ -71,9 +96,9 @@ class DataSourceManager:
         else:
             datasources = config["datasources"]
 
-            for dstype, datasources_info in datasources.items():
+            for _, datasources_info in datasources.items():
                 for ds_info in datasources_info:
-                    self.insert_datasource(dstype, ds_info)
+                    self.insert_datasource(ds_info)
 
 
 datasource_manager = DataSourceManager()

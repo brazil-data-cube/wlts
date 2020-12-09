@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +9,7 @@
 """Web Land Trajectory Service."""
 
 import os
+
 from setuptools import find_packages, setup
 
 readme = open('README.rst').read()
@@ -28,6 +29,8 @@ tests_require = [
 
 docs_require = [
     'Sphinx>=2.2',
+    'sphinx_rtd_theme',
+    'sphinx-copybutton',
 ]
 
 extras_require = {

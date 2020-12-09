@@ -1,20 +1,25 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Feature Collection Class."""
 
-from .collection import Collection
 from ..utils import get_date_from_str
+from .collection import Collection
+
 
 class FeatureCollection(Collection):
-    """FeatureCollection Class."""
+    """Implement a feature collection."""
 
     def __init__(self, collections_info):
-        """Creates FeatureCollection."""
+        """Creates FeatureCollection.
+
+        Args:
+            collections_info (dict): The collection information.
+        """
         super().__init__(collections_info["name"],
                          collections_info["authority_name"],
                          collections_info["description"],
@@ -32,11 +37,22 @@ class FeatureCollection(Collection):
         self.observations_properties = collections_info["observations_properties"]
 
     def collection_type(self):
-        """Get Collection Feature Type."""
+        """Return collection type."""
         return "Feature"
 
     def trajectory(self, tj_attr, x, y, start_date, end_date):
-        """Get Trajectory."""
+        """Return the trajectory.
+
+        Args:
+            tj_attr (list): The list of trajectories.
+            x (int/float): A longitude value according to EPSG:4326.
+            y (int/float): A latitude value according to EPSG:4326.
+            start_date (:obj:`str`, optional): The begin of a time interval.
+            end_date (:obj:`str`, optional): The begin of a time interval.
+
+         Returns:
+            list: A trajectory object as a list.
+        """
         ds = self.datasource
 
         for obs in self.observations_properties:
@@ -58,7 +74,6 @@ class FeatureCollection(Collection):
 
             if result is not None:
 
-                # TODO verficar se os tipos estão corretos
                 # Get Class information by passing trajectory result
                 if self.temporal["type"] == "STRING":
                     obs_info = get_date_from_str(obs["temporal_property"])
@@ -67,7 +82,6 @@ class FeatureCollection(Collection):
                 elif self.temporal["type"] == "DATE":
                     obs_info = result[obs["temporal_property"]]
 
-
                 # Get Class
                 if self.classification_class.get_type() == "Literal":
                     class_info = obs["class_property_name"]
@@ -75,20 +89,21 @@ class FeatureCollection(Collection):
                 elif self.classification_class.get_type() == "Self":
                     class_info = result[obs["class_property"]]
                 else:
-                    featureID = result[obs["class_property"]]
+                    feature_id = result[obs["class_property"]]
 
                     ds_class = self.classification_class.get_class_ds()
 
-                    if self.classification_class.get_class_system() is None:
-                        class_info = ds_class.get_classe(featureID,
-                                            self.classification_class.get_value(),
-                                            self.classification_class.get_class_property_name(),
-                                            self.classification_class.get_name())
+                    if self.classification_class.get_type() == 'Self':
+                        class_info = ds_class.get_classe(feature_id,
+                                                         self.classification_class.get_class_property_value(),
+                                                         self.classification_class.get_class_property_name(),
+                                                         self.classification_class.get_classification_system_name())
                     else:
-                        class_info = ds_class.get_classe(featureID,
-                                            self.classification_class.get_value(),
-                                            self.classification_class.get_class_property_name(),
-                                            self.classification_class.get_name(),  class_system=self.classification_class)
+                        class_info = ds_class.get_classe(feature_id,
+                                                         self.classification_class.get_class_property_value(),
+                                                         self.classification_class.get_class_property_name(),
+                                                         self.classification_class.get_property_name(),
+                                                         class_system=self.get_classification_system_name)
 
                 trj = {
                     "collection": self.get_name(),
@@ -97,3 +112,4 @@ class FeatureCollection(Collection):
                 }
 
                 tj_attr.append(trj)
+

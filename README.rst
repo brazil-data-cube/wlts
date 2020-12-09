@@ -1,6 +1,6 @@
 ..
     This file is part of Web Land Trajectory Service.
-    Copyright (C) 2019 INPE.
+    Copyright (C) 2019-2020 INPE.
 
     Web Land Trajectory Service is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
@@ -37,9 +37,9 @@ Web Land Trajectory Service
         :target: https://github.com/brazil-data-cube/wlts/releases
         :alt: Release
 
-.. image:: https://badges.gitter.im/brazil-data-cube/community.svg/
-        :target: https://gitter.im/brazil-data-cube/community#
-        :alt: Join the chat
+.. image:: https://img.shields.io/discord/689541907621085198?logo=discord&logoColor=ffffff&color=7389D8
+        :target: https://discord.com/channels/689541907621085198#
+        :alt: Join us at Discord
 
 
 About

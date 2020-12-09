@@ -1,6 +1,6 @@
 ..
     This file is part of Web Land Trajectory Service.
-    Copyright (C) 2019 INPE.
+    Copyright (C) 2019-2020 INPE.
 
     Web Land Trajectory Service is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
@@ -73,10 +73,10 @@ The `docker run` command can be used to launch a container from the image `wlts:
 
         $ docker run --detach \
              --name wlts \
-             --publish 127.0.0.1:8080:5000 \
+             --publish 127.0.0.1:5000:5000 \
              --network=bdc_net \
              --env SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname" \
-             --env WLTS_URL="http://localhost:8080" \
+             --env WLTS_URL="http://localhost:5000" \
              wlts:0.2.0-0
 
 Let's take a look at each parameter in the above command:/
@@ -85,13 +85,13 @@ Let's take a look at each parameter in the above command:/
 
     - ``--name wlts``: names the container.
 
-    - ``--publish 127.0.0.1:8080:5000``: by default the WLTS will be running on port ``5000`` of the container. You can bind a host port, such as ``8080`` to the container port ``5000``.
+    - ``--publish 127.0.0.1:5000:5000``: by default the WLTS will be running on port ``5000`` of the container. You can bind a host port, such as ``8080`` to the container port ``5000``.
 
     - ``--network=bdc_net``: if the container should connect to the database server through a docker network, this parameter will automatically attach the container to the ``bdc_net``. You can ommit this parameter if the database server address can be resolved directly from a host address.
 
     - ``--env SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname"``: The database URI to be used [#f1]_.
 
-    - ``--env WLTS_URL="http://localhost:8080"``: Base URI of the service.
+    - ``--env WLTS_URL="http://localhost:5000"``: Base URI of the service.
 
     - ``wlts:0.2.0-0``: the name of the base Docker image used to create the container.
 
@@ -110,6 +110,6 @@ Finally, to test if it is listening, use the ``curl`` command:
 
 .. code-block:: shell
 
-        $ curl localhost:8080/wlts/list_collections
+        $ curl localhost:5000/wlts/list_collections
 
-        {"collections":["sampledb"]}
+        {"collections":["deter_amz"]}

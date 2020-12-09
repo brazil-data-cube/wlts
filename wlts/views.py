@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2019-2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -51,10 +51,6 @@ class DescribeCollection(APIResource):
         collection_name = request.args['collection_id']
 
         collection = controller.describe_collection(collection_name)
-
-        if collection is None:
-           return abort(404, "Collection Not Found")
-
 
         return jsonify(collection)
 
