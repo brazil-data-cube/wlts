@@ -99,7 +99,7 @@ Run the tests:
 
 .. code-block:: shell
 
-        $ ./run-test.sh
+        $ ./run-tests.sh
 
 
 Build the Documentation
