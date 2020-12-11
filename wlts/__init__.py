@@ -7,16 +7,16 @@
 #
 """Web Land Trajectory Service."""
 
-from flask import Flask
-from flask_cors import CORS
+import os
 
-from .blueprint import blueprint
+from flask import Flask
+from werkzeug.exceptions import HTTPException, InternalServerError
+
 from .config import get_settings
-from .ext import WLTSDatabase
 from .version import __version__
 
 
-def create_app(config_name='DevelopmentConfig'):
+def create_app(config_name):
     """Creates Brazil Data Cube WLTS application from config object.
 
     :param config_name: Config instance.
@@ -26,18 +26,31 @@ def create_app(config_name='DevelopmentConfig'):
     """
     app = Flask(__name__)
 
-    conf = get_settings(config_name)
+    conf = config.get_settings(config_name)
     app.config.from_object(conf)
 
-    with app.app_context():
-
-        CORS(app, resorces={r'/d/*': {"origins": '*'}})
-
-        WLTSDatabase(app)
-
-        app.register_blueprint(blueprint)
+    setup_app(app)
 
     return app
 
+
+def setup_app(app):
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        """Handle exceptions."""
+        if isinstance(e, HTTPException):
+            return {'code': e.code, 'description': e.description}, e.code
+
+        app.logger.exception(e)
+
+        return {'code': InternalServerError.code,
+                'description': InternalServerError.description}, InternalServerError.code
+
+    from .views import bp
+
+    app.register_blueprint(bp)
+
+
+app = create_app(os.environ.get('WLTS_ENVIRONMENT', 'DevelopmentConfig'))
 
 __all__ = ('__version__', 'create_app')

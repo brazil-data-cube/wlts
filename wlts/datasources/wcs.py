@@ -12,8 +12,8 @@ from functools import lru_cache
 from uuid import uuid4
 from xml.dom import minidom
 
-import gdal
 import requests
+from osgeo import gdal
 from shapely.geometry import Point
 from werkzeug.exceptions import NotFound
 
