@@ -133,7 +133,6 @@ In the source code folder, enter the following command:
 
     $ FLASK_APP="wlts" \
       FLASK_ENV="development" \
-      SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname" \
       WLTS_URL="http://localhost:5000" \
       flask run
 
@@ -142,9 +141,6 @@ You may need to replace the definition of some environment variables:
   - ``FLASK_ENV="development``: used to tell Flask to run in `Debug` mode.
 
   - ``WLTS_URL="http://localhost:5000"``: Base URI of the service.
-
-  - ``SQLALCHEMY_DATABASE_URI="postgresql://user:password@localhost:5432/dbname"``: The database URI to be used.
-
 
 The above command should output some messages in the console as showed below:
 
@@ -193,7 +189,6 @@ Enter the following command to run the service:
 .. code-block:: shell
 
     WLTS_URL="http://localhost:5000" \
-    SQLALCHEMY_DATABASE_URI=""postgresql://user:password@localhost:5432/dbname" \
     wlts run
 
 
