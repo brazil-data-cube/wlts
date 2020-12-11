@@ -46,8 +46,6 @@ setup_requires = [
 
 install_requires = [
     'Flask>=1.1.1',
-    'Flask-Cors>=3.0.8',
-    'Flask-Script>=2.0.6',
     'Flask-SQLAlchemy>=2.4.1',
     'GDAL>=2.2',
     'psycopg2>=2.8.3',
@@ -79,11 +77,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    entry_points={
-        'console_scripts': [
-            'wlts = wlts.cli:cli'
-        ]
-    },
+    entry_points={},
     extras_require=extras_require,
     install_requires=install_requires,
     setup_requires=setup_requires,

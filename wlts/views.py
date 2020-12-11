@@ -7,10 +7,7 @@
 #
 """Views of Web Land Trajectory Service."""
 from bdc_core.decorators.validators import require_model
-from bdc_core.utils.flask import APIResource
-from flask import abort, jsonify, request
-from flask_restplus import Namespace
-from werkzeug.exceptions import NotFound
+from flask import Blueprint, jsonify, request
 
 from wlts.collections.collection_manager import collection_manager
 
@@ -18,54 +15,45 @@ from . import controller
 from .schemas import collections_list, describe_collection, trajectory
 from .trajectory import Trajectory, TrajectoryParams
 
-api = Namespace('wlts', description='status')
+bp = Blueprint('wlts', import_name=__name__, url_prefix='/wlts')
 
 
-@api.route('/list_collections')
-class ListCollectionsController(APIResource):
-    """WLTS ListCollections Operation."""
+@bp.route('/list_collections', methods=['GET'])
+@require_model(collections_list)
+def list_collections():
+    """Retrieve list of collection offered.
 
-    @require_model(collections_list)
-    def get(self):
-        """Retrieve list of collection offered.
+    :returns: Collection list avaliable in server.
+    :rtype: dict
+    """
+    result = {"collections": collection_manager.collection_names()}
 
-        :returns: Collection list avaliable in server.
-        :rtype: dict
-        """
-        result = {"collections": collection_manager.collection_names()}
-
-        return jsonify(result)
+    return jsonify(result)
 
 
-@api.route('/describe_collection')
-class DescribeCollection(APIResource):
-    """WLTS DescribeCollection Operation."""
+@bp.route('/describe_collection', methods=['GET'])
+@require_model(describe_collection)
+def describe_collection():
+    """Retrieves collection metadata.
 
-    @require_model(describe_collection)
-    def get(self):
-        """Retrieves collection metadata.
+    :returns: Collection Description
+    :rtype: dict
+    """
+    collection_name = request.args['collection_id']
 
-        :returns: Collection Description
-        :rtype: dict
-        """
-        collection_name = request.args['collection_id']
+    collection = controller.describe_collection(collection_name)
 
-        collection = controller.describe_collection(collection_name)
-
-        return jsonify(collection)
+    return jsonify(collection)
 
 
-@api.route('/trajectory')
-class TrajectoryController(APIResource):
-    """WLTS Trajectory Operation."""
+@bp.route('/trajectory', methods=['GET'])
+@require_model(trajectory)
+def trajectory():
+    """Retrieves collection metadata.
 
-    @require_model(trajectory)
-    def get(self):
-        """Retrieves collection metadata.
+    :returns: Collection Description
+    :rtype: dict
+    """
+    params = TrajectoryParams(**request.args.to_dict())
 
-        :returns: Collection Description
-        :rtype: dict
-        """
-        params = TrajectoryParams(**request.args.to_dict())
-
-        return jsonify(Trajectory.get_trajectory(params))
+    return jsonify(Trajectory.get_trajectory(params))
