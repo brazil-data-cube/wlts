@@ -47,16 +47,3 @@ cli = create_cli(create_app=create_app)
 @with_appcontext
 def db():
     """Database operations."""
-
-
-@db.command()
-@with_appcontext
-def insert_db():
-    """Insert Example Data into Database."""
-    sql = load_example_data('wlts_example.sql')
-
-    _db.session.execute(sql)
-
-    _db.session.commit()
-
-    click.echo("Example Data Create!")

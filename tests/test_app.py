@@ -24,7 +24,7 @@ def client():
         yield client
 
 
-class TestListCollection:
+class TestWLTS:
     def list_collection(self, client):
         response = client.get('/wlts/list_collections')
 
@@ -37,14 +37,14 @@ class TestListCollection:
     def describe_collection_without_parameter(self, client):
         response = client.get('/wlts/describe_collection')
 
-        collection_response = json_loads(response.data.decode('utf-8'))
+        response_json = json_loads(response.data.decode('utf-8'))
 
         assert response.status_code == 400
-        assert collection_response['message'] == "\'collection_id\' is a required property"
+        assert response_json['message'] == "\'collection_id\' is a required property"
 
     def describe_collection(self, client):
         response = client.get(
-            '/wlts/describe_collection?collection_id={}'.format("Prodes")
+            '/wlts/describe_collection?collection_id={}'.format("deter_amz")
         )
 
         collection_response = json_loads(response.data.decode('utf-8'))
@@ -70,7 +70,7 @@ class TestListCollection:
         collection_response = json_loads(response.data.decode('utf-8'))
 
         assert response.status_code == 400
-        assert collection_response['message'] == "\'latitude\' is a required propertyy"
+        assert collection_response['message'] == "\'latitude\' is a required property"
 
     def trajectory_without_long(self, client):
 
@@ -79,4 +79,14 @@ class TestListCollection:
         collection_response = json_loads(response.data.decode('utf-8'))
 
         assert response.status_code == 400
-        assert collection_response['message'] == "\'longitude\' is a required propertyy"
+        assert collection_response['message'] == "\'longitude\' is a required property"
+
+    def trajectory(self, client):
+
+        response = client.get('/wlts/trajectoy?latitude=-9.091&longitude=-66.031')
+
+        response_json = json_loads(response.data.decode('utf-8'))
+
+        assert response.status_code == 200
+        assert response.conten_type == "application/json"
+        validate(instance=response_json, schema=trajectory_response)

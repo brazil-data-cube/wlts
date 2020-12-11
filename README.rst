@@ -29,8 +29,8 @@ Web Land Trajectory Service
         :target: https://wlts-server.readthedocs.io/en/latest/
         :alt: Documentation Status
 
-.. image:: https://img.shields.io/badge/lifecycle-experimental-orange.svg
-        :target: https://www.tidyverse.org/lifecycle/#experimental
+.. image:: https://img.shields.io/badge/lifecycle-maturing-blue.svg
+        :target: https://www.tidyverse.org/lifecycle/#maturing
         :alt: Software Life Cycle
 
 .. image:: https://img.shields.io/github/tag/brazil-data-cube/wlts.svg/
@@ -86,7 +86,7 @@ License
 =======
 
 .. admonition::
-    Copyright (C) 2019 INPE.
+    Copyright (C) 2019-2020 INPE.
 
     Web Land Trajectory Service is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
