@@ -7,6 +7,7 @@
 #
 """Unit-test for WLTS' controller."""
 import pytest
+import os
 
 from wlts.schemas import collections_list_response, \
     describe_collection_response, \
@@ -25,6 +26,9 @@ def client():
 
 
 class TestWLTS:
+    def test_data_dir(self):
+        assert os.path.join(os.path.dirname(__file__), '/json_configs/datasources.json')
+
     def list_collection(self, client):
         response = client.get('/wlts/list_collections')
 
