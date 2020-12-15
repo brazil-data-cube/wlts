@@ -33,7 +33,7 @@ Web Land Trajectory Service
         :target: https://www.tidyverse.org/lifecycle/#maturing
         :alt: Software Life Cycle
 
-.. image:: https://img.shields.io/github/tag/brazil-data-cube/wlts.svg/
+.. image:: https://img.shields.io/github/tag/brazil-data-cube/wlts.svg
         :target: https://github.com/brazil-data-cube/wlts/releases
         :alt: Release
 
