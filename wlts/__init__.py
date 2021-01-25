@@ -26,7 +26,7 @@ def create_app(config_name):
     """
     app = Flask(__name__)
 
-    conf = config.get_settings(config_name)
+    conf = get_settings(config_name)
     app.config.from_object(conf)
 
     setup_app(app)

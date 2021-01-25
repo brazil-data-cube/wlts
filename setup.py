@@ -54,6 +54,9 @@ install_requires = [
     'shapely>=1.6',
     'Werkzeug>=0.16.1,<1', # Temp workaround https://github.com/noirbizarre/flask-restplus/issues/777
     'bdc-core @ git+git://github.com/brazil-data-cube/bdc-core.git@b-0.2#egg=bdc-core',
+    'pyproj>=2',
+    'OWSLib>=0.20.0',
+    'rasterio[s3]>=1.1.2,<2'
 ]
 
 packages = find_packages()
