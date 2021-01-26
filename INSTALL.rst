@@ -165,13 +165,6 @@ You may need to replace definition of some information about database you loaded
 
 In ``wlts/json_configs/collections.json`` file the necessary settings must be added for accessing the collection :
 
-Enter the following command to run the service:
-
-.. code-block:: shell
-
-    WLTS_URL="http://localhost:5000" \
-    wlts run
-
 
 If you want to check if the system is up and running, try the following URL in your web browser:
 

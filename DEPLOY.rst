@@ -15,7 +15,6 @@ WLTS implementation depends essentially on:
 
 - `SQLAlchemy <https://www.sqlalchemy.org/>`_
 
-- `GDAL <https://gdal.org/>`_ ``(Version 2+)``
 
 Requeriments
 ------------
