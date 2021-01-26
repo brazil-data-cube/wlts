@@ -47,8 +47,6 @@ setup_requires = [
 install_requires = [
     'Flask>=1.1.1',
     'Flask-SQLAlchemy>=2.4.1',
-    'GDAL>=2.2',
-    'psycopg2>=2.8.3',
     'requests>=2.9.1',
     'SQLAlchemy==1.3.4',
     'shapely>=1.6',
@@ -56,7 +54,7 @@ install_requires = [
     'bdc-core @ git+git://github.com/brazil-data-cube/bdc-core.git@b-0.2#egg=bdc-core',
     'pyproj>=2',
     'OWSLib>=0.20.0',
-    'rasterio[s3]>=1.1.2,<2'
+    'rasterio>=1.1.2,<2'
 ]
 
 packages = find_packages()
