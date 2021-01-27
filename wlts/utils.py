@@ -9,15 +9,6 @@
 from datetime import datetime
 
 
-def load_example_data(file):
-    """Load data."""
-    sql_dir = "example/{}".format(file)
-
-    sql = load(__name__, sql_dir).decode()
-
-    return sql
-
-
 def get_date_from_str(date, date_ref=None):
     """Utility to build date from str."""
     date = date.replace('/', '-')
