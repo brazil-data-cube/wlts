@@ -23,7 +23,7 @@ bp = Blueprint('wlts', import_name=__name__, url_prefix='/wlts')
 def list_collections():
     """Retrieve list of collection offered.
 
-    :returns: Collection list avaliable in server.
+    :returns: Collection list available in server.
     :rtype: dict
     """
     result = {"collections": collection_manager.collection_names()}

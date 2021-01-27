@@ -15,7 +15,6 @@ WLTS implementation depends essentially on:
 
 - `SQLAlchemy <https://www.sqlalchemy.org/>`_
 
-- `GDAL <https://gdal.org/>`_ ``(Version 2+)``
 
 
 Development Installation - GitHub
@@ -64,8 +63,6 @@ Install in development mode:
 
         pip3 install --upgrade setuptools
 
-    For more information, see [#f1]_.
-
     Or you can use Python Anaconda Environment:
 
     **1.** Create an virtual environment using conda with Python Interpreter Version +3::
@@ -75,22 +72,6 @@ Install in development mode:
     **2.** Activate environment::
 
         conda activate bdc_wlts
-
-.. note::
-
-    | If you have problems during the GDAL Python package installation, please, make sure to have the GDAL library support installed in your system with its command line tools.
-    |
-    | You can check the GDAL version with:
-    | ``$ gdal-config --version``.
-    |
-    | Then, if you want to install a specific version (example: 2.4.2), try:
-    | ``$ pip install "gdal==2.4.2"``
-    |
-    | If you still having problems with GDAL installation, you can generate a log in order to check what is happening with your installation. Use the following ``pip`` command:
-    | ``$ pip install --verbose --log my.log "gdal==2.4.2"``
-    |
-    | For more information, see [#f1]_ e [#f2]_.
-
 
 Run the Tests
 +++++++++++++
@@ -184,13 +165,6 @@ You may need to replace definition of some information about database you loaded
 
 In ``wlts/json_configs/collections.json`` file the necessary settings must be added for accessing the collection :
 
-Enter the following command to run the service:
-
-.. code-block:: shell
-
-    WLTS_URL="http://localhost:5000" \
-    wlts run
-
 
 If you want to check if the system is up and running, try the following URL in your web browser:
 
@@ -261,64 +235,3 @@ You should see an output like:
         ]
         }
     }
-
-
-.. rubric:: Footnotes
-
-.. [#f1] During GDAL installation, if you have a build message such as the one showed below
-
-    .. code-block:: shell
-
-        Skipping optional fixer: ws_comma
-        running build_ext
-        building 'osgeo._gdal' extension
-        creating build/temp.linux-x86_64-3.7
-        creating build/temp.linux-x86_64-3.7/extensions
-        extensions/gdal_wrap.cpp:3168:10: fatal error: cpl_port.h: No such file or directory
-         #include "cpl_port.h"
-                  ^~~~~~~~~~~~
-        compilation terminated.
-        error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
-        Running setup.py install for gdal ... error
-        Cleaning up...
-
-    You can instruct ``pip`` to look at the right place for header files when building GDAL:
-
-    .. code-block:: shell
-
-        $ C_INCLUDE_PATH="/usr/include/gdal" \
-          CPLUS_INCLUDE_PATH="/usr/include/gdal" \
-          pip install "gdal==2.4.2"
-
-
-.. [#f2] On Linux Ubuntu 18.04 LTS you can install GDAL 2.4.2 from the UbuntuGIS repository:
-
-    | 1. Create a file named ``/etc/apt/sources.list.d/ubuntugis-ubuntu-ppa-bionic.list`` and
-    | add the following content:
-
-    .. code-block:: shell
-
-        deb http://ppa.launchpad.net/ubuntugis/ppa/ubuntu bionic main
-        deb-src http://ppa.launchpad.net/ubuntugis/ppa/ubuntu bionic main
-
-
-    2. Then add the following key:
-
-    .. code-block:: shell
-
-        $ sudo apt-key adv --keyserver keyserver.ubuntu.com \
-        --recv-keys 6B827C12C2D425E227EDCA75089EBE08314DF160
-
-
-    3. Then, update your repository index:
-
-    .. code-block:: shell
-
-        $ sudo apt-get update
-
-
-    4. Finally, install GDAL:
-
-    .. code-block:: shell
-
-        $ sudo apt-get install libgdal-dev=2.4.2+dfsg-1~bionic0

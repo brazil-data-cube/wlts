@@ -72,6 +72,8 @@ html_baseurl = 'https://brazil-data-cube.github.io/'
 
 #html_style = ''
 
+html_baseurl = 'https://brazil-data-cube.github.io/'
+
 html_title = 'WLTS'
 
 html_context = {
