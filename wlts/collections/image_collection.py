@@ -70,12 +70,12 @@ class ImageCollection(Collection):
                     "time": time
                 }
 
-                image_id = ds.get_trajectory(**args)
+                result = ds.get_trajectory(**args)
 
                 obs_info = None
                 class_info = None
 
-                if image_id is not None:
+                if result is not None:
 
                     # Get Class information by passing trajectory result
                     obs_info = get_date_from_str(time)
@@ -86,13 +86,13 @@ class ImageCollection(Collection):
                         class_info = obs["class_property_name"]
 
                     elif self.classification_class.get_type() == "Self":
-                        class_info = image_id
+                        class_info = result['raster_value']
 
                     else:
 
                         ds_class = self.classification_class.get_class_ds()
 
-                        class_info = ds_class.get_classe(image_id,
+                        class_info = ds_class.get_classe(result['raster_value'],
                                                          self.classification_class.get_class_property_value(),
                                                          self.classification_class.get_class_property_name(),
                                                          self.classification_class.get_property_name(),

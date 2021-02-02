@@ -15,6 +15,10 @@ WLTS implementation depends essentially on:
 
 - `SQLAlchemy <https://www.sqlalchemy.org/>`_
 
+- `OWSLib <https://www.osgeo.org/projects/owslib/>`_
+
+- `Rasterio <https://rasterio.readthedocs.io/en/latest/>`_
+
 
 
 Development Installation - GitHub

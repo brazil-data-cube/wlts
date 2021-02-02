@@ -56,28 +56,34 @@ class WCS:
         data_array = None
 
         data = output.read()
-        memfile = MemoryFile(data)
-        dataset = memfile.open()
+        result = dict()
+        try:
+            memfile = MemoryFile(data)
+            dataset = memfile.open()
 
-        values = list(dataset.sample([(x, y)]))
+            values = list(dataset.sample([(x, y)]))
 
-        if r_flag:
-            data_array = dataset.read()
+            if r_flag:
+                result['geom'] = dataset.read()
 
-        memfile = None
-        dataset = None
-        data = None
+            memfile = None
+            dataset = None
+            data = None
 
-        return data_array, values[0]
+            result['raster_value'] = values[0]
+
+            return result
+        except:
+            return None
 
     @lru_cache()
     def get_image(self, image, min_x, max_x, min_y, max_y, width, height, time, x, y, r_flag):
         """Returns the image value."""
         bbox = (min_x, min_y, max_x, max_y)
 
-        _, image_value = self._get(image, bbox, width, height, time, x, y, r_flag)
+        image_infos = self._get(image, bbox, width, height, time, x, y, r_flag)
 
-        return image_value
+        return image_infos
 
     def list_image(self):
         """Returns the list of all available image in service."""
@@ -147,8 +153,8 @@ class WCSDataSource(DataSource):
 
         r_flag = False
 
-        image_value = self._wcs.get_image(image_name, min_x, max_x, min_y, max_y, (kwargs['grid'])['column'],
+        image_infos = self._wcs.get_image(image_name, min_x, max_x, min_y, max_y, (kwargs['grid'])['column'],
                                           (kwargs['grid'])['row'],
                                           kwargs['time'], kwargs['x'], kwargs['y'], r_flag=r_flag)
 
-        return image_value[0]
+        return image_infos
