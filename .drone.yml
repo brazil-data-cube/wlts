@@ -31,3 +31,15 @@ steps:
     status:
       - failure
       - success
+
+- name: docker-registry
+  image: plugins/docker
+  network_mode: bridge
+  settings:
+    repo: registry.dpi.inpe.br/${DRONE_REPO}
+    registry: registry.dpi.inpe.br
+    username:
+      from_secret: registry_user
+    password:
+      from_secret: registry_pass
+    auto_tag: true

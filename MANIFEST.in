@@ -14,6 +14,7 @@ include *.rst
 include *.sh
 include *.txt
 include *.py
+include Dockerfile
 include LICENSE
 include pytest.ini
 include *.yml
@@ -31,4 +32,3 @@ recursive-include wlts *.json
 recursive-include wlts *.sql
 recursive-include wlts *.py
 recursive-exclude docker *
-
