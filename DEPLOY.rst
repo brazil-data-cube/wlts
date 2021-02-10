@@ -26,16 +26,16 @@ On the command line use the `docker build` command to create the docker image fo
 
 .. code-block:: shell
 
-        $ docker build -t wlts:0.2.0-0 -f docker/Dockerfile . --no-cache
+        $ docker build -t wlts:0.2.0 . --no-cache
 
-The above command will create a Docker image named `wlts` and tag `0.2.0-0`, as one can see with the `docker images` command:
+The above command will create a Docker image named `wlts` and tag `0.2.0`, as one can see with the `docker images` command:
 
 .. code-block:: shell
 
         $ docker images
 
         REPOSITORY                                          TAG                 IMAGE ID            CREATED             SIZE
-        wlts                                            0.2.0-0             ce2ba6a67896        16 hours ago        1.25GB
+        wlts                                              0.2.0             ce2ba6a67896        16 hours ago          1.25GB
 
 Preparing the Network for Containers
 ------------------------------------

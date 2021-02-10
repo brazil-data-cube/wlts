@@ -15,9 +15,9 @@ services:
   wlts:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./Dockerfile
     container_name: wlts
-    image: wlts:0.2.0-0
+    image: wlts:0.2.0
     restart: "always"
     environment:
       - "SQLALCHEMY_DATABASE_URI=postgresql://user:password@localhost:5432/dbname"
