@@ -39,7 +39,7 @@
         },
         "longitude": {
           "$id": "#/properties/query/properties/longitude",
-          "type": "integer",
+          "type": "number",
           "title": "The Longitude Schema",
           "default": 0,
           "examples": [
@@ -48,7 +48,7 @@
         },
         "latitude": {
           "$id": "#/properties/query/properties/latitude",
-          "type": "integer",
+          "type": "number",
           "title": "The Latitude Schema",
           "default": 0,
           "examples": [

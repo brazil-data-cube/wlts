@@ -28,10 +28,14 @@ class TrajectoryParams:
 
     def to_dict(self):
         """Export Trajectory params to Python Dictionary."""
-        return {
-            k: v
+        data = {
+            k: v if v is not None else ''
             for k, v in vars(self).items() if not k.startswith('_')
-            }
+        }
+        if data.get('collections') == '':
+            data['collections'] = []
+
+        return data
 
 
 class Trajectory:
@@ -92,8 +96,5 @@ class Trajectory:
 
         return {
             "query": ts_params.to_dict(),
-            "result": {
-                "trajectory": newtraj
-            }
-
+            "trajectory": newtraj
         }
