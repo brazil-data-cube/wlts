@@ -11,7 +11,7 @@ from functools import lru_cache
 from owslib.util import Authentication
 from owslib.wcs import WebCoverageService
 from rasterio.io import MemoryFile
-from shapely.geometry import Point
+from shapely.geometry import Point, mapping
 
 from wlts.datasources.datasource import DataSource
 from wlts.utils import get_date_from_str
@@ -38,7 +38,7 @@ class WCS:
         else:
             self.wcs_owslib = WebCoverageService(host, version='1.0.0')
 
-    def _get(self, name, bbox, width, height, time, x, y, r_flag):
+    def _get(self, name, bbox, width, height, time, x, y):
         """Return the image value for a location.
 
         Args:
@@ -53,35 +53,28 @@ class WCS:
                                              time=[time],
                                              width=width, height=height)
 
-        data_array = None
-
         data = output.read()
-        result = dict()
+
         try:
             memfile = MemoryFile(data)
             dataset = memfile.open()
 
             values = list(dataset.sample([(x, y)]))
 
-            if r_flag:
-                result['geom'] = dataset.read()
-
             memfile = None
             dataset = None
             data = None
 
-            result['raster_value'] = values[0]
-
-            return result
+            return values[0]
         except:
             return None
 
     @lru_cache()
-    def get_image(self, image, min_x, max_x, min_y, max_y, width, height, time, x, y, r_flag):
+    def get_image(self, image, min_x, max_x, min_y, max_y, width, height, time, x, y):
         """Returns the image value."""
         bbox = (min_x, min_y, max_x, max_y)
 
-        image_infos = self._get(image, bbox, width, height, time, x, y, r_flag)
+        image_infos = self._get(image, bbox, width, height, time, x, y)
 
         return image_infos
 
@@ -123,6 +116,33 @@ class WCSDataSource(DataSource):
 
         if ft_name not in images:
             raise ValueError(f'Image "{ft_name}" not found in host {self._wcs.url}')
+        
+    def organize_trajectory(self, result, time, classification_class, geom, geom_flag, temporal):
+        """Organize trajectory."""
+        # Get temporal information
+        obs_info = get_date_from_str(time)
+        obs_info = obs_info.strftime(temporal["string_format"])
+    
+        # Get Class
+        if classification_class.get_type() == "Self":
+            class_info = result['raster_value']
+        else:
+            ds_class = classification_class.get_class_ds()
+
+            class_info = ds_class.get_classe(result,
+                                             classification_class.get_class_property_value(),
+                                             classification_class.get_class_property_name(),
+                                             classification_class.get_property_name(),
+                                             class_system=classification_class.get_classification_system_name())
+
+        trj = dict()
+        trj["class"] = class_info
+        trj["date"] = str(obs_info)
+
+        if geom_flag:
+            trj["geom"] = mapping(geom)
+        
+        return trj
 
     def get_trajectory(self, **kwargs):
         """Return a trajectory instance for wcs datasource.
@@ -132,7 +152,8 @@ class WCSDataSource(DataSource):
         """
         invalid_parameters = set(kwargs) - {"image", "temporal",
                                             "x", "y", "srid",
-                                            "grid", "start_date", "end_date", "time"}
+                                            "grid", "start_date", "end_date", "time", "classification_class",
+                                            "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
@@ -151,10 +172,16 @@ class WCSDataSource(DataSource):
 
         min_x, min_y, max_x, max_y = Point(kwargs['x'], kwargs['y']).buffer(0.002).bounds
 
-        r_flag = False
-
-        image_infos = self._wcs.get_image(image_name, min_x, max_x, min_y, max_y, (kwargs['grid'])['column'],
+        image_infos = self._wcs.get_image(image_name, min_x, max_x, min_y, max_y,
+                                          (kwargs['grid'])['column'],
                                           (kwargs['grid'])['row'],
-                                          kwargs['time'], kwargs['x'], kwargs['y'], r_flag=r_flag)
+                                          kwargs['time'], kwargs['x'], kwargs['y'])
 
-        return image_infos
+        trj = self.organize_trajectory(result=image_infos, time=kwargs['time'],
+                                       classification_class=kwargs['classification_class'],
+                                       geom=Point(kwargs['x'], kwargs['y']),
+                                       geom_flag=kwargs['geometry_flag'],
+                                       temporal=kwargs['temporal']
+                                       )
+
+        return trj
