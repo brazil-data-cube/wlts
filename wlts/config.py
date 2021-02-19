@@ -8,6 +8,10 @@
 """Brazil Data Cube Configuration."""
 import os
 
+from packaging import version as _version
+
+from .version import __version__
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -25,9 +29,9 @@ class Config():
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "APi-Users-123456"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI',
-                                             'postgresql://postgres:postgres@localhost:5432/wlts')
     WLTS_URL = os.getenv('WLTS_URL', 'http://localhost:5000')
+
+    WLTS_API_VERSION = _version.parse(__version__).base_version
 
 
 class ProductionConfig(Config):

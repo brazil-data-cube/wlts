@@ -12,10 +12,24 @@ from flask import Blueprint, jsonify, request
 from wlts.collections.collection_manager import collection_manager
 
 from . import controller
+from .config import Config
 from .schemas import collections_list, describe_collection, trajectory
 from .trajectory import Trajectory, TrajectoryParams
 
 bp = Blueprint('wlts', import_name=__name__, url_prefix='/wlts')
+
+
+@bp.route('/', methods=['GET'])
+def root():
+    """Retrieve the server version.
+
+    :returns: Server version.
+    :rtype: dict
+    """
+    response = dict()
+    response["wlts_version"] = Config.WLTS_API_VERSION
+
+    return response
 
 
 @bp.route('/list_collections', methods=['GET'])
