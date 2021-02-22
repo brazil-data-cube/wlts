@@ -49,6 +49,7 @@ class Collection(metaclass=ABCMeta):
         args['class_property_id'] = classification_class.get('class_property_id', None)
         args['classification_system_name'] = classification_class.get('classification_system_name', None)
         args['classification_system_id'] = classification_class.get('classification_system_id', None)
+        args['classification_system_version'] = classification_class.get('classification_system_version', None)
 
         if classification_class["type"] == 'Self':
             args['property_name'] = None
