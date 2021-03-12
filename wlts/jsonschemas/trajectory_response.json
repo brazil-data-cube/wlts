@@ -5,7 +5,7 @@
   "type": "object",
   "title": "The Trajectory root schema",
   "required": [
-    "trajectory",
+    "result",
     "query"
   ],
   "properties": {
@@ -39,7 +39,7 @@
         },
         "longitude": {
           "$id": "#/properties/query/properties/longitude",
-          "type": "integer",
+          "type": "number",
           "title": "The Longitude Schema",
           "default": 0,
           "examples": [
@@ -48,7 +48,7 @@
         },
         "latitude": {
           "$id": "#/properties/query/properties/latitude",
-          "type": "integer",
+          "type": "number",
           "title": "The Latitude Schema",
           "default": 0,
           "examples": [
@@ -77,7 +77,10 @@
         }
       }
     },
-    "trajectory": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "trajectory": {
       "$id": "#/properties/trajectory",
       "type": "array",
       "title": "Trajectory result order by date",
@@ -125,6 +128,9 @@
 
       }
 
+    }
+      },
+      "required": ["trajectory"]
     }
   }
 }
