@@ -25,9 +25,11 @@ def describe_collection(collection_name):
         describe["classification_system"] = {
             "type": classification_system.get_type(),
             "classification_system_name": classification_system.get_classification_system_name(),
-            "classification_system_id": classification_system.get_classification_system_id()
+            "classification_system_id": classification_system.get_classification_system_id(),
+            "classification_system_version": classification_system.get_classification_system_version()
         }
-        describe["name"]= collection.name
+
+        describe["name"] = collection.name
         describe["description"] = collection.description
         describe["detail"] = collection.detail
         describe["collection_type"] = collection.collection_type()
@@ -44,4 +46,4 @@ def describe_collection(collection_name):
         return describe
 
     except Exception:
-        abort(403, "Error while retrive colection metadata")
+        abort(403, "Error while retrieve collection metadata")

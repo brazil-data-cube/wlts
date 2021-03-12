@@ -17,7 +17,8 @@ class ClassificationSystemClass:
         """Creates a ClassificationSystemClass."""
         invalid_parameters = set(kwargs) - {"type", "datasource_id", "property_name", "class_property_name",
                                             "class_property_value", 'class_property_id', 'classification_system_name',
-                                            'classification_system_id', 'class_property_id'}
+                                            'classification_system_id', 'classification_system_version',
+                                            'class_property_id'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
@@ -29,6 +30,7 @@ class ClassificationSystemClass:
         self.class_property_value = kwargs['class_property_value']
         self.class_property_id = kwargs['class_property_id']
 
+        self.classification_system_version = kwargs['classification_system_version']
         self.classification_system_name = kwargs['classification_system_name']
         self.classification_system_id = kwargs['classification_system_id']
 
@@ -57,6 +59,10 @@ class ClassificationSystemClass:
     def get_class_ds(self):
         """Return classification system datasource."""
         return self.datasource
+
+    def get_classification_system_version(self):
+        """Return classification system name."""
+        return self.classification_system_version
 
     def get_classification_system_name(self):
         """Return classification system name."""

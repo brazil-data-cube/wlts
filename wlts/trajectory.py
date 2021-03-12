@@ -25,6 +25,7 @@ class TrajectoryParams:
         self.latitude = float(properties.get('latitude'))
         self.start_date = properties.get('start_date') if properties.get('start_date') else None
         self.end_date = properties.get('end_date') if properties.get('end_date') else None
+        self.geometry = properties.get('geometry') if properties.get('geometry') else False
 
     def to_dict(self):
         """Export Trajectory params to Python Dictionary."""
@@ -78,7 +79,7 @@ class Trajectory:
         :rtype: dict
 
         """
-        if (ts_params.collections):
+        if ts_params.collections:
             # Validate collection existence
             for collection in ts_params.collections:
                 cls.check_collection(collection)
@@ -90,11 +91,13 @@ class Trajectory:
         tj_attr = []
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
-                                  ts_params.end_date)
+                                  ts_params.end_date, ts_params.geometry)
 
         newtraj = sorted(tj_attr, key=lambda k: k['date'])
 
         return {
             "query": ts_params.to_dict(),
-            "trajectory": newtraj
+            "result": {
+                "trajectory": newtraj
+            }
         }

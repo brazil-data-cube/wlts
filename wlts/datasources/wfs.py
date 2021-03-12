@@ -11,11 +11,11 @@ from json import loads as json_loads
 from xml.dom import minidom
 
 import requests
-from shapely.geometry import Point
+from shapely.geometry import MultiPolygon, Point, Polygon, mapping
 from werkzeug.exceptions import NotFound
 
 from wlts.datasources.datasource import DataSource
-from wlts.utils import get_date_from_str
+from wlts.utils import get_date_from_str, transform_crs
 
 
 class WFS:
@@ -135,7 +135,7 @@ class WFS:
         if not js["features"]:
             return None
         else:
-            return js["features"][0]["properties"]
+            return js["features"]
 
     @lru_cache()
     def get_class(self, type_name, tag_name, filter):
@@ -189,32 +189,87 @@ class WFSDataSource(DataSource):
 
         return self._wfs.get_class(type_name=type_name, tag_name=tag_name, filter=filter)
 
+    def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal):
+        """Organize trajectory."""
+        # Get temporal information
+        if temporal["type"] == "STRING":
+            obs_info = get_date_from_str(obs["temporal_property"])
+            obs_info = obs_info.strftime(temporal["string_format"])
+    
+        elif temporal["type"] == "DATE":
+            obs_info = result['properties'][obs["temporal_property"]]
+    
+        # Get Class information
+        if classification_class.get_type() == "Literal":
+            class_info = obs["class_property_name"]
+    
+        elif classification_class.get_type() == "Self":
+            class_info = result['properties'][obs["class_property"]]
+        else:
+            feature_id = result['properties'][obs["class_property"]]
+        
+            ds_class = classification_class.get_class_ds()
+        
+            if classification_class.get_class_system() is None:
+                class_info = ds_class.get_classe(feature_id,
+                                                 classification_class.get_value(),
+                                                 classification_class.get_class_property_name(),
+                                                 classification_class.get_name())
+            else:
+                class_info = ds_class.get_classe(feature_id,
+                                                 classification_class.get_value(),
+                                                 classification_class.get_class_property_name(),
+                                                 classification_class.get_name(),
+                                                 class_system=classification_class)
+        trj = dict()
+        trj["class"] = class_info
+        trj["date"] = str(obs_info)
+    
+        if geom_flag:
+            if result['geometry']['type'] == 'Point':
+                geom = Point(result['geometry']['coordinates'][0], result['geometry']['coordinates'][1])
+            elif result['geometry']['type'] == 'MultiPolygon':
+                polygons = []
+                for polygon in result['geometry']['coordinates']:
+                    polygons += [Polygon(lr) for lr in polygon]
+                geom = MultiPolygon(polygons)
+            elif result['geometry']['type'] == 'Polygon':
+                geom = Polygon(result['geometry']['coordinates'][0])
+            else:
+                raise Exception('Unsupported geometry type.')
+        
+            crs_orig = f'EPSG:{geom_property}'
+            geom_tmp = transform_crs(crs_orig, 'EPSG:4326', geom)
+
+            trj["geom"] = mapping(geom_tmp)
+
+        return trj
+
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
         invalid_parameters = set(kwargs) - {"feature_name", "temporal",
                                             "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date"}
+                                            "classification_class", "start_date", "end_date", "classification_class",
+                                            "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        typeName = self.workspace + ":" + kwargs['feature_name']
+        type_name = self.workspace + ":" + kwargs['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
 
         cql_filter = "&CQL_FILTER=INTERSECTS({}, {})".format((kwargs['geom_property'])['property_name'], geom.wkt)
 
         if (kwargs['temporal'])["type"] == "STRING":
-
             temporal_observation = get_date_from_str((kwargs['obs'])["temporal_property"]).strftime(
                 (kwargs['temporal'])["string_format"])
-
             if kwargs['start_date']:
                 start_date = get_date_from_str(kwargs['start_date']).strftime((kwargs['temporal'])["string_format"])
-                if (start_date > temporal_observation):
+                if start_date > temporal_observation:
                     return
             if kwargs['end_date']:
                 end_date = get_date_from_str(kwargs['end_date']).strftime((kwargs['temporal'])["string_format"])
-                if (temporal_observation > end_date):
+                if temporal_observation > end_date:
                     return
         else:
             if kwargs['start_date']:
@@ -227,6 +282,13 @@ class WFSDataSource(DataSource):
                 cql_filter += " AND {} <= {}".format((kwargs['obs'])["temporal_property"],
                                                      end_date.strftime((kwargs['temporal'])["string_format"]))
 
-        retval = self._wfs.get_feature(typeName, (kwargs['geom_property'])['srid'], cql_filter)
+        retval = self._wfs.get_feature(type_name, (kwargs['geom_property'])['srid'], cql_filter)
 
-        return retval
+        trj = list()
+
+        for i in retval:
+            trj.append(self.organize_trajectory(i, kwargs['obs'], kwargs['geometry_flag'],
+                                                (kwargs['geom_property'])['srid'], kwargs['classification_class'],
+                                                kwargs['temporal']))
+
+        return trj

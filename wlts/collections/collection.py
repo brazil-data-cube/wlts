@@ -49,6 +49,7 @@ class Collection(metaclass=ABCMeta):
         args['class_property_id'] = classification_class.get('class_property_id', None)
         args['classification_system_name'] = classification_class.get('classification_system_name', None)
         args['classification_system_id'] = classification_class.get('classification_system_id', None)
+        args['classification_system_version'] = classification_class.get('classification_system_version', None)
 
         if classification_class["type"] == 'Self':
             args['property_name'] = None
@@ -95,7 +96,7 @@ class Collection(metaclass=ABCMeta):
         return self.period["end_date"]
 
     @abstractmethod
-    def trajectory(self, tj_attr, x, y, start_date, end_date):
+    def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
         """Abstract Method to get trajectory.
 
         Args:
@@ -104,6 +105,7 @@ class Collection(metaclass=ABCMeta):
             y (int/float): A latitude value according to EPSG:4326.
             start_date (:obj:`str`, optional): The begin of a time interval.
             end_date (:obj:`str`, optional): The begin of a time interval.
+            geometry (:obj:`str`, optional): Used to return geometry in trajectory.
 
          Returns:
             list: A trajectory object as a list.

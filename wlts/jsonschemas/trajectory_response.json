@@ -5,7 +5,7 @@
   "type": "object",
   "title": "The Trajectory root schema",
   "required": [
-    "trajectory",
+    "result",
     "query"
   ],
   "properties": {
@@ -77,7 +77,10 @@
         }
       }
     },
-    "trajectory": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "trajectory": {
       "$id": "#/properties/trajectory",
       "type": "array",
       "title": "Trajectory result order by date",
@@ -125,6 +128,9 @@
 
       }
 
+    }
+      },
+      "required": ["trajectory"]
     }
   }
 }
