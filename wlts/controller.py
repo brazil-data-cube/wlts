@@ -35,7 +35,7 @@ def describe_collection(collection_name):
         describe["collection_type"] = collection.collection_type()
         describe["resolution_unit"] = {
             "unit": collection.get_resolution_unit(),
-            "value": collection.get_resolution_value()
+            "value": float(collection.get_resolution_value())
         }
         describe["period"] = {
             "start_date": collection.get_start_date(),
