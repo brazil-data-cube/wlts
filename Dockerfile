@@ -19,4 +19,4 @@ RUN pip install gunicorn
 
 EXPOSE 5000
 
-CMD ["gunicorn", "-w4", "--bind=0.0.0.0:5000", "wlts:app", "--timeout", "350"]
+CMD ["gunicorn", "-w4", "--bind=0.0.0.0:5000", "wlts:create_app()", "--timeout", "350"]
