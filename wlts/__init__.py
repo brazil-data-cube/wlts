@@ -16,17 +16,14 @@ from .config import get_settings
 from .version import __version__
 
 
-def create_app(config_name):
+def create_app():
     """Creates Brazil Data Cube WLTS application from config object.
-
-    :param config_name: Config instance.
-    :type config_name:string|wlts.config.Config
 
     :returns: Flask Application with config instance scope.
     """
     app = Flask(__name__)
 
-    conf = config.get_settings(config_name)
+    conf = config.get_settings(os.environ.get('WLTS_ENVIRONMENT', 'DevelopmentConfig'))
 
     app.config.from_object(conf)
 
@@ -51,7 +48,5 @@ def setup_app(app):
 
     app.register_blueprint(bp)
 
-
-app = create_app(os.environ.get('WLTS_ENVIRONMENT', 'DevelopmentConfig'))
 
 __all__ = ('__version__', 'create_app')
