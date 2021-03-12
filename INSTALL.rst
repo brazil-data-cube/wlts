@@ -1,6 +1,6 @@
 ..
     This file is part of Web Land Trajectory Service.
-    Copyright (C) 2019-2020 INPE.
+    Copyright (C) 2020-2021 INPE.
 
     Web Land Trajectory Service is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
@@ -27,25 +27,19 @@ Development Installation - GitHub
 Clone the Software Repository
 +++++++++++++++++++++++++++++
 
-Use ``git`` to clone the software repository:
+Use ``git`` to clone the software repository::
 
-.. code-block:: shell
-
-    $ git clone https://github.com/brazil-data-cube/wlts.git
+    git clone https://github.com/brazil-data-cube/wlts.git
 
 
-Go to the source code folder:
+Go to the source code folder::
 
-.. code-block:: shell
-
-     $ cd wlts
+    cd wlts
 
 
-Install in development mode:
+Install in development mode::
 
-.. code-block:: shell
-
-    $ pip3 install -e .[all]
+    pip3 install -e .[all]
 
 .. note::
 
@@ -80,31 +74,23 @@ Install in development mode:
 Run the Tests
 +++++++++++++
 
-Run the tests:
+Run the tests::
 
-.. code-block:: shell
-
-        $ ./run-tests.sh
+    ./run-tests.sh
 
 
 Build the Documentation
 +++++++++++++++++++++++
 
-Generate the documentation:
+Generate the documentation::
 
-.. code-block:: shell
+    python setup.py build_sphinx
 
-        $ python setup.py build_sphinx
-
-The above command will generate the documentation in HTML and it will place it under:
-
-.. code-block:: shell
+The above command will generate the documentation in HTML and it will place it under::
 
     docs/sphinx/_build/html/
 
-You can open the above documentation in your favorite browser, as:
-
-.. code-block:: shell
+You can open the above documentation in your favorite browser, as::
 
     firefox docs/sphinx/_build/html/index.html
 
@@ -112,14 +98,12 @@ You can open the above documentation in your favorite browser, as:
 Running in Development Mode
 ---------------------------
 
-In the source code folder, enter the following command:
+In the source code folder, enter the following command::
 
-.. code-block:: shell
-
-    $ FLASK_APP="wlts" \
-      FLASK_ENV="development" \
-      WLTS_URL="http://localhost:5000" \
-      flask run
+    FLASK_APP="wlts" \
+    FLASK_ENV="development" \
+    WLTS_URL="http://localhost:5000" \
+    flask run
 
 You may need to replace the definition of some environment variables:
 
@@ -127,9 +111,7 @@ You may need to replace the definition of some environment variables:
 
   - ``WLTS_URL="http://localhost:5000"``: Base URI of the service.
 
-The above command should output some messages in the console as showed below:
-
-.. code-block:: shell
+The above command should output some messages in the console as showed below::
 
      * Environment: development
      * Debug mode: on

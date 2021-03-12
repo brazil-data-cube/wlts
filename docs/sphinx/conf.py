@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019-2020 INPE.
+# Copyright (C) 2020-2021 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -12,7 +12,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'WLTS'
-copyright = '2020, INPE.'
+copyright = '2020-2021, INPE'
 author = 'Brazil Data Cube Team'
 release = wlts.__version__
 
@@ -71,8 +71,6 @@ html_baseurl = 'https://brazil-data-cube.github.io/'
 #html_theme_path = ''
 
 #html_style = ''
-
-html_baseurl = 'https://brazil-data-cube.github.io/'
 
 html_title = 'WLTS'
 
