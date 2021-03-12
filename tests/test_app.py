@@ -12,7 +12,6 @@ import os
 from wlts.schemas import collections_list_response, \
     describe_collection_response, \
     trajectory_response
-from json import loads as json_loads
 from jsonschema import validate
 
 from wlts import create_app
@@ -26,71 +25,51 @@ def client():
 
 
 class TestWLTS:
+    def _assert_json(self, response, expected_code: int = 200):
+        assert response.status_code == expected_code
+        assert response.content_type == 'application/json'
+
     def test_data_dir(self):
         assert os.path.join(os.path.dirname(__file__), '/json_configs/datasources.json')
 
-    def list_collection(self, client):
+    def test_list_collection(self, client):
         response = client.get('/wlts/list_collections')
 
-        assert response.status_code == 200
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=collections_list_response)
 
-        collection_response = json_loads(self.response.data.decode('utf-8'))
-
-        validate(instance=collection_response, schema=collections_list_response)
-
-    def describe_collection_without_parameter(self, client):
+    def test_describe_collection_without_parameter(self, client):
         response = client.get('/wlts/describe_collection')
 
-        response_json = json_loads(response.data.decode('utf-8'))
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'collection_id\' is a required property"
 
-        assert response.status_code == 400
-        assert response_json['message'] == "\'collection_id\' is a required property"
+    def test_describe_collection(self, client):
+        response = client.get('/wlts/describe_collection?collection_id=deter_amz')
 
-    def describe_collection(self, client):
-        response = client.get(
-            '/wlts/describe_collection?collection_id={}'.format("deter_amz")
-        )
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=describe_collection_response)
 
-        collection_response = json_loads(response.data.decode('utf-8'))
+    def test_describe_collection_not_found(self, client):
+        response = client.get('/wlts/describe_collection?collection_id=Invalid')
 
-        assert response.status_code == 200
-        assert response.conten_type == "application/json"
-        validate(instance=collection_response, schema=describe_collection_response)
-
-    def describe_collection_not_found(self, client):
-        response = client.get(
-            '/wlts/describe_collection?collection_id={}'.format("Prodes")
-        )
-
-        collection_response = json_loads(response.data.decode('utf-8'))
-
-        assert response.status_code == 404
-        assert collection_response['message'] == "Collection Not Found"
+        self._assert_json(response, expected_code=404)
+        assert response.json['description'] == "Collection Not Found"
 
     def trajectory_without_lat(self, client):
-
         response = client.get('/wlts/trajectory')
 
-        collection_response = json_loads(response.data.decode('utf-8'))
-
-        assert response.status_code == 400
-        assert collection_response['message'] == "\'latitude\' is a required property"
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'latitude\' is a required property"
 
     def trajectory_without_long(self, client):
+        response = client.get('/wlts/trajectory?latitude=-12.662241')
 
-        response = client.get('/wlts/trajectoy?latitude=-12.662241')
+        self._assert_json(response, expected_code=400)
+        assert response.json['message'] == "\'longitude\' is a required property"
 
-        collection_response = json_loads(response.data.decode('utf-8'))
+    def test_trajectory(self, client):
+        response = client.get('/wlts/trajectory?latitude=-9.091&longitude=-66.031')
 
-        assert response.status_code == 400
-        assert collection_response['message'] == "\'longitude\' is a required property"
-
-    def trajectory(self, client):
-
-        response = client.get('/wlts/trajectoy?latitude=-9.091&longitude=-66.031')
-
-        response_json = json_loads(response.data.decode('utf-8'))
-
-        assert response.status_code == 200
-        assert response.conten_type == "application/json"
-        validate(instance=response_json, schema=trajectory_response)
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=trajectory_response)

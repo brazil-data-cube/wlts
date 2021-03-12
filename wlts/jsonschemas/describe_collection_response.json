@@ -47,7 +47,7 @@
     },
     "resolution_unit": {
       "$id": "#/properties/resolution_unit",
-      "type": "string",
+      "type": "object",
       "title": "The Collection Resolution Unit",
       "required": [
         "unit",
@@ -55,7 +55,6 @@
       ],
       "properties": {
         "unit": {
-          "$id": "#/properties/resolution_unit/properties/unit",
           "type": "string",
           "title": "The Unit of Time",
           "default": "",
@@ -65,7 +64,6 @@
 
         },
         "value": {
-          "$id": "#/properties/resolution_unit/properties/value",
           "type": "number",
           "title": "The Value of Time",
           "default": "",
@@ -78,7 +76,7 @@
     },
     "period": {
       "$id": "#/properties/period",
-      "type": "string",
+      "type": "object",
       "title": "The Collection period",
       "required": [
         "start_date",
