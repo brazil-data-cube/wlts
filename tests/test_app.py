@@ -45,7 +45,7 @@ class TestWLTS:
         assert response.json['description'] == "\'collection_id\' is a required property"
 
     def test_describe_collection(self, client):
-        response = client.get('/wlts/describe_collection?collection_id=deter_amazonia_legal')
+        response = client.get('/wlts/describe_collection?collection_id=deter_amz')
 
         self._assert_json(response, expected_code=200)
         validate(instance=response.json, schema=describe_collection_response)
