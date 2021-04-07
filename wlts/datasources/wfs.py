@@ -286,9 +286,14 @@ class WFSDataSource(DataSource):
 
         trj = list()
 
-        for i in retval:
-            trj.append(self.organize_trajectory(i, kwargs['obs'], kwargs['geometry_flag'],
-                                                (kwargs['geom_property'])['srid'], kwargs['classification_class'],
-                                                kwargs['temporal']))
+        if retval is not None:
+            for i in retval:
+                trj.append(self.organize_trajectory(i, kwargs['obs'],
+                                                    kwargs['geometry_flag'],
+                                                    (kwargs['geom_property'])['srid'],
+                                                    kwargs['classification_class'],
+                                                    kwargs['temporal']))
 
-        return trj
+            return trj
+
+        return retval

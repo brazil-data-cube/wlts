@@ -177,11 +177,14 @@ class WCSDataSource(DataSource):
                                           (kwargs['grid'])['row'],
                                           kwargs['time'], kwargs['x'], kwargs['y'])
 
-        trj = self.organize_trajectory(result=image_infos, time=kwargs['time'],
-                                       classification_class=kwargs['classification_class'],
-                                       geom=Point(kwargs['x'], kwargs['y']),
-                                       geom_flag=kwargs['geometry_flag'],
-                                       temporal=kwargs['temporal']
-                                       )
+        if image_infos is not None:
+            trj = self.organize_trajectory(result=image_infos, time=kwargs['time'],
+                                           classification_class=kwargs['classification_class'],
+                                           geom=Point(kwargs['x'], kwargs['y']),
+                                           geom_flag=kwargs['geometry_flag'],
+                                           temporal=kwargs['temporal']
+                                           )
 
-        return trj
+            return trj
+
+        return image_infos
