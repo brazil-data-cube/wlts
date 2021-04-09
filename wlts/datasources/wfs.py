@@ -209,18 +209,18 @@ class WFSDataSource(DataSource):
             feature_id = result['properties'][obs["class_property"]]
         
             ds_class = classification_class.get_class_ds()
-        
-            if classification_class.get_class_system() is None:
+
+            if classification_class.get_classification_system_name() is None:
                 class_info = ds_class.get_classe(feature_id,
-                                                 classification_class.get_value(),
+                                                 classification_class.get_class_property_value(),
                                                  classification_class.get_class_property_name(),
-                                                 classification_class.get_name())
+                                                 classification_class.get_property_name())
             else:
                 class_info = ds_class.get_classe(feature_id,
-                                                 classification_class.get_value(),
+                                                 classification_class.get_class_property_value(),
                                                  classification_class.get_class_property_name(),
-                                                 classification_class.get_name(),
-                                                 class_system=classification_class)
+                                                 classification_class.get_property_name(),
+                                                 class_system=classification_class.get_classification_system_name())
         trj = dict()
         trj["class"] = class_info
         trj["date"] = str(obs_info)
@@ -249,7 +249,7 @@ class WFSDataSource(DataSource):
         """Return a trajectory observation of this datasource."""
         invalid_parameters = set(kwargs) - {"feature_name", "temporal",
                                             "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date", "classification_class",
+                                            "classification_class", "start_date", "end_date",
                                             "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
@@ -288,11 +288,11 @@ class WFSDataSource(DataSource):
 
         if retval is not None:
             for i in retval:
-                trj.append(self.organize_trajectory(i, kwargs['obs'],
-                                                    kwargs['geometry_flag'],
-                                                    (kwargs['geom_property'])['srid'],
-                                                    kwargs['classification_class'],
-                                                    kwargs['temporal']))
+                trj.append(self.organize_trajectory(result=i, obs=kwargs['obs'],
+                                                    geom_flag=kwargs['geometry_flag'],
+                                                    geom_property=(kwargs['geom_property'])['srid'],
+                                                    classification_class=kwargs['classification_class'],
+                                                    temporal=kwargs['temporal']))
 
             return trj
 
