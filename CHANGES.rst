@@ -10,7 +10,7 @@
 Changes
 =======
 
-Version 0.6.0 (2021-04-12)
+Version 0.6.0 (2021-04-13)
 --------------------------
 
 - Add Drone integration (`#31 <https://github.com/brazil-data-cube/wlts/issues/31>`_).
