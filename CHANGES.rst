@@ -10,8 +10,8 @@
 Changes
 =======
 
-Version 0.6.0 (2021-X-X)
-------------------------
+Version 0.6.0 (2021-04-13)
+--------------------------
 
 - Add Drone integration (`#31 <https://github.com/brazil-data-cube/wlts/issues/31>`_).
 
@@ -24,6 +24,16 @@ Version 0.6.0 (2021-X-X)
 - Integration with OWSLib in WFS (`#29 <https://github.com/brazil-data-cube/wlts/issues/29>`_).
 
 - Add geometry field in Trajectory (`#21 <https://github.com/brazil-data-cube/wlts/issues/21>`_).
+
+- Review api tests (`#42 <https://github.com/brazil-data-cube/wlts/issues/42>`_).
+
+- Support for the `WLTS specification version 0.6.0 <https://github.com/brazil-data-cube/wlts-spec>`_.
+
+- Bug fix: Update Dockerfile Change app to create_app (`#46 <https://github.com/brazil-data-cube/wlts/issues/46>`_).
+
+- Bug fix: Check for null returns in datasources (`#48 <https://github.com/brazil-data-cube/wlts/issues/48>`_).
+
+- Bug fix: WFS get_class_system() does not exist (`#50 <https://github.com/brazil-data-cube/wlts/issues/50>`_).
 
 Version 0.4.0-0 (2020-12-11)
 ----------------------------
