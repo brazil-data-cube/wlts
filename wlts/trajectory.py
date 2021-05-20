@@ -6,7 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """This class implements a  for WLTS."""
-from werkzeug.exceptions import BadRequest, NotFound
+from flask import abort
+from werkzeug.exceptions import NotFound, Forbidden
 
 from wlts.collections.collection_manager import collection_manager
 
@@ -20,12 +21,14 @@ class TrajectoryParams:
 
     def __init__(self, **properties):
         """Creates a trajectory parameter object."""
-        self.collections = properties.get('collections').split(',') if properties.get('collections') else None
+        self.collections = properties.get('collections', None)
+        if self.collections is not None:
+            self.collections = self.collections.split(',')
         self.longitude = float(properties.get('longitude'))
         self.latitude = float(properties.get('latitude'))
-        self.start_date = properties.get('start_date') if properties.get('start_date') else None
-        self.end_date = properties.get('end_date') if properties.get('end_date') else None
-        self.geometry = properties.get('geometry') if properties.get('geometry') else False
+        self.start_date = properties.get('start_date', None)
+        self.end_date = properties.get('end_date', None)
+        self.geometry = properties.get('geometry', None)
 
     def to_dict(self):
         """Export Trajectory params to Python Dictionary."""
@@ -33,42 +36,77 @@ class TrajectoryParams:
             k: v if v is not None else ''
             for k, v in vars(self).items() if not k.startswith('_')
         }
-        if data.get('collections') == '':
-            data['collections'] = []
-
         return data
 
 
-class Trajectory:
-    """Trajectory Class.
-
-    :param cls: instance ...
-    """
+class WLTS:
+    """WLTS Utility."""
 
     @classmethod
-    def list_collection(cls):
-        """Creates a trajectory parameter object."""
-        return collection_manager.collection_names()
+    def list_collection(cls, roles=[]):
+        """Retrieve a list of collections offered."""
+        collections = list()
+        available_collections = collection_manager.collections()
+
+        for collection in available_collections:
+            if collection.is_public is True or collection.name in roles:
+                collections.append(collection.name)
+
+        return collections
 
     @classmethod
-    def check_collection(cls, collection):
-        """Utility to check collection existence in memory."""
-        if collection not in cls.list_collection():
-            raise NotFound('Collection "{}" not found'.format(collection))
+    def describe_collection(cls, collection_name, roles=[]):
+        cls.check_collection(collection_name, roles)
+
+        collection = collection_manager.collection(collection_name)
+
+        try:
+            classification_system = collection.classification_class
+
+            describe = dict()
+
+            describe["classification_system"] = {
+                "type": classification_system.get_type(),
+                "classification_system_name": classification_system.get_classification_system_name(),
+                "classification_system_id": classification_system.get_classification_system_id(),
+                "classification_system_version": classification_system.get_classification_system_version()
+            }
+
+            describe["name"] = collection.name
+            describe["description"] = collection.description
+            describe["detail"] = collection.detail
+            describe["collection_type"] = collection.collection_type()
+            describe["resolution_unit"] = {
+                "unit": collection.get_resolution_unit(),
+                "value": float(collection.get_resolution_value())
+            }
+            describe["period"] = {
+                "start_date": collection.get_start_date(),
+                "end_date": collection.get_end_date()
+            }
+            describe["spatial_extent"] = collection.get_spatial_extent()
+
+            return describe
+
+        except Exception:
+            abort(403, "Error while retrieve collection metadata")
+
+    @classmethod
+    def check_collection(cls, collection, roles):
+        """Utility to check collection existence in memory and permission."""
+        available_collection = collection_manager.collection(collection)
+        if available_collection is None:
+            raise NotFound(f"Collection {collection} not found!")
+        if available_collection.is_public is False and available_collection.name not in roles:
+            raise Forbidden('Forbidden')
 
     @staticmethod
-    def get_collections(ts_params):
+    def get_collections(names):
         """Retrieves collections."""
-        features = []
-        try:
-            for collections_name in ts_params.collections:
-                features.append(collection_manager.get_collection(collections_name))
-            return features
-        except RuntimeError:
-            raise BadRequest('No Collection found')
+        return collection_manager.find_collections(names)
 
     @classmethod
-    def get_trajectory(cls, ts_params: TrajectoryParams):
+    def get_trajectory(cls, ts_params: TrajectoryParams, roles=[]):
         """
         Retrieves trajectory object.
 
@@ -79,25 +117,22 @@ class Trajectory:
         :rtype: dict
 
         """
-        if ts_params.collections:
-            # Validate collection existence
-            for collection in ts_params.collections:
-                cls.check_collection(collection)
-            collections = cls.get_collections(ts_params)
-        else:
-            collections = collection_manager.get_all_collections()
+        for collection in ts_params.collections:
+            cls.check_collection(collection, roles)
 
         # Retrieves the collections that matches the Trajectory collections name arguments
+        collections = cls.get_collections(ts_params.collections)
+        
         tj_attr = []
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
                                   ts_params.end_date, ts_params.geometry)
 
-        newtraj = sorted(tj_attr, key=lambda k: k['date'])
+        trajectory_result = sorted(tj_attr, key=lambda k: k['date'])
 
         return {
             "query": ts_params.to_dict(),
             "result": {
-                "trajectory": newtraj
+                "trajectory": trajectory_result
             }
         }

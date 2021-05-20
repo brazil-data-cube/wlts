@@ -16,7 +16,7 @@ class Collection(metaclass=ABCMeta):
     """Abstract class to represent an collection."""
 
     def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
-                 classification_class, temporal, scala, spatial_extent, period):
+                 classification_class, temporal, scala, spatial_extent, period, is_public):
         """Create Collection."""
         self.name = name
         self.authority_name = authority_name
@@ -27,6 +27,7 @@ class Collection(metaclass=ABCMeta):
         self.scala = scala
         self.spatial_extent = spatial_extent
         self.period = period
+        self.is_public = eval(is_public)
         self.classification_class = self.create_classification_system(classification_class)
 
         self.datasource = datasource_manager.get_datasource(datasource_id)

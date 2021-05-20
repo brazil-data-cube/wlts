@@ -11,12 +11,16 @@ from flask import abort
 from wlts.collections.collection_manager import collection_manager
 
 
-def describe_collection(collection_name):
+def describe_collection(collection_name, roles=[]):
     """Describe Collection."""
     collection = collection_manager.get_collection(collection_name)
 
     if collection is None:
         abort(404, "Collection Not Found")
+
+    if eval(collection.is_public) is False and collection_name not in roles:
+        abort(403, "Forbidden")
+
     try:
         classification_system = collection.classification_class
 

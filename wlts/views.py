@@ -6,15 +6,18 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Views of Web Land Trajectory Service."""
-from bdc_core.decorators.validators import require_model
+from bdc_auth_client.decorators import oauth2
+
 from flask import Blueprint, jsonify, request
 
 from wlts.collections.collection_manager import collection_manager
+from wlts.utils.schemas import (collections_list, describe_collection,
+                                trajectory)
 
 from . import controller
 from .config import Config
-from .schemas import collections_list, describe_collection, trajectory
-from .trajectory import Trajectory, TrajectoryParams
+from .trajectory import WLTS, TrajectoryParams
+from .utils.decorators import require_model
 
 bp = Blueprint('wlts', import_name=__name__, url_prefix='/wlts')
 
@@ -34,35 +37,33 @@ def root():
 
 @bp.route('/list_collections', methods=['GET'])
 @require_model(collections_list)
-def list_collections():
+@oauth2(required=False)
+def list_collections(roles=[], access_token=""):
     """Retrieve list of collection offered.
 
     :returns: Collection list available in server.
     :rtype: dict
     """
-    result = {"collections": collection_manager.collection_names()}
-
-    return jsonify(result)
+    return {"collections": WLTS.list_collection(roles=roles)}
 
 
 @bp.route('/describe_collection', methods=['GET'])
 @require_model(describe_collection)
-def describe_collection():
+@oauth2(required=False)
+def describe_collection(roles=[], access_token=""):
     """Retrieves collection metadata.
 
     :returns: Collection Description
     :rtype: dict
     """
-    collection_name = request.args['collection_id']
 
-    collection = controller.describe_collection(collection_name)
-
-    return jsonify(collection)
+    return WLTS.describe_collection(request.args['collection_id'], roles=roles)
 
 
 @bp.route('/trajectory', methods=['GET'])
 @require_model(trajectory)
-def trajectory():
+@oauth2(required=True)
+def trajectory(**kwargs):
     """Retrieves collection metadata.
 
     :returns: Collection Description
@@ -70,4 +71,4 @@ def trajectory():
     """
     params = TrajectoryParams(**request.args.to_dict())
 
-    return jsonify(Trajectory.get_trajectory(params))
+    return jsonify(WLTS.get_trajectory(params, roles=kwargs['roles']))

@@ -15,7 +15,7 @@ from shapely.geometry import MultiPolygon, Point, Polygon, mapping
 from werkzeug.exceptions import NotFound
 
 from wlts.datasources.datasource import DataSource
-from wlts.utils import get_date_from_str, transform_crs
+from wlts.utils.utilities import get_date_from_str, transform_crs
 
 
 class WFS:

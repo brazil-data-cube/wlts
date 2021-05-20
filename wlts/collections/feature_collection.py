@@ -7,7 +7,6 @@
 #
 """WLTS Feature Collection Class."""
 
-from ..utils import get_date_from_str
 from .collection import Collection
 
 
@@ -30,7 +29,8 @@ class FeatureCollection(Collection):
                          collections_info["temporal"],
                          collections_info["scala"],
                          collections_info["spatial_extent"],
-                         collections_info["period"])
+                         collections_info["period"],
+                         collections_info["is_public"])
 
         self.feature_name = collections_info["feature_name"]
         self.geom_property = collections_info["geom_property"]

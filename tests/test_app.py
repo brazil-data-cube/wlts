@@ -9,7 +9,7 @@
 import pytest
 import os
 
-from wlts.schemas import collections_list_response, \
+from wlts.utils.schemas import collections_list_response, \
     describe_collection_response, \
     trajectory_response
 from jsonschema import validate
