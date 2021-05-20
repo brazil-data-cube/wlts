@@ -9,7 +9,8 @@
   "writeOnly": false,
   "required": [
     "latitude",
-    "longitude"
+    "longitude",
+    "collections"
   ],
   "properties": {
     "collections": {

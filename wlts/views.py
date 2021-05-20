@@ -7,16 +7,13 @@
 #
 """Views of Web Land Trajectory Service."""
 from bdc_auth_client.decorators import oauth2
-
 from flask import Blueprint, jsonify, request
 
-from wlts.collections.collection_manager import collection_manager
 from wlts.utils.schemas import (collections_list, describe_collection,
                                 trajectory)
 
-from . import controller
 from .config import Config
-from .trajectory import WLTS, TrajectoryParams
+from .controller import WLTS, TrajectoryParams
 from .utils.decorators import require_model
 
 bp = Blueprint('wlts', import_name=__name__, url_prefix='/wlts')
@@ -56,7 +53,6 @@ def describe_collection(roles=[], access_token=""):
     :returns: Collection Description
     :rtype: dict
     """
-
     return WLTS.describe_collection(request.args['collection_id'], roles=roles)
 
 

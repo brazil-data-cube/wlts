@@ -77,38 +77,48 @@ class TestWLTS:
         self._assert_json(response, expected_code=200)
         validate(instance=response.json, schema=collections_list_response)
 
-    # def test_describe_collection_without_parameter(self, client):
-    #     response = client.get('/wlts/describe_collection')
-    #
-    #     self._assert_json(response, expected_code=400)
-    #     assert response.json['description'] == "\'collection_id\' is a required property"
-    #
-    # def test_describe_collection(self, client):
-    #     response = client.get('/wlts/describe_collection?collection_id=deter_amz')
-    #
-    #     self._assert_json(response, expected_code=200)
-    #     validate(instance=response.json, schema=describe_collection_response)
-    #
-    # def test_describe_collection_not_found(self, client):
-    #     response = client.get('/wlts/describe_collection?collection_id=Invalid')
-    #
-    #     self._assert_json(response, expected_code=404)
-    #     assert response.json['description'] == "Collection Not Found"
-    #
-    # def trajectory_without_lat(self, client):
-    #     response = client.get('/wlts/trajectory')
-    #
-    #     self._assert_json(response, expected_code=400)
-    #     assert response.json['description'] == "\'latitude\' is a required property"
-    #
-    # def trajectory_without_long(self, client):
-    #     response = client.get('/wlts/trajectory?latitude=-12.662241')
-    #
-    #     self._assert_json(response, expected_code=400)
-    #     assert response.json['message'] == "\'longitude\' is a required property"
-    #
-    # def test_trajectory(self, client):
-    #     response = client.get('/wlts/trajectory?latitude=-9.091&longitude=-66.031')
-    #
-    #     self._assert_json(response, expected_code=200)
-    #     validate(instance=response.json, schema=trajectory_response)
+    def test_describe_collection_without_parameter(self, client):
+        response = client.get(f'/wlts/describe_collection?access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'collection_id\' is a required property"
+
+    def test_describe_collection(self, client):
+        response = client.get(f'/wlts/describe_collection?collection_id=deter_amz&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=describe_collection_response)
+
+    def test_describe_collection_not_found(self, client):
+        response = client.get(
+            f'/wlts/describe_collection?collection_id=Invalid&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=404)
+        assert response.json['description'] == "Collection Invalid not found!"
+
+    def test_trajectory_without_lat(self, client):
+        response = client.get(f'/wlts/trajectory?access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'latitude\' is a required property"
+
+    def test_trajectory_without_long(self, client):
+        response = client.get(
+            f'/wlts/trajectory?latitude=-12.662241&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'longitude\' is a required property"
+
+    def test_trajectory_without_collection(self, client):
+        response = client.get(
+            f'/wlts/trajectory?latitude=-9.091&longitude=-66.031&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=400)
+        assert response.json['description'] == "\'collections\' is a required property"
+
+    def test_trajectory(self, client):
+        response = client.get(
+            f'/wlts/trajectory?collections=deter_amz&latitude=-9.091&longitude=-66.031&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=trajectory_response)

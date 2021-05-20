@@ -75,14 +75,19 @@ class CollectionManager:
 
         Returns:
             collection: A collection available in the server.
-
-        Raises:
-            RuntimeError: If the collection not found.
         """
         if collection_id in self._collections.keys():
             return self._collections[collection_id]
 
     def find_collections(self, names: list):
+        """Return list of collections.
+
+        Args:
+            names (list): A list with the collections names.
+
+        Returns:
+            collections: All collection available in the server.
+        """
         return [self._collections[x] for x in names]
 
     def collection_names(self):
