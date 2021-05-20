@@ -5,9 +5,9 @@
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 #
-"""This class implements a  for WLTS."""
+"""Controllers of Web Land Trajectory Service."""
 from flask import abort
-from werkzeug.exceptions import NotFound, Forbidden
+from werkzeug.exceptions import Forbidden, NotFound
 
 from wlts.collections.collection_manager import collection_manager
 
