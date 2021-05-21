@@ -19,6 +19,8 @@ WLTS implementation depends essentially on:
 
 - `Rasterio <https://rasterio.readthedocs.io/en/latest/>`_
 
+- `JSONSchema <https://github.com/Julian/jsonschema>`_
+
 
 
 Development Installation - GitHub
@@ -103,6 +105,9 @@ In the source code folder, enter the following command::
     FLASK_APP="wlts" \
     FLASK_ENV="development" \
     WLTS_URL="http://localhost:5000" \
+    BDC_AUTH_CLIENT_ID=BDC_OAuth_ClientID \
+    BDC_AUTH_CLIENT_SECRET=BDC_OAuth_ClientSecret \
+    BDC_AUTH_ACCESS_TOKEN_URL=https://brazildatacube.dpi.inpe.br/dev/auth/v1/oauth/introspect \
     flask run
 
 You may need to replace the definition of some environment variables:
@@ -110,6 +115,12 @@ You may need to replace the definition of some environment variables:
   - ``FLASK_ENV="development``: used to tell Flask to run in `Debug` mode.
 
   - ``WLTS_URL="http://localhost:5000"``: Base URI of the service.
+
+  - ``BDC_AUTH_CLIENT_ID=BDC_OAuth_ClientID``: the OAuth 2 client id.
+
+  - ``BDC_AUTH_CLIENT_SECRET=BDC_OAuth_ClientSecret``: the OAuth 2 client secret.
+
+  - ``BDC_AUTH_ACCESS_TOKEN_URL=https://brazildatacube.dpi.inpe.br/dev/auth/v1/oauth/introspect``: OAuth 2 authentication url.
 
 The above command should output some messages in the console as showed below::
 
