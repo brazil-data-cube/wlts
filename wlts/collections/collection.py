@@ -27,7 +27,7 @@ class Collection(metaclass=ABCMeta):
         self.scala = scala
         self.spatial_extent = spatial_extent
         self.period = period
-        self.is_public = eval(is_public)
+        self.is_public = is_public
         self.classification_class = self.create_classification_system(classification_class)
 
         self.datasource = datasource_manager.get_datasource(datasource_id)

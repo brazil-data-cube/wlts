@@ -65,7 +65,7 @@ class CollectionManager:
             collection_info (dict): The collection information.
         """
         collection = CollectionFactory.make(collection_type, collection_info)
-        self._collections[f"{collection.name}"] = collection
+        self._collections[collection.name] = collection
 
     def collection(self, collection_id: str):
         """Return the collection.
@@ -96,8 +96,7 @@ class CollectionManager:
         Returns:
             list: A list with all collections identifier (name) available in the server.
         """
-        if len(self._collections) > 0:
-            return list(self._collections.keys())
+        return list(self._collections.keys())
 
     def collections(self):
         """Returns a list with all collections objects."""
