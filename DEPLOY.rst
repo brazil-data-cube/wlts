@@ -19,6 +19,8 @@ WLTS implementation depends essentially on:
 
 - `Rasterio <https://rasterio.readthedocs.io/en/latest/>`_
 
+- `JSONSchema <https://github.com/Julian/jsonschema>`_
+
 
 Requirements
 ------------
@@ -70,6 +72,9 @@ The `docker run` command can be used to launch a container from the image `wlts:
              --publish 127.0.0.1:5000:5000 \
              --network=bdc_net \
              --env WLTS_URL="http://localhost:5000" \
+             --env BDC_AUTH_CLIENT_ID=BDC_OAuth_ClientID \
+             --env BDC_AUTH_CLIENT_SECRET=BDC_OAuth_ClientSecret \
+             --env BDC_AUTH_ACCESS_TOKEN_URL=https://brazildatacube.dpi.inpe.br/dev/auth/v1/oauth/introspect \
              wlts:0.6.0
 
 Let's take a look at each parameter in the above command:/
@@ -83,6 +88,12 @@ Let's take a look at each parameter in the above command:/
     - ``--network=bdc_net``: if the container should connect to the database server through a docker network, this parameter will automatically attach the container to the ``bdc_net``. You can ommit this parameter if the database server address can be resolved directly from a host address.
 
     - ``--env WLTS_URL="http://localhost:5000"``: Base URI of the service.
+
+    - ``--env BDC_AUTH_CLIENT_ID=BDC_OAuth_ClientID``: the OAuth 2 client id.
+
+    - ``--env BDC_AUTH_CLIENT_SECRET=BDC_OAuth_ClientSecret``: the OAuth 2 client secret.
+
+    - ``--env BDC_AUTH_ACCESS_TOKEN_URL=https://brazildatacube.dpi.inpe.br/dev/auth/v1/oauth/introspect``: OAuth 2 authentication url.
 
     - ``wlts:0.6.0``: the name of the base Docker image used to create the container.
 

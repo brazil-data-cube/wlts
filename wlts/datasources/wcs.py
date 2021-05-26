@@ -14,7 +14,7 @@ from rasterio.io import MemoryFile
 from shapely.geometry import Point, mapping
 
 from wlts.datasources.datasource import DataSource
-from wlts.utils import get_date_from_str
+from wlts.utils.utilities import get_date_from_str
 
 
 class WCS:

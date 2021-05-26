@@ -33,6 +33,10 @@ class Config():
 
     WLTS_API_VERSION = _version.parse(__version__).base_version
 
+    BDC_AUTH_CLIENT_SECRET = os.getenv("BDC_AUTH_CLIENT_SECRET", None)
+    BDC_AUTH_CLIENT_ID = os.getenv("BDC_AUTH_CLIENT_ID", None)
+    BDC_AUTH_ACCESS_TOKEN_URL = os.getenv("BDC_AUTH_ACCESS_TOKEN_URL", None)
+
 
 class ProductionConfig(Config):
     """Production Mode."""

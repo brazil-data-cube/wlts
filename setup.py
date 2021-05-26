@@ -27,7 +27,7 @@ tests_require = [
 ]
 
 docs_require = [
-    'Sphinx>=2.2',
+    'Sphinx>=2.2,<4',
     'sphinx_rtd_theme',
     'sphinx-copybutton',
 ]
@@ -44,16 +44,16 @@ setup_requires = [
 ]
 
 install_requires = [
-    'Flask>=1.1.1',
+    'Flask>=1.1.1,<2',
     'Flask-SQLAlchemy>=2.4.1',
     'requests>=2.9.1',
     'SQLAlchemy==1.3.4',
     'shapely>=1.6',
-    'Werkzeug>=0.16.1,<1', # Temp workaround https://github.com/noirbizarre/flask-restplus/issues/777
-    'bdc-core @ git+git://github.com/brazil-data-cube/bdc-core.git@b-0.2#egg=bdc-core',
+    'jsonschema>=3.2',
     'pyproj>=2',
     'OWSLib==0.21.0',
-    'rasterio>=1.1.2,<2'
+    'rasterio>=1.1.2,<2',
+    'bdc-auth-client @ git+https://github.com/brazil-data-cube/bdc-auth-client@v0.2.1',
 ]
 
 packages = find_packages()

@@ -6,7 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Image Collection Class."""
-from ..utils import get_date_from_str
 from .collection import Collection
 
 
@@ -29,7 +28,8 @@ class ImageCollection(Collection):
                          collections_info["temporal"],
                          collections_info["scala"],
                          collections_info["spatial_extent"],
-                         collections_info["period"])
+                         collections_info["period"],
+                         collections_info["is_public"])
 
         self.image = collections_info["image"]
         self.grid = collections_info["grid"]

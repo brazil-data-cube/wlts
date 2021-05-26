@@ -38,7 +38,7 @@ class CollectionFactory:
 class CollectionManager:
     """This is a singleton to manage all collections instances available."""
 
-    _collections = list()
+    _collections = dict()
 
     __instance = None
 
@@ -65,26 +65,30 @@ class CollectionManager:
             collection_info (dict): The collection information.
         """
         collection = CollectionFactory.make(collection_type, collection_info)
-        self._collections.append(collection)
+        self._collections[collection.name] = collection
 
-    def get_collection(self, name):
+    def collection(self, collection_id: str):
         """Return the collection.
 
         Args:
-            name (str): Identifier (name) of an collection.
+            collection_id (str): Identifier (name) of an collection.
 
         Returns:
             collection: A collection available in the server.
-
-        Raises:
-            RuntimeError: If the collection not found.
         """
-        try:
-            for collection in self._collections:
-                if name == collection.get_name():
-                    return collection
-        except ValueError:
-            raise RuntimeError(f"Collection {name} not found!")
+        if collection_id in self._collections.keys():
+            return self._collections[collection_id]
+
+    def find_collections(self, names: list):
+        """Return list of collections.
+
+        Args:
+            names (list): A list with the collections names.
+
+        Returns:
+            collections: All collection available in the server.
+        """
+        return [self._collections[x] for x in names]
 
     def collection_names(self):
         """Return all available collections.
@@ -92,16 +96,11 @@ class CollectionManager:
         Returns:
             list: A list with all collections identifier (name) available in the server.
         """
-        collections_names = list()
+        return list(self._collections.keys())
 
-        for collection in self._collections:
-            collections_names.append(collection.get_name())
-
-        return collections_names
-
-    def get_all_collections(self):
+    def collections(self):
         """Returns a list with all collections objects."""
-        return self._collections
+        return self._collections.values()
 
     def load_all(self):
         """Creates all collection based on json of image and feature collection."""

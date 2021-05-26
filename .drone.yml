@@ -12,6 +12,15 @@ name: wlts
 steps:
 - name: build
   image: python:3.7
+  environment:
+    WLTS_TEST_ACCESS_TOKEN:
+      from_secret: access_token
+    BDC_AUTH_CLIENT_ID:
+      from_secret: client_id
+    BDC_AUTH_CLIENT_SECRET:
+      from_secret: client_secret
+    BDC_AUTH_ACCESS_TOKEN_URL:
+      from_secret: oauth_url
   commands:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
