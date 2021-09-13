@@ -49,9 +49,7 @@ class DataSourceManager:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.load_all()
-            return cls._instance
-        else:
-            return cls._instance
+        return cls._instance
 
     def get_datasource(self, ds_id):
         """Return a datasource object.

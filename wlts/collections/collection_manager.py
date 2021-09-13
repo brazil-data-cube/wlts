@@ -47,9 +47,8 @@ class CollectionManager:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance.load_all()
-            return cls._instance
-        else:
-            return cls._instance
+
+        return cls._instance
 
     def insert(self, collection_type, collection_info):
         """Method to creates a new collection and stores in list of collections.
