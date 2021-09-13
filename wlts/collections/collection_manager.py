@@ -106,9 +106,9 @@ class CollectionManager:
         """Creates all collection based on json of feature and feature collection."""
         import json
         import os
+        from os import path
 
         from pkg_resources import resource_filename
-        from os import path
 
         feature_collection_dir = resource_filename('wlts', '/json_configs/feature_collection/')
         if path.isdir('image_collection_dir'):
