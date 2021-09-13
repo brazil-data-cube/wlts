@@ -42,22 +42,14 @@ class DataSourceManager:
 
     _datasources = list()
 
-    __instance = None
+    _instance = None
 
-    def __init__(self):
+    def __new__(cls):
         """Virtually private constructor."""
-        if DataSourceManager.__instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            DataSourceManager.__instance = self
-            DataSourceManager.__instance.load_all()
-
-    @staticmethod
-    def get_instance():
-        """Static access method."""
-        if DataSourceManager.__instance is None:
-            DataSourceManager()
-        return DataSourceManager.__instance
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.load_all()
+        return cls._instance
 
     def get_datasource(self, ds_id):
         """Return a datasource object.

@@ -29,6 +29,8 @@ def create_app():
 
     setup_app(app)
 
+    setup_wlts_managers()
+
     return app
 
 
@@ -49,4 +51,10 @@ def setup_app(app):
     app.register_blueprint(bp)
 
 
-__all__ = ('__version__', 'create_app')
+def setup_wlts_managers():
+    """Initialize the WLTS"""
+    from .datasources.ds_manager import datasource_manager
+    from .collections.collection_manager import collection_manager
+
+
+__all__ = ('__version__', 'create_app', )

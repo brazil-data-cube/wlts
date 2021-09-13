@@ -27,7 +27,8 @@ def root():
     :rtype: dict
     """
     response = dict()
-    response["wlts_version"] = Config.WLTS_API_VERSION
+    response["version"] = Config.WLTS_API_VERSION
+    response["application_name"] = "Web Land Trajectory Service"
 
     return response
 
@@ -35,19 +36,19 @@ def root():
 @bp.route('/list_collections', methods=['GET'])
 @require_model(collections_list)
 @oauth2(required=False)
-def list_collections(roles=[], access_token=""):
+def list_collections(**kwargs):
     """Retrieve list of collection offered.
 
     :returns: Collection list available in server.
     :rtype: dict
     """
-    return {"collections": WLTS.list_collection(roles=roles)}
+    return {"collections": WLTS.list_collection(roles=kwargs.get("roles", None))}
 
 
 @bp.route('/describe_collection', methods=['GET'])
 @require_model(describe_collection)
 @oauth2(required=False)
-def describe_collection(roles=[], access_token=""):
+def describe_collection(roles=None, access_token=""):
     """Retrieves collection metadata.
 
     :returns: Collection Description

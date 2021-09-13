@@ -40,22 +40,15 @@ class CollectionManager:
 
     _collections = dict()
 
-    __instance = None
+    _instance = None
 
-    def __init__(self):
+    def __new__(cls):
         """Virtually private constructor."""
-        if CollectionManager.__instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            CollectionManager.__instance = self
-            CollectionManager.__instance.load_all()
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.load_all()
 
-    @staticmethod
-    def get_instance():
-        """Static access method."""
-        if CollectionManager.__instance is None:
-            CollectionManager()
-        return CollectionManager.__instance
+        return cls._instance
 
     def insert(self, collection_type, collection_info):
         """Method to creates a new collection and stores in list of collections.
