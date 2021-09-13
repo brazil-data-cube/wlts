@@ -6,10 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS DataSource Manager."""
-from json import loads as json_loads
-
-import pkg_resources
-
 from .wcs import WCSDataSource
 from .wfs import WFSDataSource
 
@@ -17,8 +13,15 @@ from .wfs import WFSDataSource
 class DataSourceFactory:
     """Factory Class for DataSource."""
 
-    @staticmethod
-    def make(ds_type, id, conn_info):
+    _factories = {}
+
+    @classmethod
+    def register(cls, name, factory):
+        """Register a new Datasource."""
+        cls._factories[name] = factory
+
+    @classmethod
+    def make(cls, ds_type, id, conn_info):
         """Factory method for creates a datasource.
 
         Args:
@@ -27,13 +30,12 @@ class DataSourceFactory:
             conn_info (dict): The datasource connection information.
 
         .. note::
-            New datasources must be add in factorys.
+            New datasource must be add in _factories.
 
-            Ex: factorys = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", \
+            Ex: _factories = {"POSTGIS": "PostGisDataSource", "WCS": "WCSDataSource", \
                             "WFS": "WFSDataSource", "RASTER FILE": "RasterFileDataSource"}
         """
-        factorys = {"WFS": "WFSDataSource", "WCS": "WCSDataSource"}
-        datasource = eval(factorys[ds_type])(id, conn_info)
+        datasource = eval(cls._factories[ds_type])(id, conn_info)
         return datasource
 
 
@@ -48,8 +50,15 @@ class DataSourceManager:
         """Virtually private constructor."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+            cls._instance.register_factories()
             cls._instance.load_all()
         return cls._instance
+
+    @staticmethod
+    def register_factories():
+        """Register the Datasource."""
+        DataSourceFactory.register('WFS', 'WFSDataSource')
+        DataSourceFactory.register('WCS', 'WCSDataSource')
 
     def get_datasource(self, ds_id):
         """Return a datasource object.
@@ -80,6 +89,10 @@ class DataSourceManager:
 
     def load_all(self):
         """Creates all datasource based on json of datasource."""
+        from json import loads as json_loads
+
+        import pkg_resources
+
         json_string = pkg_resources.resource_string('wlts', '/json_configs/datasources.json').decode('utf-8')
         config = json_loads(json_string)
 

@@ -52,9 +52,9 @@ def setup_app(app):
 
 
 def setup_wlts_managers():
-    """Initialize the WLTS"""
-    from .datasources.ds_manager import datasource_manager
+    """Initialize the WLTS."""
     from .collections.collection_manager import collection_manager
+    from .datasources.ds_manager import datasource_manager
 
 
 __all__ = ('__version__', 'create_app', )

@@ -6,10 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Collection Manager."""
-from json import loads as json_loads
-
-import pkg_resources
-
 from wlts.collections.feature_collection import FeatureCollection
 from wlts.collections.image_collection import ImageCollection
 
@@ -17,8 +13,15 @@ from wlts.collections.image_collection import ImageCollection
 class CollectionFactory:
     """Factory Class for Collection."""
 
-    @staticmethod
-    def make(collection_type, collections_info):
+    _factories = {}
+
+    @classmethod
+    def register(cls, name, factory):
+        """Register a new Collection."""
+        cls._factories[name] = factory
+
+    @classmethod
+    def make(cls, collection_type, collections_info):
         """Factory method to creates a collection.
 
         Args:
@@ -28,11 +31,9 @@ class CollectionFactory:
         Returns:
             collection: A collection object.
         """
-        factorys = {"feature_collection": "FeatureCollection", "image_collection": "ImageCollection"}
+        datasource = eval(cls._factories[collection_type])(collections_info)
 
-        collection = eval(factorys[collection_type])(collections_info)
-
-        return collection
+        return datasource
 
 
 class CollectionManager:
@@ -46,9 +47,15 @@ class CollectionManager:
         """Virtually private constructor."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+            cls._instance.register_factories()
             cls._instance.load_all()
-
         return cls._instance
+
+    @staticmethod
+    def register_factories():
+        """Register the Collection."""
+        CollectionFactory.register('feature_collection', 'FeatureCollection')
+        CollectionFactory.register('image_collection', 'ImageCollection')
 
     def insert(self, collection_type, collection_info):
         """Method to creates a new collection and stores in list of collections.
@@ -96,24 +103,27 @@ class CollectionManager:
         return self._collections.values()
 
     def load_all(self):
-        """Creates all collection based on json of image and feature collection."""
-        json_string_feature = pkg_resources.resource_string('wlts', '/json_configs/feature_collection.json').decode(
-            'utf-8')
+        """Creates all collection based on json of feature and feature collection."""
+        import json
+        import os
 
-        json_string_image = pkg_resources.resource_string('wlts', '/json_configs/image_collection.json').decode('utf-8')
+        from pkg_resources import resource_filename
 
-        config_feature = json_loads(json_string_feature)
-        config_image = json_loads(json_string_image)
+        feature_collection_dir = resource_filename('wlts', '/json_configs/feature_collection/')
+        features_files = os.listdir(os.path.dirname(feature_collection_dir))
+        for filename in features_files:
+            if os.path.isfile(feature_collection_dir + filename):
+                with open(feature_collection_dir + filename, 'r') as f:
+                    config_feature = json.loads(f.read())
+                    self.insert("feature_collection", config_feature)
 
-        if "feature_collection" in config_feature:
-            feature_collection = config_feature["feature_collection"]
-            for ft_collection in feature_collection:
-                self.insert("feature_collection", ft_collection)
-
-        if "image_collection" in config_image:
-            image_collection = config_image["image_collection"]
-            for img_collection in image_collection:
-                self.insert("image_collection", img_collection)
+        image_collection_dir = resource_filename('wlts', '/json_configs/image_collection/')
+        image_files = os.listdir(os.path.dirname(image_collection_dir))
+        for filename in image_files:
+            if os.path.isfile(image_collection_dir + filename):
+                with open(image_collection_dir + filename, 'r') as f:
+                    config_image = json.loads(f.read())
+                    self.insert("image_collection", config_image)
 
 
 collection_manager = CollectionManager()
