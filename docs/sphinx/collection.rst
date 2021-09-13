@@ -14,8 +14,3 @@ Collection
     :members:
     :special-members: __init__
     :member-order: bysource
-
-.. autoclass:: wlts.collections.ClassificationSystemClass
-    :members:
-    :special-members: __init__
-    :member-order: bysource
