@@ -43,8 +43,10 @@ class WLTS:
     """WLTS Utility."""
 
     @classmethod
-    def list_collection(cls, roles=[]):
+    def list_collection(cls, roles=None):
         """Retrieve a list of collections offered."""
+        if not roles:
+            roles = []
         collections = list()
         available_collections = collection_manager.collections()
 
@@ -55,8 +57,11 @@ class WLTS:
         return collections
 
     @classmethod
-    def describe_collection(cls, collection_name, roles=[]):
+    def describe_collection(cls, collection_name, roles=None):
         """Retrieve collection description."""
+        if not roles:
+            roles = []
+
         cls.check_collection(collection_name, roles)
 
         collection = collection_manager.collection(collection_name)
@@ -95,7 +100,7 @@ class WLTS:
     @classmethod
     def check_collection(cls, collection, roles):
         """Utility to check collection existence in memory and permission."""
-        available_collection = collection_manager.collection(collection)
+        available_collection = collection_manager.collection(collection_id=collection)
         if available_collection is None:
             raise NotFound(f"Collection {collection} not found!")
         if available_collection.is_public is False and available_collection.name not in roles:
@@ -107,7 +112,7 @@ class WLTS:
         return collection_manager.find_collections(names)
 
     @classmethod
-    def get_trajectory(cls, ts_params: TrajectoryParams, roles=[]):
+    def get_trajectory(cls, ts_params: TrajectoryParams, roles=None):
         """
         Retrieves trajectory object.
 
@@ -118,12 +123,14 @@ class WLTS:
         :rtype: dict
 
         """
+        if not roles:
+            roles = []
         for collection in ts_params.collections:
             cls.check_collection(collection, roles)
 
         # Retrieves the collections that matches the Trajectory collections name arguments
         collections = cls.get_collections(ts_params.collections)
-        
+
         tj_attr = []
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
