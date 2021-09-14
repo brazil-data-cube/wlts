@@ -48,13 +48,13 @@ def list_collections(**kwargs):
 @bp.route('/describe_collection', methods=['GET'])
 @require_model(describe_collection)
 @oauth2(required=False)
-def describe_collection(roles=None, access_token=""):
+def describe_collection(**kwargs):
     """Retrieves collection metadata.
 
     :returns: Collection Description
     :rtype: dict
     """
-    return WLTS.describe_collection(request.args['collection_id'], roles=roles)
+    return WLTS.describe_collection(request.args['collection_id'], roles=kwargs.get("roles", None))
 
 
 @bp.route('/trajectory', methods=['GET'])

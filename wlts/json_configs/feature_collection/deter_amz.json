@@ -39,7 +39,7 @@
     "observations_properties": [
       {
         "class_property": "classname",
-        "temporal_property": "date"
+        "temporal_property": "view_date"
       }
     ]
   }

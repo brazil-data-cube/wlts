@@ -111,7 +111,7 @@ class CollectionManager:
         from pkg_resources import resource_filename
 
         feature_collection_dir = resource_filename('wlts', '/json_configs/feature_collection/')
-        if path.isdir('image_collection_dir'):
+        if path.isdir(feature_collection_dir):
             features_files = os.listdir(os.path.dirname(feature_collection_dir))
             for filename in features_files:
                 if os.path.isfile(feature_collection_dir + filename):
@@ -120,7 +120,7 @@ class CollectionManager:
                         self.insert("feature_collection", config_feature)
 
         image_collection_dir = resource_filename('wlts', '/json_configs/image_collection/')
-        if path.isdir('image_collection_dir'):
+        if path.isdir(image_collection_dir):
             image_files = os.listdir(os.path.dirname(image_collection_dir))
             for filename in image_files:
                 if os.path.isfile(image_collection_dir + filename):
