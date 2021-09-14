@@ -1,6 +1,6 @@
 #
 # This file is part of Web Land Trajectory Service.
-# Copyright (C) 2019 INPE.
+# Copyright (C) 2020 INPE.
 #
 # Web Land Trajectory Service is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 from wlts.utils.schemas import collections_list_response, \
     describe_collection_response, \
-    trajectory_response
+    trajectory_response, root
 from jsonschema import validate
 
 from wlts import create_app
@@ -70,6 +70,12 @@ class TestWLTS:
 
     def test_data_dir(self):
         assert os.path.join(os.path.dirname(__file__), '/json_configs/datasources.json')
+
+    def test_root(self, client):
+        response = client.get(f'/wlts/')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=root)
 
     def test_list_collection(self, client):
         response = client.get(f'/wlts/list_collections?access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')

@@ -25,6 +25,7 @@ def load_schema(file_name):
         return json_loads(f.read())
 
 
+root = load_schema('root.json')
 collections_list = load_schema('list_collections_request.json')
 collections_list_response = load_schema('list_collections_response.json')
 describe_collection = load_schema('describe_collection_request.json')
