@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     environment:
       - "WLTS_URL=http://localhost:8080"
-      - "WLTS_API_VERSION=ProductionConfig"
+      - "WLTS_ENVIRONMENT=ProductionConfig"
     networks:
       - bdc_net
     ports:

@@ -1,5 +1,4 @@
 {
-  "definitions": {},
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://www.esensing.dpi.inpe.br/wlts/trajectory_response.json",
   "type": "object",
@@ -8,6 +7,71 @@
     "result",
     "query"
   ],
+  "definitions": {
+    "Point2D": {
+      "title": "The point with two dimensions.",
+      "description": "The point definitionn with two dimensions.",
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2
+    },
+    "Point": {
+      "title": "Point",
+      "description": "GeoJSon geometry",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "coordinates": {
+          "$ref": "#/definitions/Point2D"
+        }
+      }
+    },
+    "Polygon": {
+      "title": "Polygon",
+      "description": "GeoJSon geometry",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "items": {
+              "$ref": "#/definitions/Point2D"
+            }
+          }
+        }
+      }
+    },
+    "MultiPolygon": {
+      "title": "MultiPolygon",
+      "description": "GeoJSon geometry",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Point2D"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "properties": {
     "query": {
       "$id": "#/properties/query",
@@ -18,7 +82,8 @@
         "longitude",
         "latitude",
         "start_date",
-        "end_date"
+        "end_date",
+        "geometry"
       ],
       "properties": {
         "collections": {
@@ -74,63 +139,94 @@
             "2017-12-31"
           ],
           "pattern": "^(.*)$"
+        },
+        "geometry": {
+          "$id": "#/properties/query/properties/geometry",
+          "type": "string",
+          "title": "The geometry",
+          "default": "False",
+          "examples": [
+            "True"
+          ],
+          "pattern": "^(.*)$"
         }
       }
     },
     "result": {
       "type": "object",
+      "required": ["trajectory"],
       "properties": {
         "trajectory": {
-      "$id": "#/properties/trajectory",
-      "type": "array",
-      "title": "Trajectory result order by date",
-      "items": {
-        "$id": "#/properties/trajectory/items",
-        "type": "object",
-        "title": "The Items Schema",
-        "required": [
-          "class",
-          "collection",
-          "date"
-        ],
-        "properties": {
-          "class": {
-            "$id": "#/properties/trajectory/items/properties/class",
-            "type": "string",
-            "title": "The Collection Class",
-            "default": "",
-            "examples": [
-              "Floresta"
+          "$id": "#/properties/trajectory",
+          "type": "array",
+          "title": "Trajectory result order by date",
+          "items": {
+            "$id": "#/properties/trajectory/items",
+            "type": "object",
+            "title": "The Items Schema",
+            "required": [
+              "class",
+              "collection",
+              "date"
             ],
-            "pattern": "^(.*)$"
-          },
-          "collection": {
-            "$id": "#/properties/trajectory/items/properties/collection",
-            "type": "string",
-            "title": "The Collection Name",
-            "default": "",
-            "examples": [
-              "Prodes"
-            ],
-            "pattern": "^(.*)$"
-          },
-          "date": {
-            "$id": "#/properties/trajectory/items/properties/date",
-            "type": "string",
-            "title": "The date of Collection",
-            "default": "",
-            "examples": [
-              "2007-01-01"
-            ],
-            "pattern": "^(.*)$"
+            "properties": {
+              "class": {
+                "$id": "#/properties/trajectory/items/properties/class",
+                "type": "string",
+                "title": "The Collection Class",
+                "default": "",
+                "examples": [
+                  "Floresta"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "collection": {
+                "$id": "#/properties/trajectory/items/properties/collection",
+                "type": "string",
+                "title": "The Collection Name",
+                "default": "",
+                "examples": [
+                  "Prodes"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "date": {
+                "$id": "#/properties/trajectory/items/properties/date",
+                "type": "string",
+                "title": "The date of Collection",
+                "default": "",
+                "examples": [
+                  "2007-01-01"
+                ],
+                "pattern": "^(.*)$"
+              },
+              "geometry": {
+                "$id": "#/properties/trajectory/items/properties/geometry",
+                "type": "object",
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/Point"
+                  },
+                  {
+                    "$ref": "#/definitions/Polygon"
+                  },
+                  {
+                    "$ref": "#/definitions/MultiPolygon"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "Point": "Point",
+                    "Polygon": "Polygon",
+                    "MultiPolygon": "MultiPolygon"
+                  }
+                }
+              }
+            }
           }
         }
-
       }
-
-    }
-      },
-      "required": ["trajectory"]
     }
   }
 }

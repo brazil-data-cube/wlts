@@ -122,3 +122,27 @@ class TestWLTS:
 
         self._assert_json(response, expected_code=200)
         validate(instance=response.json, schema=trajectory_response)
+
+    def test_trajectory_start_date(self, client):
+        response = client.get(
+            f'/wlts/trajectory?collections=deter_amz&latitude=-9.091&longitude=-66.031&start_date=2016-10-07'
+            f'&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=trajectory_response)
+
+    def test_trajectory_end_date(self, client):
+        response = client.get(
+            f'/wlts/trajectory?collections=deter_amz&latitude=-9.091&longitude=-66.031&end_date=2020-07-15'
+            f'&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=trajectory_response)
+
+    def test_trajectory_geometry(self, client):
+        response = client.get(
+            f'/wlts/trajectory?collections=deter_amz&latitude=-9.091&longitude=-66.031&geometry=True'
+            f'&access_token={os.getenv("WLTS_TEST_ACCESS_TOKEN")}')
+
+        self._assert_json(response, expected_code=200)
+        validate(instance=response.json, schema=trajectory_response)
