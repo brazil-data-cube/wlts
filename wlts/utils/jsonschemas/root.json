@@ -1,0 +1,34 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "root.json",
+  "type": "object",
+  "title": "Root operation",
+  "required": [
+    "version",
+    "application_name"
+  ],
+  "description": "Retrieves the service version",
+  "properties": {
+    "version": {
+      "$id": "#/properties/version",
+      "type": "string",
+      "title": "Version",
+      "description": "Show the version of server",
+      "default": "",
+      "examples": [
+        "0.8.0"
+      ]
+    },
+   "application_name": {
+      "$id": "#/properties/application_name",
+      "type": "string",
+      "title": "Application Name",
+      "description": "Show the name of running application",
+      "default": "",
+      "examples": [
+        "Web Land Trajectory Service"
+      ]
+    }
+  }
+}

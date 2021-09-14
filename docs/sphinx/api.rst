@@ -25,5 +25,4 @@ WLTS Server API
     ds_manager
     wcs
     wfs
-    class_system
 
