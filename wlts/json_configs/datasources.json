@@ -6,6 +6,12 @@
         "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
         "host": "http://terrabrasilis.dpi.inpe.br/geoserver",
         "workspace": "deter-amz"
+      },
+      {
+        "type": "WCS",
+        "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc644",
+        "host": "https://www.terraclass.gov.br/geoserver/TerraClass/wcs",
+        "workspace": "TerraClass"
       }
     ]
   }
