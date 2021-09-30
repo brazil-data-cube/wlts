@@ -10,6 +10,16 @@
 Changes
 =======
 
+Version 0.8.0 (2021-09-30)
+--------------------------
+
+- Add integration with BDC-Auth (`#53 <https://github.com/brazil-data-cube/wlts/issues/53>`_).
+- Improve unittests (`#60 <https://github.com/brazil-data-cube/wlts/issues/60>`_).
+- Review the configuration files (`#57 <https://github.com/brazil-data-cube/wlts/issues/57>`_).
+- Fix invalid keyword label in WCS response object (`#61 <https://github.com/brazil-data-cube/wlts/issues/61>`_).
+- Upgrade library to provide OAuth2 client integration to 0.2.3 (`#56 <https://github.com/brazil-data-cube/wlts/issues/56>`_).
+
+
 Version 0.6.0 (2021-04-13)
 --------------------------
 
