@@ -65,7 +65,7 @@ class WCS:
             dataset = None
             data = None
 
-            return values[0]
+            return values[0][0]
         except:
             return None
 
@@ -125,7 +125,7 @@ class WCSDataSource(DataSource):
     
         # Get Class
         if classification_class.get_type() == "Self":
-            class_info = result['raster_value']
+            class_info = str(result)
         else:
             ds_class = classification_class.get_class_ds()
 
