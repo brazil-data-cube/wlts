@@ -29,7 +29,8 @@ class ImageCollection(Collection):
                          collections_info["scala"],
                          collections_info["spatial_extent"],
                          collections_info["period"],
-                         collections_info["is_public"])
+                         collections_info["is_public"],
+                         collections_info["deprecated"])
 
         self.grid = collections_info["grid"]
         self.spatial_ref_system = collections_info["spatial_reference_system"]

@@ -5,6 +5,7 @@
     "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
     "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
     "dataset_type": "Feature",
+    "deprecated": false,
     "is_public": true,
     "classification_class": {
       "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",

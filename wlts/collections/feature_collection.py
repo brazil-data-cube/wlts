@@ -30,7 +30,9 @@ class FeatureCollection(Collection):
                          collections_info["scala"],
                          collections_info["spatial_extent"],
                          collections_info["period"],
-                         collections_info["is_public"])
+                         collections_info["is_public"],
+                         collections_info["deprecated"],
+                         )
 
         # self.feature_name = collections_info["feature_name"]
         self.geom_property = collections_info["geom_property"]
