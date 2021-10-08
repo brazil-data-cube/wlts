@@ -34,7 +34,6 @@ class FeatureCollection(Collection):
                          collections_info["deprecated"],
                          )
 
-        # self.feature_name = collections_info["feature_name"]
         self.geom_property = collections_info["geom_property"]
         self.observations_properties = collections_info["observations_properties"]
 
