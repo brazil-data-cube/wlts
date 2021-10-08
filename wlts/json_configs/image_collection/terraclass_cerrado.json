@@ -29,7 +29,6 @@
     "max_x": "-41.522427616",
     "max_y": "-2.32678430299999"
   },
-  "image": "tc_cerrado_2018_raster",
   "grid": {
     "row": "768",
     "column": "638"
@@ -39,6 +38,7 @@
   },
   "attributes_properties": [
     {
+      "image": "tc_cerrado_2018_raster",
       "name": "GRAY_INDEX",
       "data_type": "int",
       "valid_range": {

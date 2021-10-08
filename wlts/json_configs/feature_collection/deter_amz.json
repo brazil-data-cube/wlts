@@ -29,8 +29,6 @@
       "ymin": -18.0364406523564,
       "ymax": 4.55537642867927
     },
-    "feature_name": "deter_amz",
-    "feature_id_property": "gid",
     "geom_property": {
       "property_name": "geom",
       "srid": 4674,
@@ -38,6 +36,7 @@
     },
     "observations_properties": [
       {
+        "feature_name": "deter_amz",
         "class_property": "classname",
         "temporal_property": "view_date"
       }
