@@ -29,9 +29,9 @@ class ImageCollection(Collection):
                          collections_info["scala"],
                          collections_info["spatial_extent"],
                          collections_info["period"],
-                         collections_info["is_public"])
+                         collections_info["is_public"],
+                         collections_info["deprecated"])
 
-        self.image = collections_info["image"]
         self.grid = collections_info["grid"]
         self.spatial_ref_system = collections_info["spatial_reference_system"]
         self.observations_properties = collections_info["attributes_properties"]
@@ -58,23 +58,24 @@ class ImageCollection(Collection):
         ds = self.get_datasource()
 
         for time in self.timeline:
-            args = {
-                "image": self.image,
-                "temporal": self.temporal,
-                "x": x,
-                "y": y,
-                "grid": self.grid,
-                "srid": self.spatial_ref_system["srid"],
-                "start_date": start_date,
-                "end_date": end_date,
-                "time": time,
-                "classification_class": self.classification_class,
-                "geometry_flag": geometry
-            }
+            for att in self.observations_properties:
+                args = {
+                    "image": att["image"],
+                    "temporal": self.temporal,
+                    "x": x,
+                    "y": y,
+                    "grid": self.grid,
+                    "srid": self.spatial_ref_system["srid"],
+                    "start_date": start_date,
+                    "end_date": end_date,
+                    "time": time,
+                    "classification_class": self.classification_class,
+                    "geometry_flag": geometry
+                }
 
-            result = ds.get_trajectory(**args)
-            
-            if result is not None:
-                result["collection"] = self.get_name()
-                tj_attr.append(result)
+                result = ds.get_trajectory(**args)
+
+                if result is not None:
+                    result["collection"] = self.get_name()
+                    tj_attr.append(result)
 

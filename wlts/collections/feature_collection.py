@@ -30,9 +30,10 @@ class FeatureCollection(Collection):
                          collections_info["scala"],
                          collections_info["spatial_extent"],
                          collections_info["period"],
-                         collections_info["is_public"])
+                         collections_info["is_public"],
+                         collections_info["deprecated"],
+                         )
 
-        self.feature_name = collections_info["feature_name"]
         self.geom_property = collections_info["geom_property"]
         self.observations_properties = collections_info["observations_properties"]
 
@@ -59,7 +60,6 @@ class FeatureCollection(Collection):
         for obs in self.observations_properties:
 
             args = {
-                "feature_name": self.feature_name,
                 "temporal": self.temporal,
                 "x": x,
                 "y": y,

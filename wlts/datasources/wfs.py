@@ -247,14 +247,14 @@ class WFSDataSource(DataSource):
 
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
-        invalid_parameters = set(kwargs) - {"feature_name", "temporal",
+        invalid_parameters = set(kwargs) - {"temporal",
                                             "x", "y", "obs", "geom_property",
                                             "classification_class", "start_date", "end_date",
                                             "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        type_name = self.workspace + ":" + kwargs['feature_name']
+        type_name = self.workspace + ":" + (kwargs['obs'])['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
 

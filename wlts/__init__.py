@@ -46,8 +46,16 @@ def setup_app(app):
         return {'code': InternalServerError.code,
                 'description': InternalServerError.description}, InternalServerError.code
 
-    from .views import bp
+    @app.after_request
+    def after_request(response):
+        """Enable CORS."""
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', '*')
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+        return response
 
+    from .views import bp
     app.register_blueprint(bp)
 
 

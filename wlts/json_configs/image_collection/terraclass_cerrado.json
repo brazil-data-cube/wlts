@@ -5,6 +5,7 @@
   "detail": "Para mais informacoes acesse: https://www.terraclass.gov.br/",
   "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc644",
   "dataset_type": "Image",
+  "deprecated": false,
   "is_public": true,
   "classification_class": {
     "datasource_id": "3c20cbb4-ca94-4c1f-99af-6377f30bc644",
@@ -29,7 +30,6 @@
     "max_x": "-41.522427616",
     "max_y": "-2.32678430299999"
   },
-  "image": "tc_cerrado_2018_raster",
   "grid": {
     "row": "768",
     "column": "638"
@@ -39,6 +39,7 @@
   },
   "attributes_properties": [
     {
+      "image": "tc_cerrado_2018_raster",
       "name": "GRAY_INDEX",
       "data_type": "int",
       "valid_range": {

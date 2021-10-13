@@ -81,6 +81,8 @@ class WLTS:
             describe["name"] = collection.name
             describe["description"] = collection.description
             describe["detail"] = collection.detail
+            describe["is_public"] = collection.is_public
+            describe["deprecated"] = collection.deprecated
             describe["collection_type"] = collection.collection_type()
             describe["resolution_unit"] = {
                 "unit": collection.get_resolution_unit(),
