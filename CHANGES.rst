@@ -10,6 +10,14 @@
 Changes
 =======
 
+Version 0.9.0 (2021-12-08)
+--------------------------
+
+- Add multiple layers to collection (`#65 <https://github.com/brazil-data-cube/wlts/issues/65>`_).
+- Add deprecated information in describe collection (`#64 <https://github.com/brazil-data-cube/wlts/issues/64>`_).
+- Add CORS properties (`#67 <https://github.com/brazil-data-cube/wlts/issues/67>`_).
+
+
 Version 0.8.0 (2021-09-30)
 --------------------------
 
