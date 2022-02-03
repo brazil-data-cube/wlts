@@ -97,7 +97,7 @@ class Collection(metaclass=ABCMeta):
         return self.period["end_date"]
 
     @abstractmethod
-    def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
+    def trajectory(self, tj_attr, x, y, start_date, end_date, language, geometry):
         """Abstract Method to get trajectory.
 
         Args:
@@ -106,6 +106,7 @@ class Collection(metaclass=ABCMeta):
             y (int/float): A latitude value according to EPSG:4326.
             start_date (:obj:`str`, optional): The begin of a time interval.
             end_date (:obj:`str`, optional): The begin of a time interval.
+            language (:obj:`str`, optional): The class language support.
             geometry (:obj:`str`, optional): Used to return geometry in trajectory.
 
          Returns:

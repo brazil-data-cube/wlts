@@ -6,6 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Controllers of Web Land Trajectory Service."""
+from lccs_db.config import Config as Config_db
+
 from flask import abort
 from werkzeug.exceptions import Forbidden, NotFound
 
@@ -29,6 +31,7 @@ class TrajectoryParams:
         self.start_date = properties.get('start_date', None)
         self.end_date = properties.get('end_date', None)
         self.geometry = properties.get('geometry', None)
+        self.language = properties.get('language', 'pt-br')
 
     def to_dict(self):
         """Export Trajectory params to Python Dictionary."""
@@ -133,10 +136,17 @@ class WLTS:
         # Retrieves the collections that matches the Trajectory collections name arguments
         collections = cls.get_collections(ts_params.collections)
 
+        # Validate language
+        support_language = [Config_db.I18N_LANGUAGES['current_locale'][0],
+                            Config_db.I18N_LANGUAGES['default_locale'][0]]
+
+        if ts_params.language not in support_language:
+            abort(403, 'Language not supported!')
+
         tj_attr = []
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
-                                  ts_params.end_date, ts_params.geometry)
+                                  ts_params.end_date, ts_params.language, ts_params.geometry)
 
         trajectory_result = sorted(tj_attr, key=lambda k: k['date'])
 

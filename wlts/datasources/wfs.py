@@ -150,7 +150,9 @@ class WFS:
 
         itemlist = xmldoc.getElementsByTagName(tag_name)
 
-        return itemlist[0].firstChild.nodeValue
+        result = itemlist[0].firstChild.nodeValue
+
+        return result
 
 
 class WFSDataSource(DataSource):
@@ -182,15 +184,17 @@ class WFSDataSource(DataSource):
 
         tag_name = self.workspace + ":" + class_property_name
 
-        if 'class_system' in kwargs:
-            filter = "{}={} AND class_system_name=\'{}\'".format(value, feature_id, kwargs['class_system'])
+        if 'classification_system_id' in kwargs:
+            filter = f"{value}={feature_id} AND classification_system_id={ kwargs['classification_system_id']}"
         else:
-            filter = "{}={}".format(value, feature_id)
+            filter = f"{value}={feature_id}"
 
         return self._wfs.get_class(type_name=type_name, tag_name=tag_name, filter=filter)
 
-    def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal):
+    def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal, language):
         """Organize trajectory."""
+        import ast
+
         # Get temporal information
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
@@ -201,11 +205,13 @@ class WFSDataSource(DataSource):
     
         # Get Class information
         if classification_class.get_type() == "Literal":
+            # When the class is a literal property. Ex: Alert
             class_info = obs["class_property_name"]
-    
         elif classification_class.get_type() == "Self":
+            # When the class property is in the data itself
             class_info = result['properties'][obs["class_property"]]
         else:
+            # Get the class from the lcss
             feature_id = result['properties'][obs["class_property"]]
         
             ds_class = classification_class.get_class_ds()
@@ -220,9 +226,13 @@ class WFSDataSource(DataSource):
                                                  classification_class.get_class_property_value(),
                                                  classification_class.get_class_property_name(),
                                                  classification_class.get_property_name(),
-                                                 class_system=classification_class.get_classification_system_name())
+                                                 classification_system_id=classification_class.get_classification_system_id())
+
+        trj_class = ast.literal_eval(class_info)
+
+        # Get the class based on language select
         trj = dict()
-        trj["class"] = class_info
+        trj["class"] = trj_class[language]
         trj["date"] = str(obs_info)
     
         if geom_flag:
@@ -249,7 +259,7 @@ class WFSDataSource(DataSource):
         """Return a trajectory observation of this datasource."""
         invalid_parameters = set(kwargs) - {"temporal",
                                             "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date",
+                                            "classification_class", "start_date", "end_date", "language",
                                             "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
@@ -292,7 +302,9 @@ class WFSDataSource(DataSource):
                                                     geom_flag=kwargs['geometry_flag'],
                                                     geom_property=(kwargs['geom_property'])['srid'],
                                                     classification_class=kwargs['classification_class'],
-                                                    temporal=kwargs['temporal']))
+                                                    temporal=kwargs['temporal'],
+                                                    language=kwargs['language'])
+                        )
 
             return trj
 

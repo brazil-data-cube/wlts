@@ -41,7 +41,7 @@ class ImageCollection(Collection):
         """Return the collection type."""
         return "Image"
 
-    def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
+    def trajectory(self, tj_attr, x, y, start_date, end_date, language, geometry):
         """Return the trajectory.
 
         Args:
@@ -70,6 +70,7 @@ class ImageCollection(Collection):
                     "end_date": end_date,
                     "time": time,
                     "classification_class": self.classification_class,
+                    "language": language,
                     "geometry_flag": geometry
                 }
 

@@ -117,8 +117,10 @@ class WCSDataSource(DataSource):
         if ft_name not in images:
             raise ValueError(f'Image "{ft_name}" not found in host {self._wcs.url}')
         
-    def organize_trajectory(self, result, time, classification_class, geom, geom_flag, temporal):
+    def organize_trajectory(self, result, time, classification_class, geom, geom_flag, temporal, language):
         """Organize trajectory."""
+        import ast
+
         # Get temporal information
         obs_info = get_date_from_str(time)
         obs_info = obs_info.strftime(temporal["string_format"])
@@ -133,10 +135,12 @@ class WCSDataSource(DataSource):
                                              classification_class.get_class_property_value(),
                                              classification_class.get_class_property_name(),
                                              classification_class.get_property_name(),
-                                             class_system=classification_class.get_classification_system_name())
+                                             classification_system_id=classification_class.get_classification_system_id())
+        trj_class = ast.literal_eval(class_info)
 
+        # Get the class based on language select
         trj = dict()
-        trj["class"] = class_info
+        trj["class"] = trj_class[language] #TODO: validade if the class exist in language
         trj["date"] = str(obs_info)
 
         if geom_flag:
@@ -152,8 +156,8 @@ class WCSDataSource(DataSource):
         """
         invalid_parameters = set(kwargs) - {"image", "temporal",
                                             "x", "y", "srid",
-                                            "grid", "start_date", "end_date", "time", "classification_class",
-                                            "geometry_flag"}
+                                            "grid", "start_date", "end_date", "time",
+                                            "classification_class", "language", "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
@@ -182,7 +186,8 @@ class WCSDataSource(DataSource):
                                            classification_class=kwargs['classification_class'],
                                            geom=Point(kwargs['x'], kwargs['y']),
                                            geom_flag=kwargs['geometry_flag'],
-                                           temporal=kwargs['temporal']
+                                           temporal=kwargs['temporal'],
+                                           language=kwargs['language'],
                                            )
 
             return trj
