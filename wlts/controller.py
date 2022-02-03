@@ -6,9 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Controllers of Web Land Trajectory Service."""
-from lccs_db.config import Config as Config_db
-
 from flask import abort
+from lccs_db.config import Config as Config_db
 from werkzeug.exceptions import Forbidden, NotFound
 
 from wlts.collections.collection_manager import collection_manager

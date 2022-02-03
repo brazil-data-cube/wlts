@@ -7,9 +7,9 @@
 #
 """Views of Web Land Trajectory Service."""
 from bdc_auth_client.decorators import oauth2
+from flask import Blueprint, jsonify, request
 from lccs_db.config import Config as Config_db
 from lccs_db.utils import language
-from flask import Blueprint, jsonify, request
 
 from wlts.utils.schemas import (collections_list, describe_collection,
                                 trajectory)
