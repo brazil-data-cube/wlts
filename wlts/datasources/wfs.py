@@ -222,7 +222,7 @@ class WFSDataSource(DataSource):
                                                  classification_class.get_class_property_name(),
                                                  classification_class.get_property_name())
             else:
-                class_info = ds_class.get_classe(feature_id,
+                class_retval = ds_class.get_classe(feature_id,
                                                  classification_class.get_class_property_value(),
                                                  classification_class.get_class_property_name(),
                                                  classification_class.get_property_name(),
