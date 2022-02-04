@@ -131,16 +131,20 @@ class WCSDataSource(DataSource):
         else:
             ds_class = classification_class.get_class_ds()
 
-            class_info = ds_class.get_classe(result,
+            class_retval = ds_class.get_classe(result,
                                              classification_class.get_class_property_value(),
                                              classification_class.get_class_property_name(),
                                              classification_class.get_property_name(),
                                              classification_system_id=classification_class.get_classification_system_id())
-        trj_class = ast.literal_eval(class_info)
+            class_dict = ast.literal_eval(class_retval)
+            if language in class_dict:
+                class_info = class_dict[language]
+            else:
+                class_info = class_dict[list(class_dict.keys())[0]]
 
         # Get the class based on language select
         trj = dict()
-        trj["class"] = trj_class[language] #TODO: validade if the class exist in language
+        trj["class"] = class_info
         trj["date"] = str(obs_info)
 
         if geom_flag:

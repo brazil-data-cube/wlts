@@ -227,12 +227,15 @@ class WFSDataSource(DataSource):
                                                  classification_class.get_class_property_name(),
                                                  classification_class.get_property_name(),
                                                  classification_system_id=classification_class.get_classification_system_id())
-
-        trj_class = ast.literal_eval(class_info)
+                class_dict = ast.literal_eval(class_retval)
+                if language in class_dict:
+                    class_info = class_dict[language]
+                else:
+                    class_info = class_dict[list(class_dict.keys())[0]]
 
         # Get the class based on language select
         trj = dict()
-        trj["class"] = trj_class[language]
+        trj["class"] = class_info
         trj["date"] = str(obs_info)
     
         if geom_flag:
