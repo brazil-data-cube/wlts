@@ -61,6 +61,7 @@ class Collection(metaclass=ABCMeta):
             args['property_name'] = classification_class["property_name"]
             args['class_property_name'] = classification_class["class_property_name"]
             args['class_property_value'] = classification_class["class_property_value"]
+            args['workspace'] = classification_class["workspace"]
 
         return ClassificationSystemClass(**args)
 
@@ -131,7 +132,7 @@ class ClassificationSystemClass:
         invalid_parameters = set(kwargs) - {"type", "datasource_id", "property_name", "class_property_name",
                                             "class_property_value", 'class_property_id', 'classification_system_name',
                                             'classification_system_id', 'classification_system_version',
-                                            'class_property_id'}
+                                            'class_property_id', 'workspace'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
@@ -142,6 +143,7 @@ class ClassificationSystemClass:
         self.class_property_name = kwargs['class_property_name']
         self.class_property_value = kwargs['class_property_value']
         self.class_property_id = kwargs['class_property_id']
+        self._workspace = kwargs['workspace']
 
         self.classification_system_version = kwargs['classification_system_version']
         self.classification_system_name = kwargs['classification_system_name']
@@ -184,3 +186,8 @@ class ClassificationSystemClass:
     def get_classification_system_id(self):
         """Return classification system id."""
         return self.classification_system_id
+
+    @property
+    def workspace(self):
+        """Return workspace system id."""
+        return self._workspace

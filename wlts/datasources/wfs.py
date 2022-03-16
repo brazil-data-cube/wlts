@@ -170,17 +170,16 @@ class WFSDataSource(DataSource):
         else:
             self._wfs = WFS(ds_info['host'])
 
-        self.workspace = ds_info['workspace']
+        # self.workspace = ds_info['workspace']
 
     def get_type(self):
         """Return the datasource type."""
         return "WFS"
 
-    def get_classe(self, feature_id, value, class_property_name, ft_name, **kwargs):
+    def get_classe(self, feature_id, value, class_property_name, ft_name, workspace, **kwargs):
         """Return a class of feature based on his classification system."""
-        type_name = self.workspace + ":" + ft_name
-
-        tag_name = self.workspace + ":" + class_property_name
+        type_name = workspace + ":" + ft_name
+        tag_name = workspace + ":" + class_property_name
 
         if 'class_system' in kwargs:
             filter = "{}={} AND class_system_name=\'{}\'".format(value, feature_id, kwargs['class_system'])
@@ -220,6 +219,7 @@ class WFSDataSource(DataSource):
                                                  classification_class.get_class_property_value(),
                                                  classification_class.get_class_property_name(),
                                                  classification_class.get_property_name(),
+                                                 workspace=classification_class.workspace,
                                                  class_system=classification_class.get_classification_system_name())
         trj = dict()
         trj["class"] = class_info
@@ -247,14 +247,13 @@ class WFSDataSource(DataSource):
 
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
-        invalid_parameters = set(kwargs) - {"temporal",
-                                            "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date",
-                                            "geometry_flag"}
+        invalid_parameters = set(kwargs) - {"temporal", "x", "y", "obs", "geom_property",
+                                            "classification_class", "start_date", "end_date", "geometry_flag"}
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        type_name = self.workspace + ":" + (kwargs['obs'])['feature_name']
+        # type_name = self.workspace + ":" + (kwargs['obs'])['feature_name']
+        type_name =  (kwargs['obs'])['workspace'] + ":" + (kwargs['obs'])['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
 
