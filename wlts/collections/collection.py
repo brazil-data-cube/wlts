@@ -56,6 +56,7 @@ class Collection(metaclass=ABCMeta):
             args['property_name'] = None
             args['class_property_name'] = None
             args['class_property_value'] = None
+            args['workspace'] = None
 
         else:
             args['property_name'] = classification_class["property_name"]

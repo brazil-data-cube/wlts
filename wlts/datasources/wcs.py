@@ -136,10 +136,12 @@ class WCS:
         Args:
             uri (str): URL for the WCS server.
         """
-        response = requests.get(uri, auth=self._auth)
+        with requests.session() as s:
+            s.keep_alive = False
+            response = s.get(uri, auth=self._auth)
 
         if response.status_code != 200:
-            raise Exception("Request Fail: {} ".format(response.status_code))
+            raise Exception(f"Request Fail: {response.status_code}")
 
         return response.content.decode('utf-8')
 
