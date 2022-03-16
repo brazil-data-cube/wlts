@@ -40,6 +40,7 @@ class ImageCollection(Collection):
         self.validade_collection()
 
     def validade_collection(self) -> None:
+        """Verify if collection exist in datasource."""
         ds = self.get_datasource()
 
         for att in self.observations_properties:

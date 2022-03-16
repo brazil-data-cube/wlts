@@ -6,8 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS WCS DataSource."""
-from functools import lru_cache
-
 import base64
 import urllib.request
 from functools import lru_cache
@@ -28,6 +26,7 @@ class WCS:
 
     def __init__(self, host, **kwargs):
         """Create a WCS client attached to the given host address (an URL).
+
         Args:
             host (str): the server URL.
             **kwargs: The keyword arguments with credentials to access WFS.
@@ -55,6 +54,7 @@ class WCS:
 
     def _request_image(self, uri):
         """Query the WCS service using HTTP GET verb and return the image result.
+
         Args:
             uri (str): URL for the WCS server.
         """
@@ -81,6 +81,7 @@ class WCS:
 
     def open_image(self, url, long, lat):
         """Return the image value for a location.
+
         Args:
             url (str): URL for the WCS server.
             long (int/float): A longitude value according to EPSG:4326.
@@ -105,6 +106,7 @@ class WCS:
     @lru_cache()
     def get_image(self, image, srid, min_x, max_x, min_y, max_y, column, row, time, x, y):
         """Mount the url for get a image(coverage) from server based on GetCoverage request.
+
         Args:
             image (str): The image(coverage) name to retrieve from service.
             srid (int): The CRS of the image(coverage).
@@ -130,6 +132,7 @@ class WCS:
 
     def _get(self, uri):
         """Query the WCS service using HTTP GET verb.
+
         Args:
             uri (str): URL for the WCS server.
         """
@@ -179,6 +182,7 @@ class WCSDataSource(DataSource):
     @lru_cache()
     def check_image(self, workspace, ft_name):
         """Utility to check image existence in wcs.
+
         Args:
             ft_name (str): The image name.
         """
