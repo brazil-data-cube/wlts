@@ -51,7 +51,6 @@ install_requires = [
     'shapely>=1.6',
     'jsonschema>=3.2',
     'pyproj>=2',
-    'OWSLib==0.21.0',
     'rasterio>=1.1.2,<2',
     'bdc-auth-client @ git+https://github.com/brazil-data-cube/bdc-auth-client@v0.2.3',
 ]
