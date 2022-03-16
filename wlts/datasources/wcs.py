@@ -156,7 +156,6 @@ class WCS:
             coverage_id = s.getElementsByTagName('wcs:CoverageId')
             avaliables.append(coverage_id[0].firstChild.nodeValue)
 
-
         return avaliables
 
 
@@ -198,17 +197,17 @@ class WCSDataSource(DataSource):
         obs_info = obs_info.strftime(temporal["string_format"])
     
         # Get Class
-        if classification_class.get_type() == "Self":
+        if classification_class.type == "Self":
             class_info = str(result)
         else:
             ds_class = classification_class.get_class_ds()
 
             class_info = ds_class.get_classe(feature_id=result,
-                                             value=classification_class.get_class_property_value(),
-                                             class_property_name=classification_class.get_class_property_name(),
-                                             ft_name=classification_class.get_property_name(),
+                                             value=classification_class.class_property_value,
+                                             class_property_name=classification_class.class_property_name,
+                                             ft_name=classification_class.property_name,
                                              workspace=classification_class.workspace,
-                                             class_system=classification_class.get_classification_system_name(),
+                                             class_system=classification_class.classification_system_name,
                                              )
 
         trj = dict()

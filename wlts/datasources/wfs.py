@@ -170,8 +170,6 @@ class WFSDataSource(DataSource):
         else:
             self._wfs = WFS(ds_info['host'])
 
-        # self.workspace = ds_info['workspace']
-
     def get_type(self):
         """Return the datasource type."""
         return "WFS"
@@ -194,37 +192,37 @@ class WFSDataSource(DataSource):
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
-    
+
         elif temporal["type"] == "DATE":
             obs_info = result['properties'][obs["temporal_property"]]
-    
+
         # Get Class information
-        if classification_class.get_type() == "Literal":
+        if classification_class.type == "Literal":
             class_info = obs["class_property_name"]
     
-        elif classification_class.get_type() == "Self":
+        elif classification_class.type == "Self":
             class_info = result['properties'][obs["class_property"]]
         else:
             feature_id = result['properties'][obs["class_property"]]
-        
+
             ds_class = classification_class.get_class_ds()
 
-            if classification_class.get_classification_system_name() is None:
-                class_info = ds_class.get_classe(feature_id,
-                                                 classification_class.get_class_property_value(),
-                                                 classification_class.get_class_property_name(),
-                                                 classification_class.get_property_name())
+            if classification_class.classification_system_name is None:
+                class_info = ds_class.get_classe(feature_id=feature_id,
+                                                 value=classification_class.class_property_value,
+                                                 class_property_name=classification_class.class_property_name,
+                                                 ft_name=classification_class.property_name)
             else:
-                class_info = ds_class.get_classe(feature_id,
-                                                 classification_class.get_class_property_value(),
-                                                 classification_class.get_class_property_name(),
-                                                 classification_class.get_property_name(),
+                class_info = ds_class.get_classe(feature_id=feature_id,
+                                                 value=classification_class.class_property_value,
+                                                 class_property_name=classification_class.class_property_name,
+                                                 ft_name=classification_class.property_name,
                                                  workspace=classification_class.workspace,
-                                                 class_system=classification_class.get_classification_system_name())
+                                                 class_system=classification_class.classification_system_name)
         trj = dict()
         trj["class"] = class_info
         trj["date"] = str(obs_info)
-    
+
         if geom_flag:
             if result['geometry']['type'] == 'Point':
                 geom = Point(result['geometry']['coordinates'][0], result['geometry']['coordinates'][1])
@@ -252,7 +250,6 @@ class WFSDataSource(DataSource):
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        # type_name = self.workspace + ":" + (kwargs['obs'])['feature_name']
         type_name =  (kwargs['obs'])['workspace'] + ":" + (kwargs['obs'])['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])

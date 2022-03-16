@@ -137,55 +137,63 @@ class ClassificationSystemClass:
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        self.type = kwargs['type']
+        self._type = kwargs['type']
 
-        self.property_name = kwargs['property_name']
-        self.class_property_name = kwargs['class_property_name']
-        self.class_property_value = kwargs['class_property_value']
-        self.class_property_id = kwargs['class_property_id']
+        self._property_name = kwargs['property_name']
+        self._class_property_name = kwargs['class_property_name']
+        self._class_property_value = kwargs['class_property_value']
+        self._class_property_id = kwargs['class_property_id']
         self._workspace = kwargs['workspace']
 
-        self.classification_system_version = kwargs['classification_system_version']
-        self.classification_system_name = kwargs['classification_system_name']
-        self.classification_system_id = kwargs['classification_system_id']
+        self._classification_system_version = kwargs['classification_system_version']
+        self._classification_system_name = kwargs['classification_system_name']
+        self._classification_system_id = kwargs['classification_system_id']
 
         self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
 
-    def get_type(self):
+    @property
+    def type(self):
         """Return classification system type based on WLTS model."""
-        return self.type
+        return self._type
 
-    def get_property_name(self):
+    @property
+    def property_name(self):
         """Return classification system property name."""
-        return self.property_name
+        return self._property_name
 
-    def get_class_property_value(self):
+    @property
+    def class_property_value(self):
         """Return classification system property value."""
-        return self.class_property_value
+        return self._class_property_value
 
-    def get_class_property_name(self):
+    @property
+    def class_property_name(self):
         """Return classification system property class name."""
-        return self.class_property_name
+        return self._class_property_name
 
-    def get_class_property_id(self):
+    @property
+    def class_property_id(self):
         """Return classification system property class id."""
-        return self.class_property_id
+        return self._class_property_id
 
     def get_class_ds(self):
         """Return classification system datasource."""
         return self.datasource
 
-    def get_classification_system_version(self):
+    @property
+    def classification_system_version(self):
         """Return classification system name."""
-        return self.classification_system_version
+        return self._classification_system_version
 
-    def get_classification_system_name(self):
+    @property
+    def classification_system_name(self):
         """Return classification system name."""
-        return self.classification_system_name
+        return self._classification_system_name
 
-    def get_classification_system_id(self):
+    @property
+    def classification_system_id(self):
         """Return classification system id."""
-        return self.classification_system_id
+        return self._classification_system_id
 
     @property
     def workspace(self):
