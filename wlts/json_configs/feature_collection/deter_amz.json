@@ -1,5 +1,6 @@
 {
     "name": "deter_amz",
+    "title": "DETER Amazonia",
     "authority_name": "INPE",
     "description": "Alertas de Desmatamento",
     "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
