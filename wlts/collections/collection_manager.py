@@ -31,9 +31,9 @@ class CollectionFactory:
         Returns:
             collection: A collection object.
         """
-        datasource = eval(cls._factories[collection_type])(collections_info)
+        collection = eval(cls._factories[collection_type])(collections_info)
 
-        return datasource
+        return collection
 
 
 class CollectionManager:

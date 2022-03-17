@@ -37,6 +37,17 @@ class ImageCollection(Collection):
         self.observations_properties = collections_info["attributes_properties"]
         self.timeline = collections_info["timeline"]
 
+        self.validade_collection()
+
+    def validade_collection(self) -> None:
+        """Verify if collection exist in datasource."""
+        ds = self.get_datasource()
+
+        for att in self.observations_properties:
+            ds.check_image(workspace=att["workspace"], ft_name=att["image"])
+
+        return
+
     def collection_type(self):
         """Return the collection type."""
         return "Image"
@@ -62,6 +73,7 @@ class ImageCollection(Collection):
                 args = {
                     "image": att["image"],
                     "temporal": self.temporal,
+                    "workspace": att["workspace"],
                     "x": x,
                     "y": y,
                     "grid": self.grid,

@@ -58,7 +58,6 @@ class FeatureCollection(Collection):
         ds = self.datasource
 
         for obs in self.observations_properties:
-
             args = {
                 "temporal": self.temporal,
                 "x": x,
