@@ -14,10 +14,11 @@ from wlts.datasources.ds_manager import datasource_manager
 class Collection(metaclass=ABCMeta):
     """Abstract class to represent an collection."""
 
-    def __init__(self, name, authority_name, description, detail, datasource_id, dataset_type,
+    def __init__(self, name, title, authority_name, description, detail, datasource_id, dataset_type,
                  classification_class, temporal, scala, spatial_extent, period, is_public, deprecated):
         """Create Collection."""
         self.name = name
+        self.title = title
         self.authority_name = authority_name
         self.description = description
         self.detail = detail

@@ -79,6 +79,7 @@ class WLTS:
             }
 
             describe["name"] = collection.name
+            describe["title"] = collection.title
             describe["description"] = collection.description
             describe["detail"] = collection.detail
             describe["is_public"] = collection.is_public

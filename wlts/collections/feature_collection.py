@@ -20,6 +20,7 @@ class FeatureCollection(Collection):
             collections_info (dict): The collection information.
         """
         super().__init__(collections_info["name"],
+                         collections_info["title"],
                          collections_info["authority_name"],
                          collections_info["description"],
                          collections_info["detail"],
