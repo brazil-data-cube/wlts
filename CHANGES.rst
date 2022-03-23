@@ -10,6 +10,15 @@
 Changes
 =======
 
+Version 0.9.1 (2022-03-23)
+--------------------------
+
+- Remove OWSLib package (`#71 <https://github.com/brazil-data-cube/wlts/issues/71>`_).
+- Bug fix: cannot import name 'soft_unicode' from 'markupsafe' (`#70 <https://github.com/brazil-data-cube/wlts/issues/70>`_).
+- Add the title information in collection (`#69 <https://github.com/brazil-data-cube/wlts/issues/69>`_).
+- Refactor the organization of datasets (`#72 <https://github.com/brazil-data-cube/wlts/issues/72>`_).
+- Remove mandatory BDC Auth access token in operations (`#74 <https://github.com/brazil-data-cube/wlts/issues/74>`_).
+
 Version 0.9.0 (2021-12-08)
 --------------------------
 
