@@ -72,13 +72,14 @@ class WLTS:
             describe = dict()
 
             describe["classification_system"] = {
-                "type": classification_system.get_type(),
-                "classification_system_name": classification_system.get_classification_system_name(),
-                "classification_system_id": classification_system.get_classification_system_id(),
-                "classification_system_version": classification_system.get_classification_system_version()
+                "type": classification_system.type,
+                "classification_system_name": classification_system.classification_system_name,
+                "classification_system_id": classification_system.classification_system_id,
+                "classification_system_version": classification_system.classification_system_version
             }
 
             describe["name"] = collection.name
+            describe["title"] = collection.title
             describe["description"] = collection.description
             describe["detail"] = collection.detail
             describe["is_public"] = collection.is_public

@@ -59,7 +59,7 @@ def describe_collection(**kwargs):
 
 @bp.route('/trajectory', methods=['GET'])
 @require_model(trajectory)
-@oauth2(required=True)
+@oauth2(required=False)
 def trajectory(**kwargs):
     """Retrieves collection metadata.
 
@@ -68,4 +68,4 @@ def trajectory(**kwargs):
     """
     params = TrajectoryParams(**request.args.to_dict())
 
-    return jsonify(WLTS.get_trajectory(params, roles=kwargs['roles']))
+    return jsonify(WLTS.get_trajectory(params, roles=kwargs.get('roles', None)))
