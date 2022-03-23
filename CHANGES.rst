@@ -10,7 +10,7 @@
 Changes
 =======
 
-Version 0.9.1 (2022-03-21)
+Version 0.9.1 (2022-03-23)
 --------------------------
 
 - Remove OWSLib package (`#71 <https://github.com/brazil-data-cube/wlts/issues/71>`_).
