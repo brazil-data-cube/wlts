@@ -135,14 +135,14 @@ class Collection(metaclass=ABCMeta):
         """
         pass
     
-    # @abstractmethod
-    # def layers_information(self):
-    #     """Abstract Method to get collections layers informations.
-    # 
-    #     Returns:
-    #         host url (str): A string that represents the datasource host of an collection.
-    #     """
-    #     pass
+    @abstractmethod
+    def layers_information(self):
+        """Abstract Method to get collections layers informations.
+
+        Returns:
+            layers (List): A list of dict that represents the information of the layers.
+        """
+        pass
 
 
 class ClassificationSystemClass:
