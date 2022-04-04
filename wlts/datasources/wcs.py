@@ -36,8 +36,8 @@ class WCS:
         if invalid_parameters:
             raise AttributeError(f'invalid parameter(s): {invalid_parameters}')
 
-        self.host = host
-        self.base_path = "wcs?service=WCS"
+        self._host = host
+        self._base_path = "wcs?service=WCS"
         self.version = "&version=1.0.0"
 
         self._auth = None
@@ -51,6 +51,11 @@ class WCS:
                 self._auth = kwargs['auth']
 
         self.avaliable_images = self.list_image()
+
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._host
 
     def _request_image(self, uri):
         """Query the WCS service using HTTP GET verb and return the image result.
@@ -120,7 +125,7 @@ class WCS:
             x (int/float): The location x to retrieve.
             x (int/float): The location y to retrieve.
         """
-        url = f"{self.host}/{self.base_path}{self.version}&request=GetCoverage&COVERAGE={image}&"
+        url = f"{self._host}/{self._base_path}{self.version}&request=GetCoverage&COVERAGE={image}&"
 
         url += f"CRS=EPSG:4326&RESPONSE_CRS=EPSG:{srid}&"
 
@@ -147,7 +152,7 @@ class WCS:
 
     def list_image(self):
         """Returns the list of all available image in service."""
-        url = f"{self.host}/{self.base_path}&request=GetCapabilities&outputFormat=application/json"
+        url = f"{self._host}/{self._base_path}&request=GetCapabilities&outputFormat=application/json"
 
         doc = self._get(url)
 
@@ -191,6 +196,10 @@ class WCSDataSource(DataSource):
         if f'{workspace}__{ft_name}' not in self._wcs.avaliable_images:
             raise NotFound(f'Image "{ft_name}" not found')
 
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._wcs.host_information
 
     def get_type(self):
         """Return the datasource type."""

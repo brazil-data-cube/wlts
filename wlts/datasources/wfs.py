@@ -33,8 +33,8 @@ class WFS:
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        self.host = host
-        self.base_path = "wfs?service=WFS&version=1.0.0"
+        self._host = host
+        self._base_path = "wfs?service=WFS&version=1.0.0"
 
         self._auth = None
 
@@ -45,6 +45,11 @@ class WFS:
                 if len(kwargs['auth']) != 2:
                     raise AttributeError('auth must be a tuple with 2 values ("user", "pass")')
                 self._auth = kwargs['auth']
+
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._host
 
     def _get(self, uri):
         """Query the WFS service using HTTP GET verb.
@@ -61,7 +66,7 @@ class WFS:
 
     def _list_features(self):
         """Returns the list of all available feature in service."""
-        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
+        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self._host, self._base_path)
 
         doc = self._get(url)
 
@@ -104,7 +109,7 @@ class WFS:
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        url = "{}/{}&request=GetFeature&typeName={}".format(self.host, self.base_path, type_name)
+        url = "{}/{}&request=GetFeature&typeName={}".format(self._host, self._base_path, type_name)
 
         if 'propertyName' in kwargs:
             url += "&propertyName={}".format(kwargs['propertyName'])
@@ -173,6 +178,11 @@ class WFSDataSource(DataSource):
     def get_type(self):
         """Return the datasource type."""
         return "WFS"
+    
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._wfs.host_information
 
     def get_classe(self, feature_id, value, class_property_name, ft_name, workspace, **kwargs):
         """Return a class of feature based on his classification system."""
