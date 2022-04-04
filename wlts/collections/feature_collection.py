@@ -99,7 +99,7 @@ class FeatureCollection(Collection):
                     property_name = obs["class_property"].replace(obs["temporal_property"], 'YEAR')
                     wms += f"PROPERTYNAME={property_name}"
                 else:
-                    wms += "CQL_FILTER=" + f"{obs['temporal_property']}" + "={YEAR}"
+                    wms += "CQL_FILTER=" + f"{obs['temporal_property']}" + "=YEAR"
 
                 layers.append(
                     dict(
