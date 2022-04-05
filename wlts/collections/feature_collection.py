@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Feature Collection Class."""
+from typing import Dict, List
 
 from .collection import Collection
 
@@ -38,9 +39,14 @@ class FeatureCollection(Collection):
         self.geom_property = collections_info["geom_property"]
         self.observations_properties = collections_info["observations_properties"]
 
-    def collection_type(self):
+    def collection_type(self) -> str:
         """Return collection type."""
         return "Feature"
+    
+    @property
+    def host_information(self) -> str:
+        """Return the host information of image collection."""
+        return self.get_datasource().host_information
 
     def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
         """Return the trajectory.
@@ -77,3 +83,30 @@ class FeatureCollection(Collection):
                 for i in result:
                     i["collection"] = self.get_name()
                     tj_attr.append(i)
+
+    def layers_information(self) -> List[Dict]:
+        """Return the dataset information of feature collection."""
+        layers = list()
+        wms_base = f"{self.host_information}"
+
+        for obs in self.observations_properties:
+            if not any(l.get('name', "") == obs['feature_name'] for l in layers):
+                wms = f"{wms_base}/{obs['workspace']}/wms?service=WMS&version=1.1.0&request=GetMap&"
+
+                wms += f"layers={obs['feature_name']}&"
+
+                if self.temporal["type"] == "STRING":
+                    property_name = obs["class_property"].replace(obs["temporal_property"], 'YEAR')
+                    wms += f"PROPERTYNAME={property_name}"
+                else:
+                    wms += "CQL_FILTER=" + f"{obs['temporal_property']}" + "=YEAR"
+
+                layers.append(
+                    dict(
+                        workspace=obs['workspace'],
+                        name=obs['feature_name'],
+                        wms=wms
+                    )
+                )
+
+        return layers

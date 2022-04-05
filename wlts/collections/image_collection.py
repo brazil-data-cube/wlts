@@ -6,6 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Image Collection Class."""
+from typing import Dict, List
+
 from .collection import Collection
 
 
@@ -49,9 +51,14 @@ class ImageCollection(Collection):
 
         return
 
-    def collection_type(self):
+    def collection_type(self) -> str:
         """Return the collection type."""
         return "Image"
+
+    @property
+    def host_information(self) -> str:
+        """Return the host information of image collection."""
+        return self.get_datasource().host_information
 
     def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
         """Return the trajectory.
@@ -92,3 +99,21 @@ class ImageCollection(Collection):
                     result["collection"] = self.get_name()
                     tj_attr.append(result)
 
+    def layers_information(self) -> List[Dict]:
+        """Return the dataset information of image collection."""
+        layers = list()
+        wms_base = f"{self.host_information}"
+
+        for obs in self.observations_properties:
+            wms = f"{wms_base}/{obs['workspace']}/wms?service=WMS&version=1.1.0&request=GetMap&"
+            wms += f"layers={obs['image']}&"
+            wms += "time" + "=YEAR"
+            layers.append(
+                dict(
+                    workspace=obs['workspace'],
+                    name=obs['image'],
+                    wms=wms
+                )
+            )
+
+        return layers
