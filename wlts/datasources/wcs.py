@@ -185,6 +185,11 @@ class WCSDataSource(DataSource):
             self._wcs = WCS(ds_info['host'], auth=(ds_info["user"], ds_info["password"]))
         else:
             self._wcs = WCS(ds_info['host'])
+            
+        if 'external_host' in ds_info:
+            self._external_host = ds_info['external_host']
+        else:
+            self._external_host = ds_info['host']
 
     @lru_cache()
     def check_image(self, workspace, ft_name):
@@ -199,7 +204,7 @@ class WCSDataSource(DataSource):
     @property
     def host_information(self) -> str:
         """Returns the host."""
-        return self._wcs.host_information
+        return self._external_host
 
     def get_type(self):
         """Return the datasource type."""

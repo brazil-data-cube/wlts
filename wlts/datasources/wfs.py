@@ -175,6 +175,12 @@ class WFSDataSource(DataSource):
         else:
             self._wfs = WFS(ds_info['host'])
 
+        if 'external_host' in ds_info:
+            self._external_host = ds_info['external_host']
+        else:
+            self._external_host = ds_info['host']
+
+
     def get_type(self):
         """Return the datasource type."""
         return "WFS"
@@ -182,7 +188,7 @@ class WFSDataSource(DataSource):
     @property
     def host_information(self) -> str:
         """Returns the host."""
-        return self._wfs.host_information
+        return self._external_host
 
     def get_classe(self, feature_id, value, class_property_name, ft_name, workspace, **kwargs):
         """Return a class of feature based on his classification system."""
