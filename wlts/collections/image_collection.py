@@ -102,17 +102,13 @@ class ImageCollection(Collection):
     def layers_information(self) -> List[Dict]:
         """Return the dataset information of image collection."""
         layers = list()
-        wms_base = f"{self.host_information}"
 
         for obs in self.observations_properties:
-            wms = f"{wms_base}/{obs['workspace']}/wms?service=WMS&version=1.1.0&request=GetMap&"
-            wms += f"layers={obs['image']}&"
-            wms += "time" + "=YEAR"
             layers.append(
                 dict(
+                    temporal_property="time",
                     workspace=obs['workspace'],
-                    name=obs['image'],
-                    wms=wms
+                    layer_name=obs['image']
                 )
             )
 

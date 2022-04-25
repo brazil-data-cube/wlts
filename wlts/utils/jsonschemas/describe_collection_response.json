@@ -9,7 +9,7 @@
     "description",
     "detail",
     "collection_type",
-    "resolution_unit",
+    "temporal_resolution",
     "period",
     "spatial_extent",
     "datasource"
@@ -46,8 +46,8 @@
         "Feature"
       ]
     },
-    "resolution_unit": {
-      "$id": "#/properties/resolution_unit",
+    "temporal_resolution": {
+      "$id": "#/properties/temporal_resolution",
       "type": "object",
       "title": "The Collection Resolution Unit",
       "required": [
@@ -214,12 +214,11 @@
               "type": "object",
               "title": "The Layers of datasource",
               "required": [
-                "name",
-                "ows",
+                "layer_name",
                 "workspace"
               ],
               "properties": {
-                "name": {
+                "layer_name": {
                   "type": "string",
                   "title": "The name of layer",
                   "default": "",
@@ -227,12 +226,20 @@
                     "prodes"
                   ]
                 },
-                "ows": {
+                "data_field": {
                   "type": "string",
-                  "title": "The ows url of the layer",
+                  "title": "The data field of the layer",
                   "default": "",
                   "examples": [
-                    "prodes"
+                    "year"
+                  ]
+                },
+                "temporal_property": {
+                  "type": "string",
+                  "title": "The temporal property of the layer",
+                  "default": "",
+                  "examples": [
+                    "time"
                   ]
                 },
                 "workspace": {
@@ -242,6 +249,12 @@
                   "examples": [
                     "prodes"
                   ]
+                },
+                "propertyname": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }

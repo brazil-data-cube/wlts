@@ -85,9 +85,9 @@ class WLTS:
             describe["is_public"] = collection.is_public
             describe["deprecated"] = collection.deprecated
             describe["collection_type"] = collection.collection_type()
-            describe["resolution_unit"] = {
+            describe["temporal_resolution"] = {
                 "unit": collection.get_resolution_unit(),
-                "value": float(collection.get_resolution_value())
+                "value": int(collection.get_resolution_value())
             }
             describe["period"] = {
                 "start_date": collection.get_start_date(),
