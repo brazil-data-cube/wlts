@@ -228,10 +228,18 @@
                 },
                 "data_field": {
                   "type": "string",
-                  "title": "The data_field of the layer",
+                  "title": "The data field of the layer",
                   "default": "",
                   "examples": [
-                    "prodes"
+                    "year"
+                  ]
+                },
+                "temporal_property": {
+                  "type": "string",
+                  "title": "The temporal property of the layer",
+                  "default": "",
+                  "examples": [
+                    "time"
                   ]
                 },
                 "workspace": {
