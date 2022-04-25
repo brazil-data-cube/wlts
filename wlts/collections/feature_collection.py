@@ -87,26 +87,27 @@ class FeatureCollection(Collection):
     def layers_information(self) -> List[Dict]:
         """Return the dataset information of feature collection."""
         layers = list()
-        wms_base = f"{self.host_information}"
+
+        def prepare_datafields(data: dict, obs: dict):
+            if self.temporal["type"] == "STRING":
+                if "propertyname" not in data:
+                    data["propertyname"] = [obs["class_property"]]
+                elif obs["class_property"] not in data["propertyname"]:
+                    data["propertyname"].append(obs["class_property"])
+            else:
+                data["data_field"] = obs['temporal_property']
 
         for obs in self.observations_properties:
-            if not any(l.get('name', "") == obs['feature_name'] for l in layers):
-                wms = f"{wms_base}/{obs['workspace']}/wms?service=WMS&version=1.1.0&request=GetMap&"
-
-                wms += f"layers={obs['feature_name']}&"
-
-                if self.temporal["type"] == "STRING":
-                    property_name = obs["class_property"].replace(obs["temporal_property"], 'YEAR')
-                    wms += f"PROPERTYNAME={property_name}"
-                else:
-                    wms += "CQL_FILTER=" + f"{obs['temporal_property']}" + "=YEAR"
-
-                layers.append(
-                    dict(
-                        workspace=obs['workspace'],
-                        name=obs['feature_name'],
-                        wms=wms
-                    )
+            data = [l for l in layers if l.get('layer_name', "")  == obs['feature_name']]
+            if len(data) == 0:
+                ds_information = dict(
+                    workspace=obs['workspace'],
+                    layer_name=obs['feature_name'],
                 )
+                prepare_datafields(ds_information, obs)
+                layers.append(ds_information)
+            else:
+                prepare_datafields(data[0], obs)
+
 
         return layers
