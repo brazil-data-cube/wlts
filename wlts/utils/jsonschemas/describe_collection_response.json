@@ -9,7 +9,7 @@
     "description",
     "detail",
     "collection_type",
-    "resolution_unit",
+    "temporal_resolution",
     "period",
     "spatial_extent",
     "datasource"
@@ -46,8 +46,8 @@
         "Feature"
       ]
     },
-    "resolution_unit": {
-      "$id": "#/properties/resolution_unit",
+    "temporal_resolution": {
+      "$id": "#/properties/temporal_resolution",
       "type": "object",
       "title": "The Collection Resolution Unit",
       "required": [
