@@ -250,10 +250,14 @@
                     "prodes"
                   ]
                 },
-                "propertyname": {
+                "properties": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": "object",
+                    "properties":{
+                      "class_property": {"type": "string"},
+                      "temporal_property": {"type": "string"}
+                    }
                   }
                 }
               }
