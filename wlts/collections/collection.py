@@ -125,6 +125,25 @@ class Collection(metaclass=ABCMeta):
         """
         pass
 
+    @property
+    @abstractmethod
+    def host_information(self):
+        """Abstract Method to get collections datasource host.
+
+        Returns:
+            host_url (str): A string that represents the datasource host of an collection.
+        """
+        pass
+    
+    @abstractmethod
+    def layers_information(self):
+        """Abstract Method to get collections layers informations.
+
+        Returns:
+            layers (List): A list of dict that represents the information of the layers.
+        """
+        pass
+
 
 class ClassificationSystemClass:
     """This class represents a Classification System of a collection."""

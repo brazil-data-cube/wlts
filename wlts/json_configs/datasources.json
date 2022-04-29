@@ -4,8 +4,9 @@
        {
         "type": "WFS",
         "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc683",
-        "host": "http://terrabrasilis.dpi.inpe.br/geoserver"
-      },
+        "host": "http://terrabrasilis.dpi.inpe.br/geoserver",
+        "external_host":"http://terrabrasilis.dpi.inpe.br/geoserver"
+       },
       {
         "type": "WCS",
         "id": "3c20cbb4-ca94-4c1f-99af-6377f30bc644",
