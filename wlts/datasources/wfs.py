@@ -208,10 +208,12 @@ class WFSDataSource(DataSource):
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
+            obs_info = obs_info.replace('Z', '')
 
         elif temporal["type"] == "DATE":
-            obs_info = result['properties'][obs["temporal_property"]].replace('Z', '')
-
+            obs_info = result['properties'][obs["temporal_property"]]
+            if isinstance(obs_info, str):
+                obs_info = obs_info.replace('Z', '')
         # Get Class information
         if classification_class.type == "Literal":
             class_info = obs["class_property_name"]
