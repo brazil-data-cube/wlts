@@ -87,7 +87,7 @@ class DataSourceManager:
         """
         self._datasources.append(DataSourceFactory.make(conn_info["type"], conn_info["id"], conn_info))
 
-    def load_all(self):
+    def load_all(self) -> None:
         """Creates all datasource based on json of datasource."""
         from json import loads as json_loads
 

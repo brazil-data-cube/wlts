@@ -39,9 +39,12 @@
     "observations_properties": [
       {
         "feature_name": "deter_amz",
-        "class_property": "classname",
-        "temporal_property": "view_date",
-        "workspace": "deter-amz"
+        "title": "DETER AMZ",
+        "workspace": "deter-amz",
+        "properties":{
+          "class_property": "classname",
+          "temporal_property": "view_date"
+        }
       }
     ]
   }
