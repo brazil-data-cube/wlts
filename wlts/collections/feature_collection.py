@@ -92,10 +92,6 @@ class FeatureCollection(Collection):
         def prepare_datafields(data: dict, obs: dict):
             if self.temporal["type"] == "STRING" and "properties" not in data:
                 data["properties"] = obs['properties']
-                # if "properties" not in data:
-                #     data["properties"] = obs['properties']
-                # elif obs["class_property"] not in data["properties"]:
-                #     data["properties"].append(dict(class_property=obs['properties']["class_property"], temporal_property=obs['properties']["temporal_property"]))
             else:
                 data["data_field"] = obs['properties']['temporal_property']
 
