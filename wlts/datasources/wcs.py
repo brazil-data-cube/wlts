@@ -9,6 +9,7 @@
 import base64
 import urllib.request
 from functools import lru_cache
+from typing import List
 from uuid import uuid4
 from xml.dom import minidom
 
@@ -150,7 +151,7 @@ class WCS:
 
         return response.content.decode('utf-8')
 
-    def list_image(self):
+    def list_image(self) -> List[str]:
         """Returns the list of all available image in service."""
         url = f"{self._host}/{self._base_path}&request=GetCapabilities&outputFormat=application/json"
 
@@ -192,7 +193,7 @@ class WCSDataSource(DataSource):
             self._external_host = ds_info['host']
 
     @lru_cache()
-    def check_image(self, workspace, ft_name):
+    def check_image(self, workspace: str, ft_name: str) -> None:
         """Utility to check image existence in wcs.
 
         Args:
@@ -206,7 +207,7 @@ class WCSDataSource(DataSource):
         """Returns the host."""
         return self._external_host
 
-    def get_type(self):
+    def get_type(self) -> str:
         """Return the datasource type."""
         return "WCS"
 

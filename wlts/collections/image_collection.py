@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Image Collection Class."""
+from turtle import title
 from typing import Dict, List
 
 from .collection import Collection
@@ -108,7 +109,8 @@ class ImageCollection(Collection):
                 dict(
                     temporal_property="time",
                     workspace=obs['workspace'],
-                    layer_name=obs['image']
+                    layer_name=obs['image'],
+                    title = obs['title']
                 )
             )
 

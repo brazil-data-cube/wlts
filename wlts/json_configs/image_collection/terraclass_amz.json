@@ -42,6 +42,7 @@
     {
       "image": "tc_2014_raster",
       "workspace": "TerraClass",
+      "title": "TerraClass Amazonia",
       "name": "GRAY_INDEX",
       "data_type": "int",
       "valid_range": {

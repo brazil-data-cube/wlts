@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Feature Collection Class."""
+from turtle import title
 from typing import Dict, List
 
 from .collection import Collection
@@ -42,7 +43,7 @@ class FeatureCollection(Collection):
     def collection_type(self) -> str:
         """Return collection type."""
         return "Feature"
-    
+
     @property
     def host_information(self) -> str:
         """Return the host information of image collection."""
@@ -89,13 +90,14 @@ class FeatureCollection(Collection):
         layers = list()
 
         def prepare_datafields(data: dict, obs: dict):
-            if self.temporal["type"] == "STRING":
-                if "properties" not in data:
-                    data["properties"] = [dict(class_property=obs["class_property"], temporal_property=obs["temporal_property"])]
-                elif obs["class_property"] not in data["properties"]:
-                    data["properties"].append(dict(class_property=obs["class_property"], temporal_property=obs["temporal_property"]))
+            if self.temporal["type"] == "STRING" and "properties" not in data:
+                data["properties"] = obs['properties']
+                # if "properties" not in data:
+                #     data["properties"] = obs['properties']
+                # elif obs["class_property"] not in data["properties"]:
+                #     data["properties"].append(dict(class_property=obs['properties']["class_property"], temporal_property=obs['properties']["temporal_property"]))
             else:
-                data["data_field"] = obs['temporal_property']
+                data["data_field"] = obs['properties']['temporal_property']
 
         for obs in self.observations_properties:
             data = [l for l in layers if l.get('layer_name', "")  == obs['feature_name']]
@@ -103,11 +105,11 @@ class FeatureCollection(Collection):
                 ds_information = dict(
                     workspace=obs['workspace'],
                     layer_name=obs['feature_name'],
+                    title=obs['title']
                 )
                 prepare_datafields(ds_information, obs)
                 layers.append(ds_information)
             else:
                 prepare_datafields(data[0], obs)
-
 
         return layers
