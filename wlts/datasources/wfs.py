@@ -204,12 +204,12 @@ class WFSDataSource(DataSource):
         """Organize trajectory."""
         # Get temporal information
         if temporal["type"] == "STRING":
-            obs_info = get_date_from_str(obs['properties']["temporal_property"])
+            obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
             obs_info = obs_info.replace('Z', '')
 
         elif temporal["type"] == "DATE":
-            obs_info = result['properties'][obs['properties']["temporal_property"]]
+            obs_info = result['properties'][obs["temporal_property"]]
             if isinstance(obs_info, str):
                 obs_info = obs_info.replace('Z', '')
         # Get Class information
@@ -217,9 +217,9 @@ class WFSDataSource(DataSource):
             class_info = obs["class_property_name"]
     
         elif classification_class.type == "Self":
-            class_info = result['properties'][obs['properties']["class_property"]]
+            class_info = result['properties'][obs["class_property"]]
         else:
-            feature_id = result['properties'][obs['properties']["class_property"]]
+            feature_id = result['properties'][obs["class_property"]]
 
             ds_class = classification_class.get_class_ds()
 
@@ -261,19 +261,31 @@ class WFSDataSource(DataSource):
 
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
-        invalid_parameters = set(kwargs) - {"temporal", "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date", "geometry_flag"}
+        invalid_parameters = set(kwargs) - {
+            "temporal", 
+            "x", "y", 
+            "obs", 
+            "geom_property", 
+            "feature_name",
+            "workspace", 
+            "temporal_properties",
+            "classification_class", 
+            "start_date",
+             "end_date", 
+             "geometry_flag"
+        }
+
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        type_name =  (kwargs['obs'])['workspace'] + ":" + (kwargs['obs'])['feature_name']
+        type_name =  kwargs['workspace'] + ":" + kwargs['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
 
         cql_filter = "&CQL_FILTER=INTERSECTS({}, {})".format((kwargs['geom_property'])['property_name'], geom.wkt)
 
         if (kwargs['temporal'])["type"] == "STRING":
-            temporal_observation = get_date_from_str((kwargs['obs'])["temporal_property"]).strftime(
+            temporal_observation = get_date_from_str((kwargs['temporal_properties'])['temporal_property']).strftime(
                 (kwargs['temporal'])["string_format"])
             if kwargs['start_date']:
                 start_date = get_date_from_str(kwargs['start_date']).strftime((kwargs['temporal'])["string_format"])
@@ -300,7 +312,7 @@ class WFSDataSource(DataSource):
 
         if retval is not None:
             for i in retval:
-                trj.append(self.organize_trajectory(result=i, obs=kwargs['obs'],
+                trj.append(self.organize_trajectory(result=i, obs=kwargs['temporal_properties'],
                                                     geom_flag=kwargs['geometry_flag'],
                                                     geom_property=(kwargs['geom_property'])['srid'],
                                                     classification_class=kwargs['classification_class'],
