@@ -154,7 +154,9 @@ class WFS:
 
         itemlist = xmldoc.getElementsByTagName(tag_name)
 
-        return itemlist[0].firstChild.nodeValue
+        result = itemlist[0].firstChild.nodeValue
+
+        return result
 
 
 class WFSDataSource(DataSource):
@@ -193,16 +195,19 @@ class WFSDataSource(DataSource):
         type_name = workspace + ":" + ft_name
         tag_name = workspace + ":" + class_property_name
 
-        if 'class_system' in kwargs:
-            filter = "{}={} AND class_system_name=\'{}\'".format(value, feature_id, kwargs['class_system'])
+        if 'classification_system_id' in kwargs:
+            filter = f"{value}={feature_id} AND classification_system_id={ kwargs['classification_system_id']}"
         else:
-            filter = "{}={}".format(value, feature_id)
+            filter = f"{value}={feature_id}"
 
         return self._wfs.get_class(type_name=type_name, tag_name=tag_name, filter=filter)
 
-    def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal):
+    def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal, language):
         """Organize trajectory."""
+        import ast
+
         # Get the temporal information based on temporal type
+
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
@@ -215,11 +220,14 @@ class WFSDataSource(DataSource):
 
         # Get the class information based on type
         if classification_class.type == "Literal":
+            # When the class is a literal property. Ex: Alert
             class_info = obs["class_property_name"]
 
         elif classification_class.type == "Self":
+          # When the class property is in the data itself
             class_info = result['properties'][obs["class_property"]]
         else:
+            # Get the class from the lcss
             feature_id = result['properties'][obs["class_property"]]
 
             ds_class = classification_class.get_class_ds()
@@ -230,12 +238,18 @@ class WFSDataSource(DataSource):
                                                  class_property_name=classification_class.class_property_name,
                                                  ft_name=classification_class.property_name)
             else:
-                class_info = ds_class.get_classe(feature_id=feature_id,
+                class_retval =  ds_class.get_classe(feature_id=feature_id,
                                                  value=classification_class.class_property_value,
                                                  class_property_name=classification_class.class_property_name,
                                                  ft_name=classification_class.property_name,
                                                  workspace=classification_class.workspace,
-                                                 class_system=classification_class.classification_system_name)
+                                                  classification_system_id=classification_class.get_classification_system_id())
+                class_dict = ast.literal_eval(class_retval)
+                if language in class_dict:
+                    class_info = class_dict[language]
+                else:
+                    class_info = class_dict[list(class_dict.keys())[0]]
+
         trj = dict()
         trj["class"] = class_info
         trj["date"] = str(obs_info)
@@ -273,9 +287,9 @@ class WFSDataSource(DataSource):
             "classification_class",
             "start_date",
              "end_date",
-             "geometry_flag"
+             "geometry_flag",
+              "language",
         }
-
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
@@ -317,7 +331,9 @@ class WFSDataSource(DataSource):
                                                     geom_flag=kwargs['geometry_flag'],
                                                     geom_property=(kwargs['geom_property'])['srid'],
                                                     classification_class=kwargs['classification_class'],
-                                                    temporal=kwargs['temporal']))
+                                                    temporal=kwargs['temporal'],
+                                                    language=kwargs['language'])
+                        )
 
             return trj
 

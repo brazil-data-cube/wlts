@@ -211,8 +211,10 @@ class WCSDataSource(DataSource):
         """Return the datasource type."""
         return "WCS"
 
-    def organize_trajectory(self, result, time, classification_class, geom, geom_flag, temporal, workspace=None):
+    def organize_trajectory(self, result, time, classification_class, geom, geom_flag, temporal, language, workspace=None):
         """Organize trajectory."""
+        import ast
+
         # Get temporal information
         obs_info = get_date_from_str(time)
         obs_info = obs_info.strftime(temporal["string_format"])
@@ -223,13 +225,19 @@ class WCSDataSource(DataSource):
         else:
             ds_class = classification_class.get_class_ds()
 
-            class_info = ds_class.get_classe(feature_id=result,
+            class_retval =  ds_class.get_classe(feature_id=result,
                                              value=classification_class.class_property_value,
                                              class_property_name=classification_class.class_property_name,
                                              ft_name=classification_class.property_name,
                                              workspace=classification_class.workspace,
-                                             class_system=classification_class.classification_system_name,
+                                             classification_system_id=classification_class.get_classification_system_id()
                                              )
+                                             
+            class_dict = ast.literal_eval(class_retval)
+            if language in class_dict:
+                class_info = class_dict[language]
+            else:
+                class_info = class_dict[list(class_dict.keys())[0]]
 
         trj = dict()
         trj["class"] = class_info
@@ -247,7 +255,8 @@ class WCSDataSource(DataSource):
             **kwargs: The keyword arguments.
         """
         invalid_parameters = set(kwargs) - {"image", "workspace", "temporal", "x", "y", "srid", "grid", "start_date",
-                                            "end_date", "time", "classification_class", "geometry_flag"}
+                                            "end_date", "time", "classification_class", "geometry_flag",  "language"}
+
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
@@ -277,6 +286,7 @@ class WCSDataSource(DataSource):
                                            geom=Point(kwargs['x'], kwargs['y']),
                                            geom_flag=kwargs['geometry_flag'],
                                            temporal=kwargs['temporal'],
+                                           language=kwargs['language'],
                                            workspace=kwargs['workspace']
                                            )
 
