@@ -6,6 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """Controllers of Web Land Trajectory Service."""
+from typing import Dict, List
+
 from flask import abort
 from lccs_db.config import Config as Config_db
 from werkzeug.exceptions import Forbidden, NotFound
@@ -20,7 +22,7 @@ class TrajectoryParams:
     :type properties:dict
     """
 
-    def __init__(self, **properties):
+    def __init__(self, **properties) -> None:
         """Creates a trajectory parameter object."""
         self.collections = properties.get('collections', None)
         if self.collections is not None:
@@ -32,7 +34,7 @@ class TrajectoryParams:
         self.geometry = properties.get('geometry', None)
         self.language = properties.get('language', 'pt-br')
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         """Export Trajectory params to Python Dictionary."""
         data = {
             k: v if v is not None else ''
@@ -45,7 +47,7 @@ class WLTS:
     """WLTS Utility."""
 
     @classmethod
-    def list_collection(cls, roles=None):
+    def list_collection(cls, roles=None) -> List:
         """Retrieve a list of collections offered."""
         if not roles:
             roles = []
@@ -59,7 +61,7 @@ class WLTS:
         return collections
 
     @classmethod
-    def describe_collection(cls, collection_name, roles=None):
+    def describe_collection(cls, collection_name, roles=None) -> Dict:
         """Retrieve collection description."""
         if not roles:
             roles = []
@@ -74,21 +76,21 @@ class WLTS:
             describe = dict()
 
             describe["classification_system"] = {
-                "type": classification_system.get_type(),
-                "classification_system_name": classification_system.get_classification_system_name(),
-                "classification_system_id": classification_system.get_classification_system_id(),
-                "classification_system_version": classification_system.get_classification_system_version()
+                "type": classification_system.type,
+                "classification_system_name": classification_system.classification_system_name,
+                "classification_system_id": classification_system.classification_system_id,
+                "classification_system_version": classification_system.classification_system_version
             }
-
             describe["name"] = collection.name
+            describe["title"] = collection.title
             describe["description"] = collection.description
             describe["detail"] = collection.detail
             describe["is_public"] = collection.is_public
             describe["deprecated"] = collection.deprecated
             describe["collection_type"] = collection.collection_type()
-            describe["resolution_unit"] = {
+            describe["temporal_resolution"] = {
                 "unit": collection.get_resolution_unit(),
-                "value": float(collection.get_resolution_value())
+                "value": int(collection.get_resolution_value())
             }
             describe["period"] = {
                 "start_date": collection.get_start_date(),
@@ -96,13 +98,18 @@ class WLTS:
             }
             describe["spatial_extent"] = collection.get_spatial_extent()
 
+            describe["datasource"] = {
+                "host": collection.host_information,
+                "layers": collection.layers_information()
+            }
+
             return describe
 
         except Exception:
             abort(403, "Error while retrieve collection metadata")
 
     @classmethod
-    def check_collection(cls, collection, roles):
+    def check_collection(cls, collection: str, roles) -> None:
         """Utility to check collection existence in memory and permission."""
         available_collection = collection_manager.collection(collection_id=collection)
         if available_collection is None:
@@ -111,12 +118,12 @@ class WLTS:
             raise Forbidden('Forbidden')
 
     @staticmethod
-    def get_collections(names):
+    def get_collections(names: list):
         """Retrieves collections."""
         return collection_manager.find_collections(names)
 
     @classmethod
-    def get_trajectory(cls, ts_params: TrajectoryParams, roles=None):
+    def get_trajectory(cls, ts_params: TrajectoryParams, roles=None) -> dict:
         """
         Retrieves trajectory object.
 
@@ -143,6 +150,7 @@ class WLTS:
             abort(403, 'Language not supported!')
 
         tj_attr = []
+
         for collection in collections:
             collection.trajectory(tj_attr, ts_params.longitude, ts_params.latitude, ts_params.start_date,
                                   ts_params.end_date, ts_params.language, ts_params.geometry)

@@ -6,6 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Image Collection Class."""
+from typing import Dict, List
+
 from .collection import Collection
 
 
@@ -19,6 +21,7 @@ class ImageCollection(Collection):
             collections_info (dict): The collection information.
         """
         super().__init__(collections_info["name"],
+                         collections_info["title"],
                          collections_info["authority_name"],
                          collections_info["description"],
                          collections_info["detail"],
@@ -37,9 +40,25 @@ class ImageCollection(Collection):
         self.observations_properties = collections_info["attributes_properties"]
         self.timeline = collections_info["timeline"]
 
-    def collection_type(self):
+        self.validade_collection()
+
+    def validade_collection(self) -> None:
+        """Verify if collection exist in datasource."""
+        ds = self.get_datasource()
+
+        for att in self.observations_properties:
+            ds.check_image(workspace=att["workspace"], ft_name=att["image"])
+
+        return
+
+    def collection_type(self) -> str:
         """Return the collection type."""
         return "Image"
+
+    @property
+    def host_information(self) -> str:
+        """Return the host information of image collection."""
+        return self.get_datasource().host_information
 
     def trajectory(self, tj_attr, x, y, start_date, end_date, language, geometry):
         """Return the trajectory.
@@ -62,6 +81,7 @@ class ImageCollection(Collection):
                 args = {
                     "image": att["image"],
                     "temporal": self.temporal,
+                    "workspace": att["workspace"],
                     "x": x,
                     "y": y,
                     "grid": self.grid,
@@ -80,3 +100,18 @@ class ImageCollection(Collection):
                     result["collection"] = self.get_name()
                     tj_attr.append(result)
 
+    def layers_information(self) -> List[Dict]:
+        """Return the dataset information of image collection."""
+        layers = list()
+
+        for obs in self.observations_properties:
+            layers.append(
+                dict(
+                    temporal_property="time",
+                    workspace=obs['workspace'],
+                    layer_name=obs['image'],
+                    title = obs['title']
+                )
+            )
+
+        return layers

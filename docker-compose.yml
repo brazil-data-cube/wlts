@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: wlts
-    image: wlts:0.6.0
+    image: registry.dpi.inpe.br/brazil-data-cube/wlts:latest
     restart: unless-stopped
     environment:
       - "WLTS_URL=http://localhost:8080"

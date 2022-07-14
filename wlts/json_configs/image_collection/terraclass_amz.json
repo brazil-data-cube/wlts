@@ -1,5 +1,6 @@
 {
-  "name": "terraclass_cerrado",
+  "name": "terraclass_amz",
+  "title": "TerraClass Amazonia",
   "authority_name": "INPE e EMBRAPA",
   "description": "O Projeto TerraClass foi estruturado em 2010 com o objetivo de atender uma demanda do Governo Federal relacionada à qualificação dos desmatamentos observados na região da Amazônia Legal e endereçada a gestores e colaboradores da Empresa Brasileira de Pesquisa Agropecuária (Embrapa) e do Instituto Nacional de Pesquisas Espaciais (Inpe). Os produtos gerados pelo projeto TerraClass oferecem subsídios para a definição de ações governamentais referentes ao desenvolvimento da produção agrícola nacional com bases sustentáveis, à preservação da biodiversidade nacional e à manutenção da qualidade dos serviços ambientais. Em 2015, durante a expansão das ações do projeto para o bioma Cerrado, ano base 2013, foi publicada a Portaria MMA nº 365 de 27 de novembro de 2015, do Ministério do Meio Ambiente, criando o Programa de Monitoramento Ambiental dos Biomas Brasileiros (PMABB), que tem por objetivo expandir as ações de mapeamento e monitoramento para os demais biomas brasileiros.",
   "detail": "Para mais informacoes acesse: https://www.terraclass.gov.br/",
@@ -20,15 +21,15 @@
     "string_format": "%Y"
   },
   "period": {
-    "start_date": "2018",
-    "end_date": "2018"
+    "start_date": "2014",
+    "end_date": "2014"
   },
   "scala": "1:250.000",
   "spatial_extent": {
-    "min_x": "-60.109929103",
-    "min_y": "-24.685119425",
-    "max_x": "-41.522427616",
-    "max_y": "-2.32678430299999"
+    "min_x": "-73.990449969",
+    "min_y": "-18.041598240999974",
+    "max_x": "-43.997229968999996",
+    "max_y": "5.2718217590000265"
   },
   "grid": {
     "row": "768",
@@ -39,7 +40,9 @@
   },
   "attributes_properties": [
     {
-      "image": "tc_cerrado_2018_raster",
+      "image": "tc_2014_raster",
+      "workspace": "TerraClass",
+      "title": "TerraClass Amazonia",
       "name": "GRAY_INDEX",
       "data_type": "int",
       "valid_range": {
@@ -51,6 +54,6 @@
     }
   ],
   "timeline": [
-    "2018"
+    "2014"
   ]
 }

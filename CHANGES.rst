@@ -10,6 +10,33 @@
 Changes
 =======
 
+Version 0.9.1 (2022-03-23)
+--------------------------
+
+- Remove OWSLib package (`#71 <https://github.com/brazil-data-cube/wlts/issues/71>`_).
+- Bug fix: cannot import name 'soft_unicode' from 'markupsafe' (`#70 <https://github.com/brazil-data-cube/wlts/issues/70>`_).
+- Add the title information in collection (`#69 <https://github.com/brazil-data-cube/wlts/issues/69>`_).
+- Refactor the organization of datasets (`#72 <https://github.com/brazil-data-cube/wlts/issues/72>`_).
+- Remove mandatory BDC Auth access token in operations (`#74 <https://github.com/brazil-data-cube/wlts/issues/74>`_).
+
+Version 0.9.0 (2021-12-08)
+--------------------------
+
+- Add multiple layers to collection (`#65 <https://github.com/brazil-data-cube/wlts/issues/65>`_).
+- Add deprecated information in describe collection (`#64 <https://github.com/brazil-data-cube/wlts/issues/64>`_).
+- Add CORS properties (`#67 <https://github.com/brazil-data-cube/wlts/issues/67>`_).
+
+
+Version 0.8.0 (2021-09-30)
+--------------------------
+
+- Add integration with BDC-Auth (`#53 <https://github.com/brazil-data-cube/wlts/issues/53>`_).
+- Improve unittests (`#60 <https://github.com/brazil-data-cube/wlts/issues/60>`_).
+- Review the configuration files (`#57 <https://github.com/brazil-data-cube/wlts/issues/57>`_).
+- Fix invalid keyword label in WCS response object (`#61 <https://github.com/brazil-data-cube/wlts/issues/61>`_).
+- Upgrade library to provide OAuth2 client integration to 0.2.3 (`#56 <https://github.com/brazil-data-cube/wlts/issues/56>`_).
+
+
 Version 0.6.0 (2021-04-13)
 --------------------------
 

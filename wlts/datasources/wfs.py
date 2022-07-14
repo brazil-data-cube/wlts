@@ -33,8 +33,8 @@ class WFS:
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        self.host = host
-        self.base_path = "wfs?service=WFS&version=1.0.0"
+        self._host = host
+        self._base_path = "wfs?service=WFS&version=1.0.0"
 
         self._auth = None
 
@@ -45,6 +45,11 @@ class WFS:
                 if len(kwargs['auth']) != 2:
                     raise AttributeError('auth must be a tuple with 2 values ("user", "pass")')
                 self._auth = kwargs['auth']
+
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._host
 
     def _get(self, uri):
         """Query the WFS service using HTTP GET verb.
@@ -61,7 +66,7 @@ class WFS:
 
     def _list_features(self):
         """Returns the list of all available feature in service."""
-        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self.host, self.base_path)
+        url = "{}/{}&request=GetCapabilities&outputFormat=application/json".format(self._host, self._base_path)
 
         doc = self._get(url)
 
@@ -97,14 +102,13 @@ class WFS:
                 propertyName (str): Feature property names
                 filter (str): Filter to use in request.
                 outputformat (str): Requested response format of the request.
-
         """
         invalid_parameters = set(kwargs) - {'srid', 'propertyName', 'filter', 'outputformat'}
 
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        url = "{}/{}&request=GetFeature&typeName={}".format(self.host, self.base_path, type_name)
+        url = "{}/{}&request=GetFeature&typeName={}".format(self._host, self._base_path, type_name)
 
         if 'propertyName' in kwargs:
             url += "&propertyName={}".format(kwargs['propertyName'])
@@ -172,17 +176,24 @@ class WFSDataSource(DataSource):
         else:
             self._wfs = WFS(ds_info['host'])
 
-        self.workspace = ds_info['workspace']
+        if 'external_host' in ds_info:
+            self._external_host = ds_info['external_host']
+        else:
+            self._external_host = ds_info['host']
 
-    def get_type(self):
+    def get_type(self) -> str:
         """Return the datasource type."""
         return "WFS"
 
-    def get_classe(self, feature_id, value, class_property_name, ft_name, **kwargs):
-        """Return a class of feature based on his classification system."""
-        type_name = self.workspace + ":" + ft_name
+    @property
+    def host_information(self) -> str:
+        """Returns the host."""
+        return self._external_host
 
-        tag_name = self.workspace + ":" + class_property_name
+    def get_classe(self, feature_id, value, class_property_name, ft_name, workspace, **kwargs):
+        """Return a class of feature based on his classification system."""
+        type_name = workspace + ":" + ft_name
+        tag_name = workspace + ":" + class_property_name
 
         if 'classification_system_id' in kwargs:
             filter = f"{value}={feature_id} AND classification_system_id={ kwargs['classification_system_id']}"
@@ -195,49 +206,54 @@ class WFSDataSource(DataSource):
         """Organize trajectory."""
         import ast
 
-        # Get temporal information
+        # Get the temporal information based on temporal type
+
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
-    
+            obs_info = obs_info.replace('Z', '')
+
         elif temporal["type"] == "DATE":
             obs_info = result['properties'][obs["temporal_property"]]
-    
-        # Get Class information
-        if classification_class.get_type() == "Literal":
+            if isinstance(obs_info, str):
+                obs_info = obs_info.replace('Z', '')
+
+        # Get the class information based on type
+        if classification_class.type == "Literal":
             # When the class is a literal property. Ex: Alert
             class_info = obs["class_property_name"]
-        elif classification_class.get_type() == "Self":
-            # When the class property is in the data itself
+
+        elif classification_class.type == "Self":
+          # When the class property is in the data itself
             class_info = result['properties'][obs["class_property"]]
         else:
             # Get the class from the lcss
             feature_id = result['properties'][obs["class_property"]]
-        
+
             ds_class = classification_class.get_class_ds()
 
-            if classification_class.get_classification_system_name() is None:
-                class_info = ds_class.get_classe(feature_id,
-                                                 classification_class.get_class_property_value(),
-                                                 classification_class.get_class_property_name(),
-                                                 classification_class.get_property_name())
+            if classification_class.classification_system_name is None:
+                class_info = ds_class.get_classe(feature_id=feature_id,
+                                                 value=classification_class.class_property_value,
+                                                 class_property_name=classification_class.class_property_name,
+                                                 ft_name=classification_class.property_name)
             else:
-                class_retval = ds_class.get_classe(feature_id,
-                                                 classification_class.get_class_property_value(),
-                                                 classification_class.get_class_property_name(),
-                                                 classification_class.get_property_name(),
-                                                 classification_system_id=classification_class.get_classification_system_id())
+                class_retval =  ds_class.get_classe(feature_id=feature_id,
+                                                 value=classification_class.class_property_value,
+                                                 class_property_name=classification_class.class_property_name,
+                                                 ft_name=classification_class.property_name,
+                                                 workspace=classification_class.workspace,
+                                                  classification_system_id=classification_class.get_classification_system_id())
                 class_dict = ast.literal_eval(class_retval)
                 if language in class_dict:
                     class_info = class_dict[language]
                 else:
                     class_info = class_dict[list(class_dict.keys())[0]]
 
-        # Get the class based on language select
         trj = dict()
         trj["class"] = class_info
         trj["date"] = str(obs_info)
-    
+
         if geom_flag:
             if result['geometry']['type'] == 'Point':
                 geom = Point(result['geometry']['coordinates'][0], result['geometry']['coordinates'][1])
@@ -250,7 +266,7 @@ class WFSDataSource(DataSource):
                 geom = Polygon(result['geometry']['coordinates'][0])
             else:
                 raise Exception('Unsupported geometry type.')
-        
+
             crs_orig = f'EPSG:{geom_property}'
             geom_tmp = transform_crs(crs_orig, 'EPSG:4326', geom)
 
@@ -260,21 +276,31 @@ class WFSDataSource(DataSource):
 
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
-        invalid_parameters = set(kwargs) - {"temporal",
-                                            "x", "y", "obs", "geom_property",
-                                            "classification_class", "start_date", "end_date", "language",
-                                            "geometry_flag"}
+        invalid_parameters = set(kwargs) - {
+            "temporal",
+            "x", "y",
+            "obs",
+            "geom_property",
+            "feature_name",
+            "workspace",
+            "temporal_properties",
+            "classification_class",
+            "start_date",
+             "end_date",
+             "geometry_flag",
+              "language",
+        }
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
-        type_name = self.workspace + ":" + (kwargs['obs'])['feature_name']
+        type_name =  kwargs['workspace'] + ":" + kwargs['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
 
         cql_filter = "&CQL_FILTER=INTERSECTS({}, {})".format((kwargs['geom_property'])['property_name'], geom.wkt)
 
         if (kwargs['temporal'])["type"] == "STRING":
-            temporal_observation = get_date_from_str((kwargs['obs'])["temporal_property"]).strftime(
+            temporal_observation = get_date_from_str((kwargs['temporal_properties'])['temporal_property']).strftime(
                 (kwargs['temporal'])["string_format"])
             if kwargs['start_date']:
                 start_date = get_date_from_str(kwargs['start_date']).strftime((kwargs['temporal'])["string_format"])
@@ -287,21 +313,21 @@ class WFSDataSource(DataSource):
         else:
             if kwargs['start_date']:
                 start_date = get_date_from_str(kwargs['start_date'])
-                cql_filter += " AND {} >= {}".format((kwargs['obs'])["temporal_property"],
+                cql_filter += " AND {} >= {}".format((kwargs['temporal_properties'])["temporal_property"],
                                                      start_date.strftime((kwargs['temporal'])["string_format"]))
 
             if kwargs['end_date']:
                 end_date = get_date_from_str(kwargs['end_date'])
-                cql_filter += " AND {} <= {}".format((kwargs['obs'])["temporal_property"],
+                cql_filter += " AND {} <= {}".format((kwargs['temporal_properties'])["temporal_property"],
                                                      end_date.strftime((kwargs['temporal'])["string_format"]))
 
-        retval = self._wfs.get_feature(type_name, (kwargs['geom_property'])['srid'], cql_filter)
+        retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
 
         trj = list()
 
         if retval is not None:
             for i in retval:
-                trj.append(self.organize_trajectory(result=i, obs=kwargs['obs'],
+                trj.append(self.organize_trajectory(result=i, obs=kwargs['temporal_properties'],
                                                     geom_flag=kwargs['geometry_flag'],
                                                     geom_property=(kwargs['geom_property'])['srid'],
                                                     classification_class=kwargs['classification_class'],

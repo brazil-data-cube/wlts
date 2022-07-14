@@ -1,5 +1,6 @@
 {
     "name": "deter_amz",
+    "title": "DETER Amazonia",
     "authority_name": "INPE",
     "description": "Alertas de Desmatamento",
     "detail": "http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/deter",
@@ -38,8 +39,12 @@
     "observations_properties": [
       {
         "feature_name": "deter_amz",
-        "class_property": "classname",
-        "temporal_property": "view_date"
+        "title": "DETER AMZ",
+        "workspace": "deter-amz",
+        "properties":{
+          "class_property": "classname",
+          "temporal_property": "view_date"
+        }
       }
     ]
   }
