@@ -202,7 +202,7 @@ class WFSDataSource(DataSource):
 
     def organize_trajectory(self, result, obs, geom_flag, geom_property, classification_class, temporal):
         """Organize trajectory."""
-        # Get temporal information
+        # Get the temporal information based on temporal type
         if temporal["type"] == "STRING":
             obs_info = get_date_from_str(obs["temporal_property"])
             obs_info = obs_info.strftime(temporal["string_format"])
@@ -212,10 +212,11 @@ class WFSDataSource(DataSource):
             obs_info = result['properties'][obs["temporal_property"]]
             if isinstance(obs_info, str):
                 obs_info = obs_info.replace('Z', '')
-        # Get Class information
+
+        # Get the class information based on type
         if classification_class.type == "Literal":
             class_info = obs["class_property_name"]
-    
+
         elif classification_class.type == "Self":
             class_info = result['properties'][obs["class_property"]]
         else:
@@ -251,7 +252,7 @@ class WFSDataSource(DataSource):
                 geom = Polygon(result['geometry']['coordinates'][0])
             else:
                 raise Exception('Unsupported geometry type.')
-        
+
             crs_orig = f'EPSG:{geom_property}'
             geom_tmp = transform_crs(crs_orig, 'EPSG:4326', geom)
 
@@ -262,16 +263,16 @@ class WFSDataSource(DataSource):
     def get_trajectory(self, **kwargs):
         """Return a trajectory observation of this datasource."""
         invalid_parameters = set(kwargs) - {
-            "temporal", 
-            "x", "y", 
-            "obs", 
-            "geom_property", 
+            "temporal",
+            "x", "y",
+            "obs",
+            "geom_property",
             "feature_name",
-            "workspace", 
+            "workspace",
             "temporal_properties",
-            "classification_class", 
+            "classification_class",
             "start_date",
-             "end_date", 
+             "end_date",
              "geometry_flag"
         }
 
