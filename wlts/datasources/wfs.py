@@ -298,12 +298,12 @@ class WFSDataSource(DataSource):
         else:
             if kwargs['start_date']:
                 start_date = get_date_from_str(kwargs['start_date'])
-                cql_filter += " AND {} >= {}".format((kwargs['obs'])['properties']["temporal_property"],
+                cql_filter += " AND {} >= {}".format((kwargs['temporal_properties'])["temporal_property"],
                                                      start_date.strftime((kwargs['temporal'])["string_format"]))
 
             if kwargs['end_date']:
                 end_date = get_date_from_str(kwargs['end_date'])
-                cql_filter += " AND {} <= {}".format((kwargs['obs'])['properties']["temporal_property"],
+                cql_filter += " AND {} <= {}".format((kwargs['temporal_properties'])["temporal_property"],
                                                      end_date.strftime((kwargs['temporal'])["string_format"]))
 
         retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
