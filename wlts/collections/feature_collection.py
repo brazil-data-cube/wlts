@@ -63,27 +63,39 @@ class FeatureCollection(Collection):
          Returns:
             list: A trajectory object as a list.
         """
+        def prepare_result(tj_attr, result):
+            if result is not None:
+                for i in result:
+                    i["collection"] = self.get_name()
+                    tj_attr.append(i)
+
         ds = self.datasource
 
         for obs in self.observations_properties:
+
             args = {
                 "temporal": self.temporal,
                 "x": x,
                 "y": y,
-                "obs": obs,
+                "feature_name": obs['feature_name'],
+                "workspace": obs['workspace'],
                 "geom_property": self.geom_property,
                 "start_date": start_date,
                 "end_date": end_date,
                 "classification_class": self.classification_class,
                 "geometry_flag": geometry
             }
+            
+            if isinstance(obs['properties'], list):
+                for temporal_properties in obs['properties']:
+                    args["temporal_properties"] = temporal_properties
+                    result = ds.get_trajectory(**args)
+                    prepare_result(tj_attr, result)
+            else:
+                args["temporal_properties"] = obs['properties']
+                result = ds.get_trajectory(**args)
+                prepare_result(tj_attr, result)
 
-            result = ds.get_trajectory(**args)
-
-            if result is not None:
-                for i in result:
-                    i["collection"] = self.get_name()
-                    tj_attr.append(i)
 
     def layers_information(self) -> List[Dict]:
         """Return the dataset information of feature collection."""
