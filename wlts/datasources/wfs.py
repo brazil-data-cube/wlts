@@ -239,12 +239,14 @@ class WFSDataSource(DataSource):
                                                  ft_name=classification_class.property_name)
             else:
                 class_retval =  ds_class.get_classe(feature_id=feature_id,
-                                                 value=classification_class.class_property_value,
-                                                 class_property_name=classification_class.class_property_name,
-                                                 ft_name=classification_class.property_name,
-                                                 workspace=classification_class.workspace,
-                                                  classification_system_id=classification_class.get_classification_system_id())
+                                                    value=classification_class.class_property_value,
+                                                    class_property_name=classification_class.class_property_name,
+                                                    ft_name=classification_class.property_name,
+                                                    workspace=classification_class.workspace,
+                                                    classification_system_id=classification_class.classification_system_id)
+
                 class_dict = ast.literal_eval(class_retval)
+
                 if language in class_dict:
                     class_info = class_dict[language]
                 else:
@@ -286,10 +288,11 @@ class WFSDataSource(DataSource):
             "temporal_properties",
             "classification_class",
             "start_date",
-             "end_date",
-             "geometry_flag",
-              "language",
+            "end_date",
+            "geometry_flag",
+            "language",
         }
+
         if invalid_parameters:
             raise AttributeError('invalid parameter(s): {}'.format(invalid_parameters))
 
