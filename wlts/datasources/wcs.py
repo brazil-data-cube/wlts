@@ -186,7 +186,7 @@ class WCSDataSource(DataSource):
             self._wcs = WCS(ds_info['host'], auth=(ds_info["user"], ds_info["password"]))
         else:
             self._wcs = WCS(ds_info['host'])
-            
+
         if 'external_host' in ds_info:
             self._external_host = ds_info['external_host']
         else:
@@ -218,7 +218,7 @@ class WCSDataSource(DataSource):
         # Get temporal information
         obs_info = get_date_from_str(time)
         obs_info = obs_info.strftime(temporal["string_format"])
-    
+
         # Get Class
         if classification_class.type == "Self":
             class_info = str(result)
@@ -230,9 +230,9 @@ class WCSDataSource(DataSource):
                                              class_property_name=classification_class.class_property_name,
                                              ft_name=classification_class.property_name,
                                              workspace=classification_class.workspace,
-                                             classification_system_id=classification_class.get_classification_system_id()
+                                             classification_system_id=classification_class.classification_system_id
                                              )
-                                             
+
             class_dict = ast.literal_eval(class_retval)
             if language in class_dict:
                 class_info = class_dict[language]
@@ -245,7 +245,7 @@ class WCSDataSource(DataSource):
 
         if geom_flag:
             trj["geom"] = mapping(geom)
-        
+
         return trj
 
     def get_trajectory(self, **kwargs):
