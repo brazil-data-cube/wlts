@@ -56,7 +56,7 @@ install_requires = [
     'MarkupSafe==2.0.1',
     'rasterio>=1.1.2,<2',
     'bdc-auth-client @ git+https://github.com/brazil-data-cube/bdc-auth-client@v0.2.3',
-    'lccs-db @ git+https://github.com/brazil-data-cube/lccs-db@master',
+    'lccs-db @ git+https://github.com/brazil-data-cube/lccs-db@v0.8.1',
 ]
 
 packages = find_packages()
