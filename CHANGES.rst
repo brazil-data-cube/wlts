@@ -10,13 +10,6 @@
 Changes
 =======
 
-Version 0.9.2 (2022-04-29)
---------------------------
-
-- Adding datasource informations in describe operation (`#79 <https://github.com/brazil-data-cube/wlts/issues/79>`_).
-- Separate temporal properties according to each date type in the collection (`#83 <https://github.com/brazil-data-cube/wlts/issues/83>`_).
-- Add external host information (`#81 <https://github.com/brazil-data-cube/wlts/issues/81>`_)
-
 Version 0.9.1 (2022-03-23)
 --------------------------
 
