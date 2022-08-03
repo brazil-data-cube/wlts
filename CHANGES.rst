@@ -10,7 +10,7 @@
 Changes
 =======
 
-Version 0.9.3 (2022-07-22)
+Version 0.9.3 (2022-08-03)
 --------------------------
 
 - Bug Fix: Remove Z in date (`#79 <https://github.com/brazil-data-cube/wlts/issues/87>`_).
