@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Feature Collection Class."""
+from joblib import Parallel, delayed
 from turtle import title
 from typing import Dict, List
 
@@ -63,13 +64,15 @@ class FeatureCollection(Collection):
          Returns:
             list: A trajectory object as a list.
         """
-        def prepare_result(tj_attr, result):
-            if result is not None:
-                for i in result:
-                    i["collection"] = self.get_name()
-                    tj_attr.append(i)
+
+        # def prepare_result(tj_attr, result):
+        #     """Add the collection name to trajectory"""
+        #     if result is not None:
+        #         result = [dict(item, collection=self.get_name()) for item in result]
+        #         tj_attr.extend(result)
 
         ds = self.datasource
+        result = list()
 
         for obs in self.observations_properties:
 
@@ -85,17 +88,20 @@ class FeatureCollection(Collection):
                 "classification_class": self.classification_class,
                 "geometry_flag": geometry
             }
-            
+
             if isinstance(obs['properties'], list):
                 for temporal_properties in obs['properties']:
                     args["temporal_properties"] = temporal_properties
-                    result = ds.get_trajectory(**args)
-                    prepare_result(tj_attr, result)
+                    result.append(ds.get_trajectory(**args))
             else:
                 args["temporal_properties"] = obs['properties']
-                result = ds.get_trajectory(**args)
-                prepare_result(tj_attr, result)
+                a = ds.get_trajectory(**args)
+                if a is not None:
+                    result.extend(a)
 
+        result = [dict(item, collection=self.get_name()) for item in result]
+
+        tj_attr.extend(result)
 
     def layers_information(self) -> List[Dict]:
         """Return the dataset information of feature collection."""

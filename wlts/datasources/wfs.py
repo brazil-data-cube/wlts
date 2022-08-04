@@ -6,6 +6,9 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS WFS DataSource."""
+from multiprocessing import Pool
+from joblib import Parallel, delayed
+from datetime import datetime
 from functools import lru_cache
 from json import loads as json_loads
 from xml.dom import minidom
@@ -212,12 +215,14 @@ class WFSDataSource(DataSource):
             obs_info = result['properties'][obs["temporal_property"]]
             if isinstance(obs_info, str):
                 obs_info = obs_info.replace('Z', '')
+
         # Get Class information
         if classification_class.type == "Literal":
             class_info = obs["class_property_name"]
-    
+
         elif classification_class.type == "Self":
             class_info = result['properties'][obs["class_property"]]
+
         else:
             feature_id = result['properties'][obs["class_property"]]
 
@@ -271,8 +276,8 @@ class WFSDataSource(DataSource):
             "temporal_properties",
             "classification_class", 
             "start_date",
-             "end_date", 
-             "geometry_flag"
+            "end_date", 
+            "geometry_flag"
         }
 
         if invalid_parameters:
@@ -281,6 +286,8 @@ class WFSDataSource(DataSource):
         type_name =  kwargs['workspace'] + ":" + kwargs['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
+
+        property_filter = f"&propertyName={kwargs['temporal_properties']['class_property']}"
 
         cql_filter = "&CQL_FILTER=INTERSECTS({}, {})".format((kwargs['geom_property'])['property_name'], geom.wkt)
 
@@ -306,8 +313,18 @@ class WFSDataSource(DataSource):
                 cql_filter += " AND {} <= {}".format((kwargs['obs'])['properties']["temporal_property"],
                                                      end_date.strftime((kwargs['temporal'])["string_format"]))
 
-        retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
+            property_filter += f",{kwargs['temporal_properties']['temporal_property']}"
 
+        if kwargs['geometry_flag']:
+            property_filter += f",{kwargs['geom_property']['property_name']}"
+
+        cql_filter = cql_filter + property_filter
+
+        now = datetime.now()
+        retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
+        print(f'Get Feature {kwargs["feature_name"]} {datetime.now()-now}')
+
+        now2 = datetime.now()
         trj = list()
 
         if retval is not None:
@@ -318,6 +335,7 @@ class WFSDataSource(DataSource):
                                                     classification_class=kwargs['classification_class'],
                                                     temporal=kwargs['temporal']))
 
+            print(f'Organize {datetime.now()-now2}')
             return trj
 
         return retval
