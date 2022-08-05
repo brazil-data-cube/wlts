@@ -6,8 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Feature Collection Class."""
-from joblib import Parallel, delayed
-from turtle import title
 from typing import Dict, List
 
 from .collection import Collection
@@ -65,11 +63,11 @@ class FeatureCollection(Collection):
             list: A trajectory object as a list.
         """
 
-        # def prepare_result(tj_attr, result):
-        #     """Add the collection name to trajectory"""
-        #     if result is not None:
-        #         result = [dict(item, collection=self.get_name()) for item in result]
-        #         tj_attr.extend(result)
+        def _prepare_result(ds, result):
+            """Add the collection name to trajectory"""
+            trj = ds.get_trajectory(**args)
+            if trj is not None:
+                result.extend(trj)
 
         ds = self.datasource
         result = list()
@@ -92,12 +90,10 @@ class FeatureCollection(Collection):
             if isinstance(obs['properties'], list):
                 for temporal_properties in obs['properties']:
                     args["temporal_properties"] = temporal_properties
-                    result.append(ds.get_trajectory(**args))
+                    _prepare_result(ds, result)
             else:
                 args["temporal_properties"] = obs['properties']
-                a = ds.get_trajectory(**args)
-                if a is not None:
-                    result.extend(a)
+                _prepare_result(ds, result)
 
         result = [dict(item, collection=self.get_name()) for item in result]
 
