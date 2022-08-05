@@ -10,6 +10,23 @@
 Changes
 =======
 
+Version 0.9.3 (2022-08-03)
+--------------------------
+
+- Bug Fix: Remove Z in date (`#79 <https://github.com/brazil-data-cube/wlts/issues/87>`_).
+
+- Add the layers title in describe collection operation (`#90 <https://github.com/brazil-data-cube/wlts/issues/90>`_).
+
+- Bug Fix: In get trajectory for multiples properties in Feature Collection (`#92 <https://github.com/brazil-data-cube/wlts/issues/92>`_).
+
+Version 0.9.2 (2022-04-29)
+--------------------------
+
+- Adding datasource informations in describe operation (`#79 <https://github.com/brazil-data-cube/wlts/issues/79>`_).
+- Separate temporal properties according to each date type in the collection (`#83 <https://github.com/brazil-data-cube/wlts/issues/83>`_).
+- Add external host information (`#81 <https://github.com/brazil-data-cube/wlts/issues/81>`_)
+
+
 Version 0.9.1 (2022-03-23)
 --------------------------
 
