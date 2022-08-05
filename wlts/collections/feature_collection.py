@@ -63,9 +63,8 @@ class FeatureCollection(Collection):
             list: A trajectory object as a list.
         """
 
-        def _prepare_result(ds, result):
+        def _prepare_result(result, trj):
             """Add the collection name to trajectory"""
-            trj = ds.get_trajectory(**args)
             if trj is not None:
                 result.extend(trj)
 
@@ -90,10 +89,12 @@ class FeatureCollection(Collection):
             if isinstance(obs['properties'], list):
                 for temporal_properties in obs['properties']:
                     args["temporal_properties"] = temporal_properties
-                    _prepare_result(ds, result)
+                    trj = ds.get_trajectory(**args)
+                    _prepare_result(result, trj)
             else:
                 args["temporal_properties"] = obs['properties']
-                _prepare_result(ds, result)
+                trj = ds.get_trajectory(**args)
+                _prepare_result(result, trj)
 
         result = [dict(item, collection=self.get_name()) for item in result]
 
