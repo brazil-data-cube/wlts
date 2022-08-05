@@ -6,9 +6,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS WFS DataSource."""
-from multiprocessing import Pool
-from joblib import Parallel, delayed
-from datetime import datetime
 from functools import lru_cache
 from json import loads as json_loads
 from xml.dom import minidom
@@ -320,11 +317,8 @@ class WFSDataSource(DataSource):
 
         cql_filter = cql_filter + property_filter
 
-        now = datetime.now()
         retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
-        print(f'Get Feature {kwargs["feature_name"]} {datetime.now()-now}')
 
-        now2 = datetime.now()
         trj = list()
 
         if retval is not None:
@@ -335,7 +329,6 @@ class WFSDataSource(DataSource):
                                                     classification_class=kwargs['classification_class'],
                                                     temporal=kwargs['temporal']))
 
-            print(f'Organize {datetime.now()-now2}')
             return trj
 
         return retval
