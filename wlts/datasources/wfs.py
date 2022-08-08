@@ -213,12 +213,14 @@ class WFSDataSource(DataSource):
             if isinstance(obs_info, str):
                 obs_info = obs_info.replace('Z', '')
 
+
         # Get the class information based on type
         if classification_class.type == "Literal":
             class_info = obs["class_property_name"]
 
         elif classification_class.type == "Self":
             class_info = result['properties'][obs["class_property"]]
+
         else:
             feature_id = result['properties'][obs["class_property"]]
 
@@ -272,8 +274,8 @@ class WFSDataSource(DataSource):
             "temporal_properties",
             "classification_class",
             "start_date",
-             "end_date",
-             "geometry_flag"
+            "end_date", 
+            "geometry_flag"
         }
 
         if invalid_parameters:
@@ -282,6 +284,8 @@ class WFSDataSource(DataSource):
         type_name =  kwargs['workspace'] + ":" + kwargs['feature_name']
 
         geom = Point(kwargs['x'], kwargs['y'])
+
+        property_filter = f"&propertyName={kwargs['temporal_properties']['class_property']}"
 
         cql_filter = "&CQL_FILTER=INTERSECTS({}, {})".format((kwargs['geom_property'])['property_name'], geom.wkt)
 
@@ -306,6 +310,13 @@ class WFSDataSource(DataSource):
                 end_date = get_date_from_str(kwargs['end_date'])
                 cql_filter += " AND {} <= {}".format((kwargs['temporal_properties'])["temporal_property"],
                                                      end_date.strftime((kwargs['temporal'])["string_format"]))
+
+            property_filter += f",{kwargs['temporal_properties']['temporal_property']}"
+
+        if kwargs['geometry_flag']:
+            property_filter += f",{kwargs['geom_property']['property_name']}"
+
+        cql_filter = cql_filter + property_filter
 
         retval = self._wfs.get_feature(type_name=type_name, srid=(kwargs['geom_property'])['srid'], filter=cql_filter)
 
