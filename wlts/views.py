@@ -8,6 +8,8 @@
 """Views of Web Land Trajectory Service."""
 from bdc_auth_client.decorators import oauth2
 from flask import Blueprint, jsonify, request
+from lccs_db.config import Config as Config_db
+from lccs_db.utils import language
 
 from wlts.utils.schemas import (collections_list, describe_collection,
                                 trajectory)
@@ -26,9 +28,15 @@ def root():
     :returns: Server version.
     :rtype: dict
     """
-    response = dict()
-    response["version"] = Config.WLTS_API_VERSION
-    response["application_name"] = "Web Land Trajectory Service"
+    response = dict(version=Config.WLTS_API_VERSION,
+                    application_name= "Web Land Trajectory Service",
+                    supported_language=[])
+
+    for _, name in Config_db.I18N_LANGUAGES.items():
+        response["supported_language"].append({
+            "language": name[0],
+            "description": name[1]
+        })
 
     return response
 

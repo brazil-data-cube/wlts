@@ -43,12 +43,13 @@ class FeatureCollection(Collection):
         """Return collection type."""
         return "Feature"
 
+
     @property
     def host_information(self) -> str:
         """Return the host information of image collection."""
         return self.get_datasource().host_information
 
-    def trajectory(self, tj_attr, x, y, start_date, end_date, geometry):
+    def trajectory(self, tj_attr, x, y, start_date, end_date, language, geometry):
         """Return the trajectory.
 
         Args:
@@ -83,6 +84,7 @@ class FeatureCollection(Collection):
                 "start_date": start_date,
                 "end_date": end_date,
                 "classification_class": self.classification_class,
+                "language": language,
                 "geometry_flag": geometry
             }
 
