@@ -6,6 +6,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 #
 """WLTS Collection Manager."""
+from typing import ValuesView
+
 from wlts.collections.feature_collection import FeatureCollection
 from wlts.collections.image_collection import ImageCollection
 
@@ -21,8 +23,8 @@ class CollectionFactory:
         cls._factories[name] = factory
 
     @classmethod
-    def make(cls, collection_type, collections_info):
-        """Factory method to creates a collection.
+    def make(cls, collection_type: str, collections_info: dict):
+        """Factory method to create a collection.
 
         Args:
             collection_type (str): The collection type to be create.
@@ -52,12 +54,12 @@ class CollectionManager:
         return cls._instance
 
     @staticmethod
-    def register_factories():
+    def register_factories() -> None:
         """Register the Collection."""
         CollectionFactory.register('feature_collection', 'FeatureCollection')
         CollectionFactory.register('image_collection', 'ImageCollection')
 
-    def insert(self, collection_type, collection_info):
+    def insert(self, collection_type: str, collection_info: dict)-> None:
         """Method to creates a new collection and stores in list of collections.
 
         Args:
@@ -98,11 +100,11 @@ class CollectionManager:
         """
         return list(self._collections.keys())
 
-    def collections(self):
+    def collections(self) -> ValuesView:
         """Returns a list with all collections objects."""
         return self._collections.values()
 
-    def load_all(self):
+    def load_all(self) -> None:
         """Creates all collection based on json of feature and feature collection."""
         import json
         import os

@@ -42,7 +42,7 @@ class FeatureCollection(Collection):
     def collection_type(self) -> str:
         """Return collection type."""
         return "Feature"
-    
+
     @property
     def host_information(self) -> str:
         """Return the host information of image collection."""
@@ -62,14 +62,23 @@ class FeatureCollection(Collection):
          Returns:
             list: A trajectory object as a list.
         """
+
+        def _prepare_result(result, trj):
+            """Add the collection name to trajectory"""
+            if trj is not None:
+                result.extend(trj)
+
         ds = self.datasource
+        result = list()
 
         for obs in self.observations_properties:
+
             args = {
                 "temporal": self.temporal,
                 "x": x,
                 "y": y,
-                "obs": obs,
+                "feature_name": obs['feature_name'],
+                "workspace": obs['workspace'],
                 "geom_property": self.geom_property,
                 "start_date": start_date,
                 "end_date": end_date,
@@ -77,25 +86,29 @@ class FeatureCollection(Collection):
                 "geometry_flag": geometry
             }
 
-            result = ds.get_trajectory(**args)
+            if isinstance(obs['properties'], list):
+                for temporal_properties in obs['properties']:
+                    args["temporal_properties"] = temporal_properties
+                    trj = ds.get_trajectory(**args)
+                    _prepare_result(result, trj)
+            else:
+                args["temporal_properties"] = obs['properties']
+                trj = ds.get_trajectory(**args)
+                _prepare_result(result, trj)
 
-            if result is not None:
-                for i in result:
-                    i["collection"] = self.get_name()
-                    tj_attr.append(i)
+        result = [dict(item, collection=self.get_name()) for item in result]
+
+        tj_attr.extend(result)
 
     def layers_information(self) -> List[Dict]:
         """Return the dataset information of feature collection."""
         layers = list()
 
         def prepare_datafields(data: dict, obs: dict):
-            if self.temporal["type"] == "STRING":
-                if "properties" not in data:
-                    data["properties"] = [dict(class_property=obs["class_property"], temporal_property=obs["temporal_property"])]
-                elif obs["class_property"] not in data["properties"]:
-                    data["properties"].append(dict(class_property=obs["class_property"], temporal_property=obs["temporal_property"]))
+            if self.temporal["type"] == "STRING" and "properties" not in data:
+                data["properties"] = obs['properties']
             else:
-                data["data_field"] = obs['temporal_property']
+                data["data_field"] = obs['properties']['temporal_property']
 
         for obs in self.observations_properties:
             data = [l for l in layers if l.get('layer_name', "")  == obs['feature_name']]
@@ -103,11 +116,11 @@ class FeatureCollection(Collection):
                 ds_information = dict(
                     workspace=obs['workspace'],
                     layer_name=obs['feature_name'],
+                    title=obs['title']
                 )
                 prepare_datafields(ds_information, obs)
                 layers.append(ds_information)
             else:
                 prepare_datafields(data[0], obs)
-
 
         return layers

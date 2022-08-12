@@ -108,7 +108,8 @@ class ImageCollection(Collection):
                 dict(
                     temporal_property="time",
                     workspace=obs['workspace'],
-                    layer_name=obs['image']
+                    layer_name=obs['image'],
+                    title = obs['title']
                 )
             )
 
