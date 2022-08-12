@@ -52,6 +52,7 @@ class Collection(metaclass=ABCMeta):
         args['classification_system_name'] = classification_class.get('classification_system_name', None)
         args['classification_system_id'] = classification_class.get('classification_system_id', None)
         args['classification_system_version'] = classification_class.get('classification_system_version', None)
+        args['classification_system_title'] = classification_class.get('classification_system_title', None)
 
         if classification_class["type"] == 'Self':
             args['property_name'] = None
@@ -134,7 +135,7 @@ class Collection(metaclass=ABCMeta):
             host_url (str): A string that represents the datasource host of an collection.
         """
         pass
-    
+
     @abstractmethod
     def layers_information(self):
         """Abstract Method to get collections layers informations.
@@ -152,7 +153,7 @@ class ClassificationSystemClass:
         """Creates a ClassificationSystemClass."""
         invalid_parameters = set(kwargs) - {"type", "datasource_id", "property_name", "class_property_name",
                                             "class_property_value", 'class_property_id', 'classification_system_name',
-                                            'classification_system_id', 'classification_system_version',
+                                            'classification_system_title','classification_system_id', 'classification_system_version',
                                             'class_property_id', 'workspace'}
 
         if invalid_parameters:
@@ -168,6 +169,7 @@ class ClassificationSystemClass:
 
         self._classification_system_version = kwargs['classification_system_version']
         self._classification_system_name = kwargs['classification_system_name']
+        self._classification_system_title = kwargs['classification_system_title']
         self._classification_system_id = kwargs['classification_system_id']
 
         self.datasource = datasource_manager.get_datasource(kwargs['datasource_id'])
@@ -210,6 +212,11 @@ class ClassificationSystemClass:
     def classification_system_name(self):
         """Return classification system name."""
         return self._classification_system_name
+
+    @property
+    def classification_system_title(self):
+        """Return classification system name."""
+        return self._classification_system_title
 
     @property
     def classification_system_id(self):

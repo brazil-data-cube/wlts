@@ -75,10 +75,12 @@ class WLTS:
 
             describe["classification_system"] = {
                 "type": classification_system.type,
-                "classification_system_name": classification_system.classification_system_name,
-                "classification_system_id": classification_system.classification_system_id,
-                "classification_system_version": classification_system.classification_system_version
+                "title": classification_system.classification_system_title,
+                "name": classification_system.classification_system_name,
+                "id": classification_system.classification_system_id,
+                "version": classification_system.classification_system_version
             }
+
             describe["name"] = collection.name
             describe["title"] = collection.title
             describe["description"] = collection.description
