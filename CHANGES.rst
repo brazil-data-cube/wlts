@@ -10,6 +10,17 @@
 Changes
 =======
 
+
+Version 1.0.0-alpha1 (2022-08-23)
+---------------------------------
+
+- Add title in classification system (`#100 <https://github.com/brazil-data-cube/wlts/issues/100>`_)
+
+- Add support for LCCS-DB 0.8.1 (`#95 <https://github.com/brazil-data-cube/wlts/issues/95>`_)
+
+- Add support I18N.
+
+
 Version 0.9.4 (2022-08-23)
 --------------------------
 
