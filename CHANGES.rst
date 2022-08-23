@@ -10,10 +10,16 @@
 Changes
 =======
 
+Version 0.9.4 (2022-08-23)
+--------------------------
+
+- Review trajectory for Feature Collection: Return geometry data only when requested by the user (`#79 <https://github.com/brazil-data-cube/wlts/issues/98>`_).
+
+
 Version 0.9.3 (2022-08-03)
 --------------------------
 
-- Bug Fix: Remove Z in date (`#79 <https://github.com/brazil-data-cube/wlts/issues/87>`_).
+- Bug Fix: Remove Z in date (`#87 <https://github.com/brazil-data-cube/wlts/issues/87>`_).
 
 - Add the layers title in describe collection operation (`#90 <https://github.com/brazil-data-cube/wlts/issues/90>`_).
 
