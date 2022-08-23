@@ -10,7 +10,7 @@
 Changes
 =======
 
-Version 0.9.4 (2022-08-22)
+Version 0.9.4 (2022-08-23)
 --------------------------
 
 - Review trajectory for Feature Collection: Return geometry data only when requested by the user (`#79 <https://github.com/brazil-data-cube/wlts/issues/98>`_).
