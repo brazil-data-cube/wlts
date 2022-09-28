@@ -13,10 +13,14 @@ steps:
 - name: build
   image: python:3.7
   environment:
-    WLTS_TEST_ACCESS_TOKEN: cRX9fYsT8rQiYXMaPdmUsMwV9McPfnsUJb65aBucTv
-    BDC_AUTH_CLIENT_ID: _xwbynWdVGBt-X8DbBYoC6sGw5MmQwD5
-    BDC_AUTH_CLIENT_SECRET: GOC6-7NSTzCUbUm9NO3_gUpqGTJp0kNpt5hQHMnNNONs-5SnSVp1lLZembicQbMD
-    BDC_AUTH_ACCESS_TOKEN_URL: https://brazildatacube.dpi.inpe.br/auth/v1/oauth/introspect
+    WLTS_TEST_ACCESS_TOKEN:
+      from_secret: access_token
+    BDC_AUTH_CLIENT_ID:
+      from_secret: client_id
+    BDC_AUTH_CLIENT_SECRET:
+      from_secret: client_secret
+    BDC_AUTH_ACCESS_TOKEN_URL:
+      from_secret: oauth_url
   commands:
   - pip install --upgrade pip
   - pip install --upgrade setuptools
