@@ -24,12 +24,8 @@ Web Land Trajectory Service
 ===========================
 
 .. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
-        :target: https://github.com/brazil-data-cube/bdc-catalog/blob/master/LICENSE
+        :target: https://github.com/brazil-data-cube/wlts/blob/master/LICENSE
         :alt: Software License
-
-.. image:: https://drone.dpi.inpe.br/api/badges/brazil-data-cube/wlts/status.svg
-        :target: https://drone.dpi.inpe.br/brazil-data-cube/wlts
-        :alt: Build Status
 
 .. image:: https://codecov.io/gh/brazil-data-cube/wlts/branch/master/graph/badge.svg?token=747MCJVQCK
         :target: https://codecov.io/gh/brazil-data-cube/wlts
