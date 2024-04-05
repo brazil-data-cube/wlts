@@ -61,7 +61,7 @@ install_requires = [
     'shapely>=1.6',
     'jsonschema>=3.2',
     'pyproj>=2',
-    'OWSLib==0.25.0',
+    'OWSLib==0.28.1',
     'geojson==2.5.0',
     'MarkupSafe==2.0.1',
     'rasterio>=1.1.2,<2',
